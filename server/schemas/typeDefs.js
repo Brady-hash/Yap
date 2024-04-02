@@ -7,8 +7,27 @@ type User{
     email: String
     password: String
     messageThreads: [MessageThread]
-    answerChoices: [ID!]
+    answerChoices: [Answer]
     friendCount: Int
+}
+
+type Answer{
+    _id: ID!
+    userId: User
+    questionId: [Question]
+    answerChoice: String
+}
+
+type Question{
+    _id: ID!
+    creator: User
+    messageThread: MessageThread
+    text: String
+    option1: String
+    option2: String
+    answerCount: Int
+    answers: [Answer]
+    createdAt: String
 }
 
 type Message{
@@ -19,12 +38,18 @@ type Message{
     timestamp: String
 }
 
+type Auth{
+    token: ID!
+    user: User
+}
+
 type MessageThread{
     _id: ID!
     name: String
     admin: User
     participants: [User]
     messages: [Message]
+    questions: [Question]
     isGroupChat: Boolean
     createdAt: String
 }
@@ -32,6 +57,7 @@ type MessageThread{
 type Query {
     users: [User]
     user(userId: ID!): User
+    me(userId: ID!): Auth
     threads: [MessageThread]
     thread(threadId: ID!): MessageThread
 }
@@ -50,6 +76,9 @@ type Mutation {
     removeFriend(userId: ID!, friendId: ID!): User
     joinThread(userId: ID!, threadId: ID!): MessageThread
     leaveThread(userId: ID!, threadId: ID!): User
+    createQuestion(userId: ID!, messageThread: ID!, text: String!, option1: String!, option2: String!): Question
+    deleteQuestion(userId: ID!, questionId: ID!): Question
+    answerQuestion(userId: ID!, questionId: ID!, answer: String!): Question
 }
 
 `
