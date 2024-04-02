@@ -2,12 +2,15 @@ const { User, MessageThread, Message, Question, Answer } = require('../models');
 const { belongsToThread } = require('../utils/helpers');
 const { signToken, AuthenticationError } = require('../utils/auth');
 const bcrypt = require('bcrypt');
+const { server, io } = require('../server');
 
 const resolvers = {
     Query: {
         users: async () => {
             try {
-                return await User.find().populate('friends').populate('messageThreads').populate('answerChoices');
+                const users = await User.find().populate('friends').populate('messageThreads').populate('answerChoices');
+                io.emit("users-fetched", users);
+                return users;
             } catch(err) {
                 throw new Error(`Error getting users: ${err}`);
             }
@@ -18,6 +21,7 @@ const resolvers = {
                 if (!user) {
                     throw new Error('No user with this id');
                 }
+                io.emit("user-fetched", user);
                 return user
             } catch(err) {
                 throw new Error(`Error getting one user: ${err}`);
