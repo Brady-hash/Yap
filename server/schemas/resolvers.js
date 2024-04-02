@@ -1,7 +1,7 @@
 const { User, MessageThread, Message, Question, Answer } = require('../models');
 const { belongsToThread } = require('../utils/helpers');
-const { signToken, AuthenticationError } = require('../utils/auth')
-const bcrypt = require('bcrypt')
+const { signToken, AuthenticationError } = require('../utils/auth');
+const bcrypt = require('bcrypt');
 
 const resolvers = {
     Query: {
@@ -9,66 +9,83 @@ const resolvers = {
             try {
                 return await User.find().populate('friends').populate('messageThreads').populate('answerChoices');
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error getting users: ${err}`);
             }
         },
         user: async (parent, { userId }) => {
             try {
                 const user = await User.findById(userId).populate('friends').populate('messageThreads').populate('answerChoices').populate({ path: 'answerChoices', populate: 'questionId' });
                 if (!user) {
-                    throw new Error('No user with this id')
+                    throw new Error('No user with this id');
                 }
                 return user
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error getting one user: ${err}`);
             }
         },
         me: async (parent, {}, context) => {
-            const userId = context.user._id;
-            if (userId) {
-                return await User.findById(userId);
+            try {
+                const userId = context.user._id;
+                if (userId) {
+                    return await User.findById(userId);
+                }
+                throw AuthenticationError
+            } catch(err) {
+                throw new Error(`Error getting current user: ${err}`);
             }
-            throw AuthenticationError
         },
         threads: async () => {
             try {
-                return await MessageThread.find().populate({ path: 'messages', populate: { path: 'sender', select: 'username' }}).populate('admin').populate('participants').populate('questions').populate({ path: 'questions', populate: 'creator' });
+                const threads = await MessageThread.find()
+                    .populate({ path: 'messages', populate: { path: 'sender', select: 'username' }})
+                    .populate('admin')
+                    .populate('participants')
+                    .populate('questions')
+                    .populate({ path: 'questions', populate: 'creator' });
+                return threads
             } catch(err) {
-                throw new Error(err)
+                throw new Error(`Error getting threads: ${err}`);
             }
         },
         thread: async (parent, { threadId }) => {
             try {
-                const thread = await MessageThread.findById(threadId).populate('admin').populate('participants').populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }}).populate({ path: 'questions', populate: 'creator' });
+                const thread = await MessageThread.findById(threadId)
+                    .populate('admin')
+                    .populate('participants')
+                    .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
+                    .populate({ path: 'questions', populate: 'creator' });
                 if (!thread) {
-                    throw new Error('No thread with this id')
+                    throw new Error('No thread with this id');
                 }
                 return thread
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error getting one thread: ${err}`);
             }
         }
     },
     Mutation: {
         addUser: async (parent, { username, email, password }) => {
             try {
-                return await User.create({ username, email, password });
+                const newUser = await User.create({ username, email, password });
+                return newUser
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error adding a new user: ${err}`);
             }
         },
         updateUser: async (parent, { userId, username, email, password }) => {
             try {
-                const user = await User.findById(userId);
+                let user = await User.findById(userId);
                 if (!user) {
                     throw new Error('No user with this id');
                 }
                 if (password) {
                     password = await bcrypt.hash(password, 10);
                 }
-                return await User.findByIdAndUpdate(userId,{ username: username, email: email, password: password}, {new: true});
+                user = User.findByIdAndUpdate(userId,{ username: username, email: email, password: password}, {new: true});
+
+                return user
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error updating user: ${err}`);
             }
         },
         deleteUser: async (parent, { userId }) => {
@@ -84,10 +101,12 @@ const resolvers = {
                 await MessageThread.updateMany({}, { $pull: { messages: { $in: messageIds}}})
                 await MessageThread.updateMany({ $pull: { participants: userId }})
                 await User.updateMany({ $pull: { friends: userId }});
+                
+                const deletedUser = await User.findByIdAndDelete(userId);
 
-                return await User.findByIdAndDelete(userId);
+                return deletedUser
             } catch(err) {
-                throw new Error(err)
+                throw new Error(`Error deleting user: ${err}`);
             }
         },
         createThread: async (parent, { userId, name }) => {
@@ -96,14 +115,14 @@ const resolvers = {
                 /* checks for a logged in user will be done with JWTs later on */
 
                 const user = await User.findById(userId);
-                if (user) {
-                    const newThread = await MessageThread.create({ admin: userId, name: name, participants: userId });
-                    await User.findByIdAndUpdate(userId, { $addToSet: { messageThreads: newThread._id }}, { new: true });
-                    return await MessageThread.findById(newThread._id).populate('admin').populate('participants', 'username');
+                if (!user) {
+                    throw new Error('Please login or create an account to create a thread')
                 }
-                throw new Error('Please login or create an account to create a thread')
+                const newThread = await MessageThread.create({ admin: userId, name: name, participants: userId });
+                await User.findByIdAndUpdate(userId, { $addToSet: { messageThreads: newThread._id }}, { new: true });
+                return await MessageThread.findById(newThread._id).populate('admin').populate('participants', 'username');
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error creating new thread: ${err}`);
             }
         },
         deleteThread: async (parent, { threadId, userId }) => {
@@ -126,20 +145,26 @@ const resolvers = {
                 await Question.deleteMany({ messageThread: threadId });
                 await Message.deleteMany({ messageThread: threadId });
                 await User.updateMany({ $pull: { messageThreads: threadId }});
+
+                const deletedThread = await MessageThread.findByIdAndDelete(threadId);
                 
-                return await MessageThread.findByIdAndDelete(threadId)
+                return deletedThread;
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error deleting thread: ${err}`);
             }
         },
         updateThread: async (parent, { threadId, userId, name }) => {
             try {
                 const thread = await MessageThread.findById(threadId);
-                if (thread.admin.toString() === userId) {
-                    return await MessageThread.findByIdAndUpdate(threadId, { name: name }, { new: true }).populate('messages')
+                if (thread.admin.toString() !== userId) {
+                    throw new Error(`You do not have permission to edit thread settings`)
                 }
+
+                const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { name: name }, { new: true }).populate('messages')
+
+                return updatedThread;
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error updating thread: ${err}`);
             }
         },
         addMessage: async (parent, { text, userId, threadId }) => {
@@ -152,10 +177,11 @@ const resolvers = {
                     throw new Error('You cannot message here until you join!')
                 }
                 const message = await Message.create({ text, sender: userId, messageThread: threadId });
-                return await MessageThread.findByIdAndUpdate(threadId, { $addToSet: { messages: message }}, { new: true }).populate({ path: 'messages', populate: { path: 'sender', select: 'username'}}).populate('participants').populate('admin');
+                const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { $addToSet: { messages: message }}, { new: true }).populate({ path: 'messages', populate: { path: 'sender', select: 'username'}}).populate('participants').populate('admin');
+                return updatedThread;
                 
             } catch(err) {
-                throw new Error(err)
+                throw new Error(`Error adding new message: ${err}`);
             }
         },
         updateMessage: async (parent, { messageId, text, userId }) => {
@@ -164,7 +190,8 @@ const resolvers = {
                 if (!user) {
                     throw new Error('You do not have permission to edit this message');
                 }
-                return await Message.findByIdAndUpdate(messageId, { text: text }, { new: true }).populate('sender');
+                const updatedMessage = await Message.findByIdAndUpdate(messageId, { text: text }, { new: true }).populate('sender');
+                return updatedMessage;
             } catch(err) {
                 throw new Error(err);
             }
@@ -179,10 +206,11 @@ const resolvers = {
                 }
 
                 await MessageThread.findByIdAndUpdate(messageId, { $pull: { messages: messageId }}, { new: true });
-                return Message.findByIdAndDelete(messageId);
+                const deletedMessage = await Message.findByIdAndDelete(messageId);
+                return deletedMessage
 
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error deleting message: ${err}`);
             }
         },
         addFriend: async (parent, { userId, friendId }) => {
@@ -192,9 +220,11 @@ const resolvers = {
                 if (!user || !friend) {
                     throw new Error('Please login or try a different friend')
                 }
-                return await User.findByIdAndUpdate(userId, { $addToSet: { friends: friendId }}, { new: true }).populate('friends')
+
+                const updatedUser = await User.findByIdAndUpdate(userId, { $addToSet: { friends: friendId }}, { new: true }).populate('friends')
+                return updatedUser
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error adding friend: ${err}`);
             }
         },
         removeFriend: async (parent, { userId, friendId }, context) => {
@@ -204,9 +234,11 @@ const resolvers = {
                 if (!user || !friend) {
                     throw new Error('Please login or try a different friend')
                 }
-                return await User.findByIdAndUpdate(userId, { $pull: { friends: friendId } }, { new: true }).populate('friends');
+
+                const updatedUser = await User.findByIdAndUpdate(userId, { $pull: { friends: friendId } }, { new: true }).populate('friends');
+                return updatedUser;
             } catch(err) {
-                throw new Error(err);
+                throw new Error(`Error removing friend: ${err}`);
             }
         },
         joinThread: async (parent, { userId, threadId }, context) => {
@@ -218,7 +250,8 @@ const resolvers = {
                     throw new Error('Please login or try a different thread')
                 }
                 await User.findByIdAndUpdate({_id: userId}, { $addToSet: { messageThreads: thread._id } });
-                return await MessageThread.findByIdAndUpdate(threadId, { $addToSet: { participants: userId } }, { new: true }).populate('messages').populate('admin').populate('participants').populate({ path: 'messages', populate: { path: 'sender', select: 'username'}});
+                const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { $addToSet: { participants: userId } }, { new: true }).populate('messages').populate('admin').populate('participants').populate({ path: 'messages', populate: { path: 'sender', select: 'username'}});
+                return updatedThread;
             } catch(err) {
                 throw new Error('Error joining thread', err)
             }
@@ -231,10 +264,12 @@ const resolvers = {
                     throw new Error('You cannot perform this action')
                 }
                 await MessageThread.findByIdAndUpdate(threadId , { $pull: { participants: userId }})
-                return await User.findByIdAndUpdate(userId, { $pull: { messageThreads: threadId }}, { new: true }).populate('friends');
+
+                const updatedUser = await User.findByIdAndUpdate(userId, { $pull: { messageThreads: threadId }}, { new: true }).populate('friends');
+                return updatedUser;
                 
             } catch(err) {
-                throw new Error('Error leaving thread');
+                throw new Error(`Error leaving thread: ${err}`);
             }
         },
         createQuestion: async (parent, { userId, messageThread, text, option1, option2 }, context) => {
@@ -243,11 +278,11 @@ const resolvers = {
                 if (!thread) {
                     throw new Error('No thread with this id')
                 }
-                const question = await Question.create({ creator: userId, messageThread, text, option1, option2 });
-                await MessageThread.findByIdAndUpdate(messageThread, { $push: { questions: question._id }}, { new: true });
-                return await Question.findById(question._id).populate('messageThread').populate('creator');
+                const newQuestion = await Question.create({ creator: userId, messageThread, text, option1, option2 });
+                await MessageThread.findByIdAndUpdate(messageThread, { $push: { questions: newQuestion._id }}, { new: true });
+                return await Question.findById(newQuestion._id).populate('messageThread').populate('creator');
             } catch(err) {
-                throw new Error('Error creating question', err)
+                throw new Error(`Error creating question: ${err}`)
             }
         },
         updateQuestion: async (parent, { userId, questionId, text, option1, option2 }) => {
@@ -260,7 +295,9 @@ const resolvers = {
                 if (question.creator.toString() !== userId) {
                     throw new Error('You do not have authorization to edit this question');
                 }
-                return await Question.findByIdAndUpdate(questionId, { text, option1, option2 }, { new: true }).populate('creator').populate('messageThread');
+
+                const updatedQuestion = await Question.findByIdAndUpdate(questionId, { text, option1, option2 }, { new: true }).populate('creator').populate('messageThread');
+                return updatedQuestion
             } catch(err) {
                 throw new Error(`Error editing question: ${err}`)
             }
@@ -276,7 +313,7 @@ const resolvers = {
                 await Question.findByIdAndDelete(questionId);
                 return { message: 'successful deletion'}
             } catch (err) {
-                throw new Error('Error deleting questiong', err)
+                throw new Error(`Error deleting question: ${err}`);
             }
         },
         answerQuestion: async (parent, { userId, questionId, answer }, context) => {
@@ -290,7 +327,7 @@ const resolvers = {
                 await User.findByIdAndUpdate(userId, { $push: { answerChoices: newAnswer._id }})
                 return question;
             } catch (err) {
-                throw new Error('Error answering questiong', err);
+                throw new Error(`Error answering question: ${err}`);
             }
         }
     }
