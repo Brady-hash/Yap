@@ -28,6 +28,19 @@ query user($userId: ID!) {
 }
 `;
 
+export const QUERY_ONE_USER_PROFILE = gql`
+query user($userId: ID!) {
+  user(userId: $userId) {
+    username
+    email
+    friendCount
+    answerChoices {
+      answerChoice
+    }
+  }
+}
+`;
+
 export const QUERY_ALL_USERS= gql`
 query users{
   users {
