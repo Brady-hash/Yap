@@ -1,3 +1,7 @@
+
+import React from "react";
+import { AuthContextProvider } from "./context/AuthContext.jsx";
+import { SocketContextProvider } from "./context/SocketContext.jsx";
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -11,7 +15,7 @@ const router = createBrowserRouter({
   routes: [
     {
       path: '/',
-      element: <APP />,
+      element: <App />,
       errorElement: <NotFound />,
       children: [
         {
@@ -30,11 +34,3 @@ const router = createBrowserRouter({
     }
   ],
 });
-
-
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
