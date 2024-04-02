@@ -14,7 +14,7 @@ type User{
 type Answer{
     _id: ID!
     userId: User
-    questionId: [Question]
+    questionId: Question
     answerChoice: String
 }
 
@@ -54,6 +54,10 @@ type MessageThread{
     createdAt: String
 }
 
+type returnMessage{
+    message: String!
+}
+
 type Query {
     users: [User]
     user(userId: ID!): User
@@ -77,7 +81,8 @@ type Mutation {
     joinThread(userId: ID!, threadId: ID!): MessageThread
     leaveThread(userId: ID!, threadId: ID!): User
     createQuestion(userId: ID!, messageThread: ID!, text: String!, option1: String!, option2: String!): Question
-    deleteQuestion(userId: ID!, questionId: ID!): Question
+    updateQuestion(userId: ID!, questionId: ID!, text: String, option1: String, option2: String): Question
+    deleteQuestion(userId: ID!, questionId: ID!): returnMessage
     answerQuestion(userId: ID!, questionId: ID!, answer: String!): Question
 }
 
