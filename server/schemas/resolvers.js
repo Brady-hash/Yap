@@ -23,6 +23,32 @@ const resolvers = {
                 throw new Error(`Error getting one user: ${err}`);
             }
         },
+        // -Brady possible modification to user for efficiency
+        // user: async (parent, { userId }, context, info) => {
+        //     try {
+        //         const userQuery = User.findById(userId);
+        
+        //         // Determine if specific fields are requested and populate them conditionally
+        //         const fields = info.fieldNodes[0].selectionSet.selections.map(field => field.name.value);
+        //         if (fields.includes('friends')) {
+        //             userQuery.populate('friends');
+        //         }
+        //         if (fields.includes('messageThreads')) {
+        //             userQuery.populate('messageThreads');
+        //         }
+        //         if (fields.includes('answerChoices')) {
+        //             userQuery.populate('answerChoices');
+        //         }
+        
+        //         const user = await userQuery;
+        //         if (!user) {
+        //             throw new Error('No user with this id');
+        //         }
+        //         return user;
+        //     } catch (err) {
+        //         throw new Error(err);
+        //     }
+        // },
         me: async (parent, {}, context) => {
             try {
                 const userId = context.user._id;
