@@ -1,19 +1,36 @@
+
 import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
-import { BrowserRouter } from "react-router-dom";
 import { AuthContextProvider } from "./context/AuthContext.jsx";
 import { SocketContextProvider } from "./context/SocketContext.jsx";
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-	<React.StrictMode>
-		<BrowserRouter>
-			<AuthContextProvider>
-				<SocketContextProvider>
-					<App />
-				</SocketContextProvider>
-			</AuthContextProvider>
-		</BrowserRouter>
-	</React.StrictMode>
-);
+import App from './App.jsx'
+import './index.css'
+import ChatRoom from './pages/Chatroom.jsx';
+import MessageHub from './pages/MessageHub.jsx';
+import MyProfile from './pages/MyProfile.jsx';
+
+const router = createBrowserRouter({
+  routes: [
+    {
+      path: '/',
+      element: <App />,
+      errorElement: <NotFound />,
+      children: [
+        {
+          index: true,
+          element: <MessageHub />
+        },
+        {
+          path: "/myprofile",
+          element: <MyProfile />
+        },
+        {
+          path: "chatroom/:id",
+          element: <ChatRoom />
+        },
+      ]
+    }
+  ],
+});
