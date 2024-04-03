@@ -1,7 +1,3 @@
-
-import React from "react";
-import { AuthContextProvider } from "./context/AuthContext.jsx";
-import { SocketContextProvider } from "./context/SocketContext.jsx";
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 

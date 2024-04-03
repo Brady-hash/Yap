@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
   password: { type: String, required: true },
   messageThreads: [{ type: mongoose.Schema.Types.ObjectId, ref: 'MessageThread' }],
   answerChoices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Answer' }],
-  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   {
     toJSON: {
