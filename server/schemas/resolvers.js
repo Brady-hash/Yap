@@ -15,7 +15,7 @@ const resolvers = {
                     .populate('messageThreads')
                     .populate('answerChoices');
                 // emits an event to the client to update the users in the UI
-                io.emit('users-fetched', users);
+                // io.emit('users-fetched', users);
                 return users;
             } catch(err) {
                 throw new Error(`Error getting users: ${err}`);

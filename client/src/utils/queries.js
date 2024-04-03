@@ -124,3 +124,24 @@ query thread($threadId: ID!){
     }
   }  
 `;
+
+export const QUERY_ME = `
+query me{
+  me{
+    token
+    user{
+      _id
+      username
+      friendCount
+      friends {
+        _id
+        username
+      }
+      messageThreads {
+      _id
+      name
+      }
+    }
+  }
+}
+`;
