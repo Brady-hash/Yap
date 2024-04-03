@@ -1,5 +1,4 @@
 import { gql } from '@apollo/client';
-
 export const ADD_USER = gql`
   mutation addUser($username: String!, $email: String!, $password: String!){
     addUser(username: $username, email: $email, password: $password) {
@@ -22,7 +21,7 @@ export const UPDATE_USER = gql`
       email
       password
     }
-  }  
+  }
 `;
 
 export const DELETE_USER = gql`
@@ -32,9 +31,8 @@ export const DELETE_USER = gql`
       username
       email
     }
-  }  
+  }
 `;
-
 export const LOGIN = gql`
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -64,7 +62,7 @@ export const CREATE_THREAD = gql`
       isGroupChat
       createdAt
     }
-  }  
+  }
 `;
 
 export const DELETE_THREAD = gql`
@@ -73,9 +71,8 @@ export const DELETE_THREAD = gql`
       _id
       name
     }
-  }  
+  }
 `
-
 export const UPDATE_THREAD = gql`
   mutation updateThread($threadId: ID!, $userId: ID!, $name: String!) {
     updateThread(threadId: $threadId, userId: $userId, name: $name) {
@@ -87,9 +84,8 @@ export const UPDATE_THREAD = gql`
         username
       }
     }
-  }  
+  }
 `;
-
 export const ADD_MESSAGE = gql`
   mutation addMessage($text: String!, $userId: ID!, $threadId: ID!) {
     addMessage(text: $text, userId: $userId, threadId: $threadId) {
@@ -115,9 +111,8 @@ export const ADD_MESSAGE = gql`
         }
       }
     }
-  }  
+  }
 `;
-
 export const UPDATE_MESSAGE = gql`
 mutation updateMessage($userId: ID!, $messageId: ID!, $text: String!) {
     updateMessage(userId: $userId, messageId: $messageId, text: $text) {
@@ -130,9 +125,8 @@ mutation updateMessage($userId: ID!, $messageId: ID!, $text: String!) {
         username
       }
     }
-  }  
+  }
 `;
-
 export const DELETE_MESSAGE = gql`
 mutation deleteMessage($messageId: ID!, $userId: ID!) {
     deleteMessage(messageId: $messageId, userId: $userId) {
@@ -153,9 +147,8 @@ export const ADD_FRIEND = gql`
       }
     }
   }
-  
-`
 
+`
 export const REMOVE_FRIEND = gql`
   mutation removeFriend($userId: ID!, $friendId: ID!){
     removeFriend(userId: $userId, friendId: $friendId) {
@@ -168,7 +161,7 @@ export const REMOVE_FRIEND = gql`
       }
     }
   }
-  
+
 `
 export const JOIN_THREAD = gql`
 mutation joinThread($userId: ID!, $threadId: ID!) {
@@ -186,7 +179,7 @@ mutation joinThread($userId: ID!, $threadId: ID!) {
         username
       }
     }
-  }  
+  }
 `;
 
 export const LEAVE_THREAD = gql`
@@ -248,9 +241,8 @@ export const DELETE_QUESTION = gql`
     deleteQuestion(userId: $userId, questionId: $questionId) {
       message
     }
-  }  
+  }
 `;
-
 export const ANSWER_QUESTION = gql`
   mutation answerQuestion($userId: ID!, $questionId: ID!, $answer: String!){
     answerQuestion(userId: $userId, questionId: $questionId, answer: $answer) {
@@ -276,5 +268,4 @@ export const ANSWER_QUESTION = gql`
         answerChoice
       }
     }
-  }  
-`
+  }

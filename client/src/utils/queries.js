@@ -125,7 +125,7 @@ query thread($threadId: ID!){
   }  
 `;
 
-export const QUERY_ME = `
+export const QUERY_ME = gql`
 query me{
   me{
     token

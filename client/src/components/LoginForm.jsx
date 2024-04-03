@@ -1,88 +1,79 @@
-import { useState } from 'react';
-import { Form, Button, Alert } from 'react-bootstrap';
-
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { LOGIN } from '../utils/mutations';
 import Auth from '../utils/auth';
-// import { useMutation } from '@apollo/react-hooks';
-// import { LOGIN_USER } from '../utils/mutations';
 
 const LoginForm = () => {
-  const [userFormData, setUserFormData] = useState({ email: '', password: '' });
-  const [validated] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [login] = useMutation(LOGIN_USER);
+    const [userFormData, setUserFormData] = useState({ email: '', password: '' });
+    const [showAlert, setShowAlert] = useState(false);
+    const [login, { error }] = useMutation(LOGIN);
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setUserFormData({ ...userFormData, [name]: value });
-  };
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setUserFormData({ ...userFormData, [name]: value });
+    };
 
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
+    const handleFormSubmit = async (event) => {
+        event.preventDefault();
 
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+        try {
+            const { data } = await login({
+                variables: {...userFormData}
+            });
 
-    try {
-      const { data } = await login({
-        variables: {...userFormData} 
-      });
+            console.log(data.login.token)
 
-      Auth.login(data.login.token);
-    } catch (err) {
-      console.error(err);
-      setShowAlert(true);
-    }
+            Auth.login(data.login.token);
+            setShowAlert(false);
+        } catch (err) {
+            console.error(err);
+            setShowAlert(true);
+        }
 
-    setUserFormData({
-      username: '',
-      email: '',
-      password: '',
-    });
-  };
+        setUserFormData({ email: '', password: '' });
+    };
 
-  return (
-    <>
-      <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
-        <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>
-          Something went wrong with your login credentials!
-        </Alert>
-        <Form.Group>
-          <Form.Label htmlFor='email'>Email</Form.Label>
-          <Form.Control
-            type='text'
-            placeholder='Your email'
-            name='email'
-            onChange={handleInputChange}
-            value={userFormData.email}
-            required
-          />
-          <Form.Control.Feedback type='invalid'>Email is required!</Form.Control.Feedback>
-        </Form.Group>
+    return (
+        <div>
+            {showAlert && (
+                <div style={{ backgroundColor: 'red', color: 'white', padding: '10px' }}>
+                    {error ? error.message : 'Something went wrong with your login credentials!'}
+                </div>
+            )}
+            <form noValidate onSubmit={handleFormSubmit}>
+                <div>
+                    <label htmlFor='email'>Email</label>
+                    <input
+                        type='text'
+                        id='email'
+                        name='email'
+                        placeholder='Your email'
+                        onChange={handleInputChange}
+                        value={userFormData.email}
+                        required
+                    />
+                </div>
 
-        <Form.Group>
-          <Form.Label htmlFor='password'>Password</Form.Label>
-          <Form.Control
-            type='password'
-            placeholder='Your password'
-            name='password'
-            onChange={handleInputChange}
-            value={userFormData.password}
-            required
-          />
-          <Form.Control.Feedback type='invalid'>Password is required!</Form.Control.Feedback>
-        </Form.Group>
-        <Button
-          disabled={!(userFormData.email && userFormData.password)}
-          type='submit'
-          variant='success'>
-          Submit
-        </Button>
-      </Form>
-    </>
-  );
+                <div>
+                    <label htmlFor='password'>Password</label>
+                    <input
+                        type='password'
+                        id='password'
+                        name='password'
+                        placeholder='Your password'
+                        onChange={handleInputChange}
+                        value={userFormData.password}
+                        required
+                    />
+                </div>
+                <button
+                    disabled={!userFormData.email || !userFormData.password}
+                    type='submit'>
+                    Submit
+                </button>
+            </form>
+        </div>
+    );
 };
 
 export default LoginForm;
