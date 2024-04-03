@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema(
   {
   username: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   messageThreads: [{ type: mongoose.Schema.Types.ObjectId, ref: 'MessageThread' }],
   answerChoices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Answer' }],
@@ -20,7 +20,11 @@ const userSchema = new mongoose.Schema(
 
 userSchema.virtual('friendCount').get(function() {
   return this.friends.length;
-})
+});
+
+userSchema.methods.isCorrectPw = async function (password) {
+  return bcrypt.compare(password, this.password);
+}
 
 userSchema.pre('save', async function (next) {
   if (this.isNew || this.isModified('password')) {

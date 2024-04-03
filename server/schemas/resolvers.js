@@ -3,12 +3,17 @@ const { belongsToThread } = require('../utils/helpers');
 const { signToken, AuthenticationError } = require('../utils/auth');
 const bcrypt = require('bcrypt');
 const { server, io } = require('../server');
+// added login, 
+// updated addUser,
 
 const resolvers = {
     Query: {
         users: async () => {
             try {
-                const users = await User.find().populate('friends').populate('messageThreads').populate('answerChoices');
+                const users = await User.find()
+                    .populate('friends')
+                    .populate('messageThreads')
+                    .populate('answerChoices');
                 // emits an event to the client to update the users in the UI
                 io.emit('users-fetched', users);
                 return users;
@@ -16,9 +21,17 @@ const resolvers = {
                 throw new Error(`Error getting users: ${err}`);
             }
         },
-        user: async (parent, { userId }) => {
+        user: async (parent, { userId }, context) => {
             try {
-                const user = await User.findById(userId).populate('friends').populate('messageThreads').populate('answerChoices').populate({ path: 'answerChoices', populate: 'questionId' });
+                // if (!context.user) {
+                //     throw AuthenticationError
+                // }
+                // const userId = context.user._id
+                const user = await User.findById(userId)
+                    .populate('friends')
+                    .populate('messageThreads')
+                    .populate('answerChoices')
+                    .populate({ path: 'answerChoices', populate: 'questionId' });
                 if (!user) {
                     throw new Error('No user with this id');
                 }
@@ -57,14 +70,14 @@ const resolvers = {
         // },
         me: async (parent, {}, context) => {
             try {
-                const userId = context.user._id;
-                if (userId) {
-                    const currentUser = await User.findById(userId);
-                    // emits an event to the client to update the current user in the UI
-                    io.emit('current-user-updated', currentUser);
-                    return currentUser;
+                if (!context.user) {
+                    throw AuthenticationError
                 }
-                throw AuthenticationError
+                const userId = context.user._id;
+                const currentUser = await User.findById(userId);
+                // emits an event to the client to update the current user in the UI
+                io.emit('current-user-updated', currentUser);
+                return currentUser;
             } catch(err) {
                 throw new Error(`Error getting current user: ${err}`);
             }
@@ -103,26 +116,55 @@ const resolvers = {
         }
     },
     Mutation: {
+        login: async (parent, { email, password }) => {
+            try {
+                const user = await User.findOne({ email });
+                if (!user) {
+                    throw AuthenticationError
+                }
+
+                const correctPw = await user.isCorrectPw(password);
+
+                if (!correctPw) {
+                    throw AuthenticationError
+                }
+
+                const token = signToken(user);
+                return { token, user }
+
+            } catch(err) {
+                throw new Error(`Error loggin in: ${err}`);
+            }
+        },
         addUser: async (parent, { username, email, password }) => {
             try {
-                const newUser = await User.create({ username, email, password });
+                const newUser = (await User.create({ username, email, password }));
+                const token = signToken(newUser);
                 // emits an event to the client to add the new user to the UI
-                io.emit('user-added', newUser);
-                return newUser;
+                // io.emit('user-added', newUser);
+                return { token, user: newUser };
             } catch(err) {
                 throw new Error(`Error adding a new user: ${err}`);
             }
         },
-        updateUser: async (parent, { userId, username, email, password }) => {
+        updateUser: async (parent, { userId, username, email, password }, context) => {
             try {
-                let user = await User.findById(userId);
+                /*   // uncomment to to use JWT
+                    let user = context.user 
+                    const userId = context.user._id
+                */ 
+                let user = await User.findById(userId); // comment out for JWT
                 if (!user) {
-                    throw new Error('No user with this id');
+                    throw new Error('You must login to update user');
                 }
                 if (password) {
                     password = await bcrypt.hash(password, 10);
                 }
-                user = User.findByIdAndUpdate(userId,{ username: username, email: email, password: password}, {new: true});
+                user = User.findByIdAndUpdate(
+                    userId,
+                    { username: username, email: email, password: password}, 
+                    {new: true});
+
                 // emits an event to the client to update the user in the UI
                 io.emit('user-updated', user);
                 return user;
@@ -130,11 +172,13 @@ const resolvers = {
                 throw new Error(`Error updating user: ${err}`);
             }
         },
-        deleteUser: async (parent, { userId }) => {
+        deleteUser: async (parent, { userId }, context) => {
             try {
+                // const user = await User.findById(context.user._id)
+
                 const user = await User.findById(userId);
                 if (!user) {
-                    throw new Error('No user found with this id')
+                    throw new Error('Please login')
                 }
                 const messages = await Message.find({ sender: userId });
                 const messageIds = messages.map(message => message._id);
@@ -151,25 +195,32 @@ const resolvers = {
                 throw new Error(`Error deleting user: ${err}`);
             }
         },
-        createThread: async (parent, { userId, name }) => {
+        createThread: async (parent, { userId, name }, context) => {
             try {
-
-                /* checks for a logged in user will be done with JWTs later on */
+                // const user = context.user
 
                 const user = await User.findById(userId);
                 if (!user) {
-                    throw new Error('Please login or create an account to create a thread')
+                    throw new Error('Please login or create an account to create a new thread')
                 }
-                const newThread = await MessageThread.create({ admin: userId, name: name, participants: userId });
-                await User.findByIdAndUpdate(userId, { $addToSet: { messageThreads: newThread._id }}, { new: true });
+                const newThread = await MessageThread.create({ admin: /* context.user._id */ userId, name: name, participants: userId });
+
+                await User.findByIdAndUpdate(
+                    // context.user._id
+                    userId, 
+                    { $addToSet: { messageThreads: newThread._id }}, 
+                    { new: true });
+
                 // emits an event to the client to add the new thread to the UI
                 io.emit('thread-created', newThread);
-                return await MessageThread.findById(newThread._id).populate('admin').populate('participants', 'username');
+                return await MessageThread.findById(newThread._id)
+                    .populate('admin')
+                    .populate('participants', 'username');
             } catch(err) {
                 throw new Error(`Error creating new thread: ${err}`);
             }
         },
-        deleteThread: async (parent, { threadId, userId }) => {
+        deleteThread: async (parent, { threadId, userId }, context) => {
             try {
                 const thread = await MessageThread.findById(threadId);
 
@@ -177,7 +228,7 @@ const resolvers = {
                     throw new Error('Thread not found');
                 }
 
-                if (thread.admin.toString() !== userId) {
+                if (thread.admin.toString() !== userId /* context.user._id*/) {
                     throw new Error('User not authorized to delete this thread');
                 }
 
@@ -198,14 +249,18 @@ const resolvers = {
                 throw new Error(`Error deleting thread: ${err}`);
             }
         },
-        updateThread: async (parent, { threadId, userId, name }) => {
+        updateThread: async (parent, { threadId, userId, name }, context) => {
             try {
                 const thread = await MessageThread.findById(threadId);
-                if (thread.admin.toString() !== userId) {
+                if (thread.admin.toString() !== userId /* context.user._id*/) {
                     throw new Error(`You do not have permission to edit thread settings`)
                 }
 
-                const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { name: name }, { new: true }).populate('messages')
+                const updatedThread = await MessageThread.findByIdAndUpdate(
+                    threadId, 
+                    { name: name }, 
+                    { new: true })
+                    .populate('messages');
                 // emits an event to the client to update the thread in the UI with the new name
                 io.emit('thread-updated', updatedThread);
                 return updatedThread;
@@ -213,17 +268,25 @@ const resolvers = {
                 throw new Error(`Error updating thread: ${err}`);
             }
         },
-        addMessage: async (parent, { text, userId, threadId }) => {
+        addMessage: async (parent, { text, userId, threadId }, context) => {
             try {
                 const thread = await MessageThread.findById(threadId);
                 if (!thread) {
                     throw new Error('No thread with that id');
                 }
-                if (!belongsToThread(thread.participants, userId)) {
+                if (!belongsToThread(thread.participants, userId /* context.user._id*/)) {
                     throw new Error('You cannot message here until you join!')
                 }
-                const message = await Message.create({ text, sender: userId, messageThread: threadId });
-                const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { $addToSet: { messages: message }}, { new: true }).populate({ path: 'messages', populate: { path: 'sender', select: 'username'}}).populate('participants').populate('admin');
+                const message = await Message.create({ text, sender: userId /* context.user._id*/, messageThread: threadId });
+                
+                const updatedThread = await MessageThread.findByIdAndUpdate(
+                    threadId, 
+                    { $addToSet: { messages: message }}, 
+                    { new: true })
+                    .populate({ path: 'messages', populate: { path: 'sender', select: 'username'}})
+                    .populate('participants')
+                    .populate('admin');
+
                 // emits an event to the client to update the thread in the UI with the new message
                 io.emit('message-added', updatedThread);
                 return updatedThread;
@@ -232,13 +295,19 @@ const resolvers = {
                 throw new Error(`Error adding new message: ${err}`);
             }
         },
-        updateMessage: async (parent, { messageId, text, userId }) => {
+        updateMessage: async (parent, { messageId, text, userId }, context) => {
             try {
+                // const user = context.user;
                 const user = await User.findById(userId);
                 if (!user) {
                     throw new Error('You do not have permission to edit this message');
                 }
-                const updatedMessage = await Message.findByIdAndUpdate(messageId, { text: text }, { new: true }).populate('sender');
+                const updatedMessage = await Message.findByIdAndUpdate(
+                    messageId, 
+                    { text: text }, 
+                    { new: true })
+                    .populate('sender');
+
                 // emits an event to the client to update the message in the UI with the new text
                 io.emit('message-updated', updatedMessage);
                 return updatedMessage;
@@ -273,7 +342,12 @@ const resolvers = {
                     throw new Error('Please login or try a different friend')
                 }
 
-                const updatedUser = await User.findByIdAndUpdate(userId, { $addToSet: { friends: friendId }}, { new: true }).populate('friends')
+                const updatedUser = await User.findByIdAndUpdate(
+                    userId, 
+                    { $addToSet: { friends: friendId }}, 
+                    { new: true })
+                    .populate('friends')
+
                 // emits an event to the client to update the user in the UI with the new friend
                 io.emit('friend-added', updatedUser);
                 return updatedUser;
@@ -289,7 +363,11 @@ const resolvers = {
                     throw new Error('Please login or try a different friend')
                 }
 
-                const updatedUser = await User.findByIdAndUpdate(userId, { $pull: { friends: friendId } }, { new: true }).populate('friends');
+                const updatedUser = await User.findByIdAndUpdate(
+                    userId, 
+                    { $pull: { friends: friendId } }, 
+                    { new: true })
+                    .populate('friends');
                 // emits an event to the client to update the user in the UI with the friend removed
                 io.emit('friend-removed', updatedUser);
                 return updatedUser;
@@ -306,7 +384,15 @@ const resolvers = {
                     throw new Error('Please login or try a different thread')
                 }
                 await User.findByIdAndUpdate({_id: userId}, { $addToSet: { messageThreads: thread._id } });
-                const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { $addToSet: { participants: userId } }, { new: true }).populate('messages').populate('admin').populate('participants').populate({ path: 'messages', populate: { path: 'sender', select: 'username'}});
+
+                const updatedThread = await MessageThread.findByIdAndUpdate(
+                    threadId, 
+                    { $addToSet: { participants: userId } }, 
+                    { new: true }).populate('messages')
+                    .populate('admin')
+                    .populate('participants')
+                    .populate({ path: 'messages', populate: { path: 'sender', select: 'username'}});
+
                 io.emit('user-joined-thread', updatedThread);
                 return updatedThread;
             } catch(err) {
@@ -322,7 +408,12 @@ const resolvers = {
                 }
                 await MessageThread.findByIdAndUpdate(threadId , { $pull: { participants: userId }})
 
-                const updatedUser = await User.findByIdAndUpdate(userId, { $pull: { messageThreads: threadId }}, { new: true }).populate('friends');
+                const updatedUser = await User.findByIdAndUpdate(
+                    userId, 
+                    { $pull: { messageThreads: threadId }}, 
+                    { new: true })
+                    .populate('friends');
+
                 // emits an event to the client to update the user in the UI with the thread removed from their messageThreads 
                 //and the user removed from the thread's participants
                 io.emit('user-left-threat', {userId, threadId});
@@ -339,7 +430,12 @@ const resolvers = {
                     throw new Error('No thread with this id')
                 }
                 const newQuestion = await Question.create({ creator: userId, messageThread, text, option1, option2 });
-                await MessageThread.findByIdAndUpdate(messageThread, { $push: { questions: newQuestion._id }}, { new: true });
+
+                await MessageThread.findByIdAndUpdate(
+                    messageThread, 
+                    { $push: { questions: newQuestion._id }}, 
+                    { new: true });
+
                 // emits an event to the client to update the thread in the UI with the new question
                 io.emit('question-added', newQuestion);
                 return await Question.findById(newQuestion._id).populate('messageThread').populate('creator');
@@ -358,7 +454,13 @@ const resolvers = {
                     throw new Error('You do not have authorization to edit this question');
                 }
 
-                const updatedQuestion = await Question.findByIdAndUpdate(questionId, { text, option1, option2 }, { new: true }).populate('creator').populate('messageThread');
+                const updatedQuestion = await Question.findByIdAndUpdate(
+                    questionId, 
+                    { text, option1, option2 }, 
+                    { new: true })
+                    .populate('creator')
+                    .populate('messageThread');
+
                 // emits an event to the client to update the question in the UI with the new text and options
                 io.emit('question-updated', updatedQuestion);
                 return updatedQuestion;
@@ -373,7 +475,12 @@ const resolvers = {
                     throw new Error('You cannot perform this action')
                 }
                 await Answer.deleteMany({ questionId: questionId })
-                await MessageThread.findByIdAndUpdate(question.messageThread, { $pull: { questions: questionId } }, { new: true });
+
+                await MessageThread.findByIdAndUpdate(
+                    question.messageThread, 
+                    { $pull: { questions: questionId } }, 
+                    { new: true });
+
                 await Question.findByIdAndDelete(questionId);
                 // emits an event to the client to delete the question from the UI
                 io.emit('question-deleted', questionId);
@@ -389,7 +496,16 @@ const resolvers = {
                     throw new Error('Please login to answer question');
                 }
                 const newAnswer = await Answer.create({ userId, questionId, answerChoice: answer })
-                const question = await Question.findByIdAndUpdate(questionId, { $push: { answers: newAnswer }}, { new: true }).populate('messageThread').populate('creator').populate('answers').populate({ path: 'answers', populate: { path: 'userId', select: 'username' }});
+
+                const question = await Question.findByIdAndUpdate(
+                    questionId, 
+                    { $push: { answers: newAnswer }}, 
+                    { new: true })
+                    .populate('messageThread')
+                    .populate('creator')
+                    .populate('answers')
+                    .populate({ path: 'answers', populate: { path: 'userId', select: 'username' }});
+
                 await User.findByIdAndUpdate(userId, { $push: { answerChoices: newAnswer._id }})
                 // emits an event to the client to update the question in the UI with the new answer
                 io.emit('question-answered', question);
