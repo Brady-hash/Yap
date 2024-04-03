@@ -58,16 +58,28 @@ type returnMessage{
     message: String!
 }
 
+type Friend{
+    _id: ID
+    username: String
+}
+
 type Query {
     users: [User]
     user(userId: ID!): User
-    me(userId: ID!): Auth
+    me: Auth
     threads: [MessageThread]
     thread(threadId: ID!): MessageThread
+
+    #possibly adding these, could be overkill
+    userThreads(userId: ID!): [MessageThread]
+    userFriends(userId: ID!): [Friend]
+    threadQuestions(threadId: ID!): [Question]
+    questionAnswers(questionId: ID!): [Answer]
 }
 
 type Mutation {
-    addUser(username: String!, email: String!, password: String!): User
+    login(email: String!, password: String!): Auth
+    addUser(username: String!, email: String!, password: String!): Auth
     updateUser(userId: ID!, username: String, email: String, password: String): User
     deleteUser(userId: ID!): User
     createThread(userId: ID!, name: String!): MessageThread
