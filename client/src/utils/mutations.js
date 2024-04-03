@@ -12,6 +12,7 @@ export const ADD_USER = gql`
     }
   }
 `;
+
 export const UPDATE_USER = gql`
   mutation updateUser($userId: ID!, $username: String, $email: String, $password: String) {
     updateUser(userId:$userId ,username: $username, email: $email, password: $password) {
@@ -22,6 +23,7 @@ export const UPDATE_USER = gql`
     }
   }
 `;
+
 export const DELETE_USER = gql`
   mutation deleteUser($userId: ID!) {
     deleteUser(userId: $userId) {
@@ -43,6 +45,7 @@ export const LOGIN = gql`
     }
   }
 `;
+
 export const CREATE_THREAD = gql`
   mutation createThread($userId: ID!, $name: String!){
     createThread(userId: $userId, name: $name) {
@@ -61,6 +64,7 @@ export const CREATE_THREAD = gql`
     }
   }
 `;
+
 export const DELETE_THREAD = gql`
   mutation deleteThread($threadId: ID!, $userId: ID!){
     deleteThread(threadId: $threadId, userId: $userId) {
@@ -131,6 +135,7 @@ mutation deleteMessage($messageId: ID!, $userId: ID!) {
     }
   }
 `;
+
 export const ADD_FRIEND = gql`
   mutation addFriend($userId: ID!, $friendId: ID!){
     addFriend(userId: $userId, friendId: $friendId) {
@@ -142,6 +147,7 @@ export const ADD_FRIEND = gql`
       }
     }
   }
+
 `
 export const REMOVE_FRIEND = gql`
   mutation removeFriend($userId: ID!, $friendId: ID!){
@@ -155,6 +161,7 @@ export const REMOVE_FRIEND = gql`
       }
     }
   }
+
 `
 export const JOIN_THREAD = gql`
 mutation joinThread($userId: ID!, $threadId: ID!) {
@@ -174,6 +181,7 @@ mutation joinThread($userId: ID!, $threadId: ID!) {
     }
   }
 `;
+
 export const LEAVE_THREAD = gql`
   mutation leaveThread($userId: ID!, $threadId: ID!){
     leaveThread(userId: $userId, threadId: $threadId) {
@@ -186,6 +194,7 @@ export const LEAVE_THREAD = gql`
     }
   }
 `;
+
 export const UPDATE_QUESTION = gql`
   mutation updateQuestion($userId: ID!, $questionId: ID!, $option1: String, $option2: String, $text: String){
     updateQuestion(userId: $userId, questionId: $questionId, option1: $option1, option2: $option2, text: $text) {
@@ -205,6 +214,7 @@ export const UPDATE_QUESTION = gql`
     }
   }
 `;
+
 export const CREATE_QUESTION = gql`
   mutation createQuestion($userId: ID!, $messageThread: ID!, $text: String!, $option1: String!, $option2: String!){
     createQuestion(userId: $userId, messageThread: $messageThread, text: $text, option1: $option1, option2: $option2) {
@@ -225,6 +235,7 @@ export const CREATE_QUESTION = gql`
     }
   }
 `;
+
 export const DELETE_QUESTION = gql`
   mutation deleteQuestion($userId: ID!, $questionId: ID!){
     deleteQuestion(userId: $userId, questionId: $questionId) {
@@ -258,4 +269,3 @@ export const ANSWER_QUESTION = gql`
       }
     }
   }
-`
