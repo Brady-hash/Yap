@@ -9,7 +9,8 @@ const resolvers = {
         users: async () => {
             try {
                 const users = await User.find().populate('friends').populate('messageThreads').populate('answerChoices');
-                io.emit("users-fetched", users);
+                // emits an event to the client to update the users in the UI
+                io.emit('users-fetched', users);
                 return users;
             } catch(err) {
                 throw new Error(`Error getting users: ${err}`);
@@ -21,7 +22,8 @@ const resolvers = {
                 if (!user) {
                     throw new Error('No user with this id');
                 }
-                io.emit("user-fetched", user);
+                // emits an event to the client to update the user in the UI
+                io.emit('user-fetched', user);
                 return user
             } catch(err) {
                 throw new Error(`Error getting one user: ${err}`);
@@ -57,7 +59,10 @@ const resolvers = {
             try {
                 const userId = context.user._id;
                 if (userId) {
-                    return await User.findById(userId);
+                    const currentUser = await User.findById(userId);
+                    // emits an event to the client to update the current user in the UI
+                    io.emit('current-user-updated', currentUser);
+                    return currentUser;
                 }
                 throw AuthenticationError
             } catch(err) {
@@ -72,7 +77,9 @@ const resolvers = {
                     .populate('participants')
                     .populate('questions')
                     .populate({ path: 'questions', populate: 'creator' });
-                return threads
+                    // emits an event to the client to update the threads in the UI
+                    io.emit('threads-updated', threads);
+                return threads;
             } catch(err) {
                 throw new Error(`Error getting threads: ${err}`);
             }
@@ -87,7 +94,9 @@ const resolvers = {
                 if (!thread) {
                     throw new Error('No thread with this id');
                 }
-                return thread
+                // emits an event to the client to update the thread in the UI
+                io.emit('thread-updated', thread);
+                return thread;
             } catch(err) {
                 throw new Error(`Error getting one thread: ${err}`);
             }
@@ -97,7 +106,9 @@ const resolvers = {
         addUser: async (parent, { username, email, password }) => {
             try {
                 const newUser = await User.create({ username, email, password });
-                return newUser
+                // emits an event to the client to add the new user to the UI
+                io.emit('user-added', newUser);
+                return newUser;
             } catch(err) {
                 throw new Error(`Error adding a new user: ${err}`);
             }
@@ -112,8 +123,9 @@ const resolvers = {
                     password = await bcrypt.hash(password, 10);
                 }
                 user = User.findByIdAndUpdate(userId,{ username: username, email: email, password: password}, {new: true});
-
-                return user
+                // emits an event to the client to update the user in the UI
+                io.emit('user-updated', user);
+                return user;
             } catch(err) {
                 throw new Error(`Error updating user: ${err}`);
             }
@@ -131,10 +143,10 @@ const resolvers = {
                 await MessageThread.updateMany({}, { $pull: { messages: { $in: messageIds}}})
                 await MessageThread.updateMany({ $pull: { participants: userId }})
                 await User.updateMany({ $pull: { friends: userId }});
-                
+                // emits an event to the client to remove the deleted user from the UI
+                io.emit('user-deleted', userId);
                 const deletedUser = await User.findByIdAndDelete(userId);
-
-                return deletedUser
+                return deletedUser;
             } catch(err) {
                 throw new Error(`Error deleting user: ${err}`);
             }
@@ -150,6 +162,8 @@ const resolvers = {
                 }
                 const newThread = await MessageThread.create({ admin: userId, name: name, participants: userId });
                 await User.findByIdAndUpdate(userId, { $addToSet: { messageThreads: newThread._id }}, { new: true });
+                // emits an event to the client to add the new thread to the UI
+                io.emit('thread-created', newThread);
                 return await MessageThread.findById(newThread._id).populate('admin').populate('participants', 'username');
             } catch(err) {
                 throw new Error(`Error creating new thread: ${err}`);
@@ -177,7 +191,8 @@ const resolvers = {
                 await User.updateMany({ $pull: { messageThreads: threadId }});
 
                 const deletedThread = await MessageThread.findByIdAndDelete(threadId);
-                
+                // emits an event to the client to remove the deleted thread from the UI
+                io.emit('thread-deleted', threadId);
                 return deletedThread;
             } catch(err) {
                 throw new Error(`Error deleting thread: ${err}`);
@@ -191,7 +206,8 @@ const resolvers = {
                 }
 
                 const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { name: name }, { new: true }).populate('messages')
-
+                // emits an event to the client to update the thread in the UI with the new name
+                io.emit('thread-updated', updatedThread);
                 return updatedThread;
             } catch(err) {
                 throw new Error(`Error updating thread: ${err}`);
@@ -208,6 +224,8 @@ const resolvers = {
                 }
                 const message = await Message.create({ text, sender: userId, messageThread: threadId });
                 const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { $addToSet: { messages: message }}, { new: true }).populate({ path: 'messages', populate: { path: 'sender', select: 'username'}}).populate('participants').populate('admin');
+                // emits an event to the client to update the thread in the UI with the new message
+                io.emit('message-added', updatedThread);
                 return updatedThread;
                 
             } catch(err) {
@@ -221,6 +239,8 @@ const resolvers = {
                     throw new Error('You do not have permission to edit this message');
                 }
                 const updatedMessage = await Message.findByIdAndUpdate(messageId, { text: text }, { new: true }).populate('sender');
+                // emits an event to the client to update the message in the UI with the new text
+                io.emit('message-updated', updatedMessage);
                 return updatedMessage;
             } catch(err) {
                 throw new Error(err);
@@ -237,7 +257,9 @@ const resolvers = {
 
                 await MessageThread.findByIdAndUpdate(messageId, { $pull: { messages: messageId }}, { new: true });
                 const deletedMessage = await Message.findByIdAndDelete(messageId);
-                return deletedMessage
+                // emits an event to the client to delete the message from the UI
+                io.emit('message-deleted', deletedMessage);
+                return deletedMessage;
 
             } catch(err) {
                 throw new Error(`Error deleting message: ${err}`);
@@ -252,7 +274,9 @@ const resolvers = {
                 }
 
                 const updatedUser = await User.findByIdAndUpdate(userId, { $addToSet: { friends: friendId }}, { new: true }).populate('friends')
-                return updatedUser
+                // emits an event to the client to update the user in the UI with the new friend
+                io.emit('friend-added', updatedUser);
+                return updatedUser;
             } catch(err) {
                 throw new Error(`Error adding friend: ${err}`);
             }
@@ -266,6 +290,8 @@ const resolvers = {
                 }
 
                 const updatedUser = await User.findByIdAndUpdate(userId, { $pull: { friends: friendId } }, { new: true }).populate('friends');
+                // emits an event to the client to update the user in the UI with the friend removed
+                io.emit('friend-removed', updatedUser);
                 return updatedUser;
             } catch(err) {
                 throw new Error(`Error removing friend: ${err}`);
@@ -281,6 +307,7 @@ const resolvers = {
                 }
                 await User.findByIdAndUpdate({_id: userId}, { $addToSet: { messageThreads: thread._id } });
                 const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { $addToSet: { participants: userId } }, { new: true }).populate('messages').populate('admin').populate('participants').populate({ path: 'messages', populate: { path: 'sender', select: 'username'}});
+                io.emit('user-joined-thread', updatedThread);
                 return updatedThread;
             } catch(err) {
                 throw new Error('Error joining thread', err)
@@ -296,6 +323,9 @@ const resolvers = {
                 await MessageThread.findByIdAndUpdate(threadId , { $pull: { participants: userId }})
 
                 const updatedUser = await User.findByIdAndUpdate(userId, { $pull: { messageThreads: threadId }}, { new: true }).populate('friends');
+                // emits an event to the client to update the user in the UI with the thread removed from their messageThreads 
+                //and the user removed from the thread's participants
+                io.emit('user-left-threat', {userId, threadId});
                 return updatedUser;
                 
             } catch(err) {
@@ -310,6 +340,8 @@ const resolvers = {
                 }
                 const newQuestion = await Question.create({ creator: userId, messageThread, text, option1, option2 });
                 await MessageThread.findByIdAndUpdate(messageThread, { $push: { questions: newQuestion._id }}, { new: true });
+                // emits an event to the client to update the thread in the UI with the new question
+                io.emit('question-added', newQuestion);
                 return await Question.findById(newQuestion._id).populate('messageThread').populate('creator');
             } catch(err) {
                 throw new Error(`Error creating question: ${err}`)
@@ -327,7 +359,9 @@ const resolvers = {
                 }
 
                 const updatedQuestion = await Question.findByIdAndUpdate(questionId, { text, option1, option2 }, { new: true }).populate('creator').populate('messageThread');
-                return updatedQuestion
+                // emits an event to the client to update the question in the UI with the new text and options
+                io.emit('question-updated', updatedQuestion);
+                return updatedQuestion;
             } catch(err) {
                 throw new Error(`Error editing question: ${err}`)
             }
@@ -341,7 +375,9 @@ const resolvers = {
                 await Answer.deleteMany({ questionId: questionId })
                 await MessageThread.findByIdAndUpdate(question.messageThread, { $pull: { questions: questionId } }, { new: true });
                 await Question.findByIdAndDelete(questionId);
-                return { message: 'successful deletion'}
+                // emits an event to the client to delete the question from the UI
+                io.emit('question-deleted', questionId);
+                return { message: 'successful deletion'};
             } catch (err) {
                 throw new Error(`Error deleting question: ${err}`);
             }
@@ -355,6 +391,8 @@ const resolvers = {
                 const newAnswer = await Answer.create({ userId, questionId, answerChoice: answer })
                 const question = await Question.findByIdAndUpdate(questionId, { $push: { answers: newAnswer }}, { new: true }).populate('messageThread').populate('creator').populate('answers').populate({ path: 'answers', populate: { path: 'userId', select: 'username' }});
                 await User.findByIdAndUpdate(userId, { $push: { answerChoices: newAnswer._id }})
+                // emits an event to the client to update the question in the UI with the new answer
+                io.emit('question-answered', question);
                 return question;
             } catch (err) {
                 throw new Error(`Error answering question: ${err}`);
