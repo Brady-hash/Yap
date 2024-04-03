@@ -11,7 +11,8 @@ export default defineConfig({
       '/graphql': {
         target: 'http://localhost:3001',
         secure: false,
-        changeOrigin: true
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/graphql/, '')
       }
     }
   }
