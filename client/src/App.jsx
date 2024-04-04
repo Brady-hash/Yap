@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+
 import "./App.css";
 import {
 	ApolloClient,
@@ -9,6 +9,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { Outlet } from 'react-router-dom';
 import { Toaster } from "react-hot-toast";
+
 const httpLink = createHttpLink({
 	uri: '/graphql',
 });
