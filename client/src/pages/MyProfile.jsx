@@ -3,7 +3,18 @@ import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_ME } from '../utils/queries';
 import { UPDATE_USER } from '../utils/mutations';
 
+import  AuthService from '../utils/auth'
+import { useAuthContext } from '../context/AuthContext';
+
 function Profile() {
+  const { authUser } = useAuthContext();
+  const navigate = useNavigate();
+
+  if (!authUser) {
+    AuthService.redirectToLogin();
+    return null;
+  }
+  
   const [userData, setUserData] = useState({ username: '', email: '', friendCount: '' });
   const [isEditing, setEditing] = useState(false);
 
