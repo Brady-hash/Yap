@@ -1,17 +1,27 @@
 import { BiLogOut } from "react-icons/bi";
-import useLogout from "../../hooks/useLogout";
+import { useAuthContext } from '../../context/AuthContext';
+
 
 const LogoutButton = () => {
-	const { loading, logout } = useLogout();
+	const { loading, logout } = useAuthContext;
 
-	return (
-		<div className='mt-auto'>
-			{!loading ? (
-				<BiLogOut className='w-6 h-6 text-white cursor-pointer' onClick={logout} />
-			) : (
-				<span className='loading loading-spinner'></span>
-			)}
-		</div>
-	);
+	const handleLogout = async () => {
+		try {
+			await logout();
+		} catch (error) {
+			console.error('Logout failed:', error);
+		}
+	}
+
+    return (
+        <div className='mt-auto'>
+            {!loading ? (
+                <BiLogOut className='w-6 h-6 text-white cursor-pointer' onClick={handleLogout} />
+            ) : (
+                <span className='loading loading-spinner'></span>
+            )}
+        </div>
+    );
 };
+
 export default LogoutButton;
