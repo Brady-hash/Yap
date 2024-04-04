@@ -1,4 +1,3 @@
-
 import React from "react";
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -13,6 +12,7 @@ import MessageHub from './pages/MessageHub.jsx';
 import MyProfile from './pages/MyProfile.jsx';
 import NotFound from './pages/NotFound.jsx';
 import LoginPage from './pages/LoginPage.jsx'
+import SignupPage from './components/SignupForm.jsx'
 import './index.css';
 
 
@@ -26,7 +26,7 @@ const router = createBrowserRouter([
       { path: '/myprofile', element: <AuthWrapper><MyProfile /></AuthWrapper> },
       { path: '/chatroom/:id', element: <AuthWrapper><ChatRoom /></AuthWrapper> },
       { path: '/login', element: <LoginPage /> },
-      // { path: '/signup', element: <SignupPage /> }
+      { path: '/signup', element: <SignupPage /> }
     ],
   },
 ]);
