@@ -1,5 +1,5 @@
 import { BiLogOut } from "react-icons/bi";
-import { useAuthContext } from '../../context/AuthContext';
+import { useAuthContext } from '../context/AuthContext';
 
 
 const LogoutButton = () => {
