@@ -24,7 +24,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <AuthWrapper><MessageHub /></AuthWrapper> },
       { path: '/myprofile', element: <AuthWrapper><MyProfile /></AuthWrapper> },
-      { path: '/chatroom/:id', element: <AuthWrapper><ChatRoom /></AuthWrapper> },
+      { path: '/chatroom/:threadId', element: <AuthWrapper><ChatRoom /></AuthWrapper> },
       { path: '/login', element: <LoginPage /> },
       { path: '/signup', element: <SignupPage /> }
     ],
