@@ -33,10 +33,17 @@ function Chatroom() {
   const toggleParticipantsList = () => {
     setShowParticipantsList(prevState => !prevState);
   };
-
+// close the user profile
   const closeUserProfile = () => {
     setShowUserProfile(false);
   };
+  
+//   useEffect(() => {
+//     if(!socket) return;
+//     socket.on('thread-updated', thread => {
+//         console.log('thread updated');
+//         });
+
 
   if (loading) return <p>Loading chatroom...</p>;
   if (error) return <p>Error loading chatroom: {error.message}</p>;
