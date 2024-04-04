@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
-// import { useQuery, useMutation } from '@apollo/client';
-// import { GET_USER_PROFILE, UPDATE_USER_PROFILE } from './graphql/queries';
+import { useQuery, useMutation } from '@apollo/client';
+import { QUERY_ME } from '../utils/queries';
+import { UPDATE_USER } from '../utils/mutations';
 
 function Profile() {
-  const [userData, setUserData] = useState({ username: '', email: '' });
+  const [userData, setUserData] = useState({ username: '', email: '', friendCount: '' });
   const [isEditing, setEditing] = useState(false);
 
   // GraphQL query to get the user's profile
-  const { loading, error, data } = useQuery(GET_USER_PROFILE);
+  const { loading, error, data } = useQuery(QUERY_ME);
   
   // Mutation to update user profile
-  const [updateUserProfile] = useMutation(UPDATE_USER_PROFILE);
+  const [updateUserProfile] = useMutation(UPDATE_USER);
 
   useEffect(() => {
     if (data) {
-      setUserData({ username: data.user.username, email: data.user.email });
+      setUserData({ 
+        username: data.me.username || '', 
+        email: data.me.email || '', 
+        friendCount: data.me.friendCount || 0 });
     }
   }, [data]);
 
@@ -65,6 +69,7 @@ function Profile() {
           <>
             <p>Username: {userData.username}</p>
             <p>Email: {userData.email}</p>
+            <p>Friends: {userData.friendCount}</p>
             <button onClick={handleEditToggle}>Edit Profile</button>
           </>
         )}

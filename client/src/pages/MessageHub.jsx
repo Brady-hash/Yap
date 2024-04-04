@@ -20,8 +20,8 @@ function MessageHub() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const threads = data.me.user.messageThreads;
-  console.log(data.me.user);
+  const threads = data.me.messageThreads;
+  const friends = data.me.friends;
 
   const handleThreadClick = (threadId) => {
     navigate(`/chatroom/${threadId}`);
@@ -30,8 +30,8 @@ function MessageHub() {
   return (
     <div>
       {threads.map(thread => (
-        <div key={thread._id} onClick={() => handleThreadClick(thread._id)}>
-          {thread.name}
+        <div className="border-2 border-white text-red" key={thread._id} onClick={() => handleThreadClick(thread._id)}>
+          <h1>{thread.name}</h1>
         </div>
       ))}
     </div>

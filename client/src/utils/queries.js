@@ -128,10 +128,9 @@ query thread($threadId: ID!){
 export const QUERY_ME = gql`
 query me{
   me{
-    token
-    user{
       _id
       username
+      email
       friendCount
       friends {
         _id
@@ -141,7 +140,6 @@ query me{
       _id
       name
       }
-    }
   }
 }
 `;
