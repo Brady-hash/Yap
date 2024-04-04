@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import CssBaseline from '@mui/material/CssBaseline';
 
 import { AuthContextProvider } from "./context/AuthContext.jsx";
 import AuthWrapper from './components/AuthWrapper.jsx'
@@ -36,6 +37,8 @@ root.render(
   <React.StrictMode>
     <AuthContextProvider>
       <SocketContextProvider>
+        {/* this is a custom css reset for MUI */}
+        <CssBaseline />
         <RouterProvider router={router} />
       </SocketContextProvider>
     </AuthContextProvider>
