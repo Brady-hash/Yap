@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
+import { Box } from '@mui/material/';
 import UserProfile from '../components/UserProfile';
 import { QUERY_ONE_THREAD } from '../utils/queries';
 import io from 'socket.io-client';
@@ -27,14 +28,14 @@ function Chatroom() {
   const [showParticipantsList, setShowParticipantsList] = useState(false);
   const [socket, setSocket] = useState(null);
 
-    useEffect(() => {
-    // create a new socket connection
-    const newSocket = io();
-    setSocket(newSocket);
-    return () => {
-        newSocket.close();
-    };
-    }, []);
+    // useEffect(() => {
+    // // create a new socket connection
+    // const newSocket = io();
+    // setSocket(newSocket);
+    // return () => {
+    //     newSocket.close();
+    // };
+    // }, []);
 // handle the user click event
   const handleUserClick = userId => {
     setSelectedUserId(userId);
@@ -61,12 +62,14 @@ function Chatroom() {
 
   const thread = data ? data.thread : null;
   const participants = thread ? thread.participants : [];
+  console.log(participants)
 
   return (
-    <div>
-      {thread && thread.isGroupChat && (
+    <Box sx={{ height: 'screen', width: 'screen'}}>
+      hello
+      {/* {thread && (
         <>
-          <button onClick={toggleParticipantsList}>
+          <button className="border-2 border-white w-12 h-12" onClick={toggleParticipantsList}>
             {showParticipantsList ? 'Hide Participants' : 'Show Participants'}
           </button>
           {showParticipantsList && (
@@ -80,9 +83,9 @@ function Chatroom() {
             </div>
           )}
         </>
-      )}
+      )} */}
 
-      {!thread.isGroupChat && participants.length > 0 && (
+      {/* {!thread.isGroupChat && participants.length > 0 && (
         <div onClick={() => handleUserClick(participants[0]._id)}>
           <img src={participants[0].image} alt={participants[0].username} />
           <span>{participants[0].username}</span>
@@ -91,8 +94,8 @@ function Chatroom() {
 
       {showUserProfile && (
         <UserProfile userId={selectedUserId} onClose={closeUserProfile} />
-      )}
-    </div>
+      )} */}
+    </Box>
   );
 }
 
