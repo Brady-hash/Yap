@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import UserProfile from '../components/UserProfile';
 import { QUERY_ONE_THREAD } from '../utils/queries';
+import io from 'socket.io-client';
 
 function Chatroom() {
   const { threadId } = useParams();
@@ -13,12 +14,22 @@ function Chatroom() {
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showParticipantsList, setShowParticipantsList] = useState(false);
+  const [socket, setSocket] = useState(null);
 
+    useEffect(() => {
+    // create a new socket connection
+    const newSocket = io();
+    setSocket(newSocket);
+    return () => {
+        newSocket.close();
+    };
+    }, []);
+// handle the user click event
   const handleUserClick = userId => {
     setSelectedUserId(userId);
     setShowUserProfile(true);
   };
-
+// toggle the participants list
   const toggleParticipantsList = () => {
     setShowParticipantsList(prevState => !prevState);
   };

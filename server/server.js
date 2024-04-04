@@ -5,6 +5,7 @@ const { authMiddleware } = require('./utils/auth');
 const { createServer } = require('http');
 const { Server: SocketServer } = require('socket.io');
 
+
 const path = require('path');
 
 const { typeDefs, resolvers } = require('./schemas');
@@ -45,6 +46,10 @@ const startApolloServer = async () => {
   // the second argument is an object with options for the socket.io server
 const io = new SocketServer(httpServer, {
   // socket.io options
+  // allows cross-origin requests
+  cors: {
+    origin: '*',
+  },
   // ping timeout :60 seconds
   pingTimeout: 60000,
 });
