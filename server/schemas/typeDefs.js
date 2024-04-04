@@ -66,7 +66,7 @@ type Friend{
 type Query {
     users: [User]
     user(userId: ID!): User
-    me: Auth
+    me: User
     threads: [MessageThread]
     thread(threadId: ID!): MessageThread
 
@@ -80,7 +80,7 @@ type Query {
 type Mutation {
     login(email: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
-    updateUser(userId: ID!, username: String, email: String, password: String): User
+    updateUser(username: String, email: String, password: String): User
     deleteUser(userId: ID!): User
     createThread(userId: ID!, name: String!): MessageThread
     deleteThread(threadId: ID!, userId: ID!): MessageThread

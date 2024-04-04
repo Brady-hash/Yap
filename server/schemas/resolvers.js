@@ -74,7 +74,7 @@ const resolvers = {
                     throw AuthenticationError
                 }
                 const userId = context.user._id;
-                const currentUser = await User.findById(userId);
+                const currentUser = await User.findById(userId).populate('friends').populate('messageThreads');
                 // emits an event to the client to update the current user in the UI
                 // io.emit('current-user-updated', currentUser);
                 return currentUser;
@@ -147,20 +147,20 @@ const resolvers = {
                 throw new Error(`Error adding a new user: ${err}`);
             }
         },
-        updateUser: async (parent, { userId, username, email, password }, context) => {
+        updateUser: async (parent, { username, email, password }, context) => {
             try {
-                /*   // uncomment to to use JWT
-                    let user = context.user 
-                    const userId = context.user._id
-                */ 
-                let user = await User.findById(userId); // comment out for JWT
+                  // uncomment to to use JWT
+                let user = context.user 
+                const userId = context.user._id
+                
+                // let user = await User.findById(userId); // comment out for JWT
                 if (!user) {
                     throw new Error('You must login to update user');
                 }
                 if (password) {
                     password = await bcrypt.hash(password, 10);
                 }
-                user = User.findByIdAndUpdate(
+                user = await User.findByIdAndUpdate(
                     userId,
                     { username: username, email: email, password: password}, 
                     {new: true});
@@ -318,8 +318,6 @@ const resolvers = {
         deleteMessage: async (parent, { messageId, userId }) => {
             try {
                 const message = await Message.findById(messageId);
-                console.log(message.sender.toString())
-                console.log(userId)
                 if (message.sender.toString() !== userId) {
                     throw new Error('Error deleting message');
                 }
