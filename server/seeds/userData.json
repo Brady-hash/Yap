@@ -1,0 +1,102 @@
+[
+    {
+        "username": "User1",
+        "email": "email@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User2",
+        "email": "email2@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User3",
+        "email": "email3@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User4",
+        "email": "email4@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User5",
+        "email": "email5@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User6",
+        "email": "email6@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User7",
+        "email": "email7@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User8",
+        "email": "email8@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User9",
+        "email": "email9@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User10",
+        "email": "email10@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User11",
+        "email": "email11@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User12",
+        "email": "email12@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User13",
+        "email": "email13@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User14",
+        "email": "email14@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User15",
+        "email": "email15@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User16",
+        "email": "email16@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User17",
+        "email": "email17@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User18",
+        "email": "email18@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User19",
+        "email": "email19@email.com",
+        "password": "password1234"
+    },
+    {
+        "username": "User20",
+        "email": "email20@email.com",
+        "password": "password1234"
+    }
+]
