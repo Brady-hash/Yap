@@ -51,35 +51,149 @@ const io = new SocketServer(httpServer, {
 
 // socket.io server listens for 'connection' events
   io.on('connection', (socket) => {
-    // when a user connects, they are sent a 'connected' event
-    // this event is listened for on the client side
-    // when the client receives the 'connected' event, it will emit a 'setup' event
-    // the 'setup' event will pass the user's information to the server
-    // the server will then join the user to a room with the user's id
-    // this will allow the server to send messages to the user specifically
-    // syntax may need to be adjusted based on the structure of the user object
-    socket.on('setup', (userData) => {
-      socket.join(userData.id);
-      socket.emit('connected');
-      console.log('userData', userData);
-    });
-    console.log('a user connected');
-    // when the server receives a 'new-message' event, it will emit the 'new-message' event to all users in the chat
-    // the 'new-message' event will pass the new message to the client
-    // the client will then add the new message to the chat window
-    socket.on('new-message', (newMessageRecieve) => { var chat = newMessageRecieve.chatId;
-      // if there is no chatId, log 'no chatId'
-      if (!chat.users) console.log('no users');
-      chat.users.forEach((user) => {
-        // if the user is the sender of the message, do not emit the message to them
-        if (user._id == newMessageRecieve.sender._id) return;
-        // emit the message to the user
-        socket.in(user._id).emit('new-message', newMessageRecieve);
+    // fetch all users and emit them to the client
+   socket.on('users-fetched', (users) => {
+      // for each user, join the user's _id room
+      users.forEach((user) => {
+        socket.join(user._id);
       });
+      console.log('users connected');
+    });
+    // fetch a single user and emit them to the client
+   socket.on('user-fetched', (user) => {
+      // join the user's _id room
+      socket.join(user._id);
+      console.log('user connected');
+    });
+// update the current user and emit the updated user to the client
+    socket.on('current-user-updated', (user) => {
+      // leave the old user's room
+      socket.leave(user._id);
+      // join the new user's room
+      socket.join(user._id);
+      console.log('user updated');
+    });
+// update the threads and emit the updated threads to the client
+    socket.on('threads-updated', (threads) => {
+      // for each thread, join the thread's _id room
+      threads.forEach((thread) => {
+        socket.join(thread._id);
+        console.log('threads updated');
+      });
+    });
+    // update the thread and emit the updated thread to the client
+    socket.on('thread-updated', (thread) => {
+      // join the thread's _id room
+      socket.join(thread._id);
+      console.log('thread updated');
+    });
+// adds the user to the room with the user's _id to the client
+    socket.on('user-added', (user) => {
+      // join the user's _id room
+      socket.join(user._id);
+      console.log('user added');
+    });
+// updates the user and emits the updated user to the client
+    socket.on('user-updated', (user) => {
+      // join the user's _id room
+      socket.join(user._id);
+      console.log('user updated');
+    });
+// deletes the user and emits the deleted user to the client
+    socket.on('user-deleted', (user) => {
+      // leave the user's _id room
+      socket.leave(user._id);
+      console.log('user deleted');
+    });
+// creates a new thread and emits the new thread to the client
+    socket.on('thread-created', (thread) => {
+      // join the thread's _id room
+      socket.join(thread._id);
+      console.log('thread created');
+    });
+// deletes the thread and emits the deleted thread to the client
+    socket.on('thread-deleted', (thread) => {
+      // leave the thread's _id room
+      socket.leave(thread._id);
+      console.log('thread deleted');
+    });
+// updates the thread and emits the updated thread to the client
+    socket.on('thread-updated', (thread) => {
+      // join the thread's _id room
+      socket.join(thread._id);
+      console.log('thread updated');
+    });
+// adds a message to the thread and emits the new message to the client
+    socket.on('message-added', (message) => {
+      // join the thread's _id room
+      socket.join(message.threadId);
+      console.log('message added');
+    });
+// updates the message and emits the updated message to the client
+    socket.on('message-updated', (message) => {
+      // join the thread's _id room
+      socket.join(message.threadId);
+      console.log('message updated');
+    });
+// deletes the message and emits the deleted message to the client
+    socket.on('message-deleted', (message) => {
+      // join the thread's _id room
+      socket.join(message.threadId);
+      console.log('message deleted');
+    });
+// adds a friend to the user and emits the new friend to the client
+    socket.on('friend-added', (friend) => {
+      // join the user's _id room
+      socket.join(friend.userId);
+      console.log('friend added');
+    });
+// removes a friend from the user and emits the removed friend to the client
+    socket.on('friend-removed', (friend) => {
+      // join the user's _id room
+      socket.join(friend.userId);
+      console.log('friend removed');
+    });
+// user joins a thread and emits the user joining the thread to the client
+    socket.on('user-joined-thread', (thread) => {
+      // join the thread's _id room
+      socket.join(thread._id);
+      console.log('user joined thread');
+    });
+// user leaves a thread and emits the user leaving the thread to the client
+    socket.on('user-left-thread', (thread) => {
+      // join the thread's _id room
+      socket.join(thread._id);
+      console.log('user left thread');
+    });
+// adds a question to the thread and emits the new question to the client
+    socket.on('question-added', (question) => {
+      // join the thread's _id room
+      socket.join(question.threadId);
+      console.log('question added');
+    });
+// updates the question and emits the updated question to the client
+    socket.on('question-updated', (question) => {
+      // join the thread's _id room
+      socket.join(question.threadId);
+      console.log('question updated');
+    });
+// deletes the question and emits the deleted question to the client
+    socket.on('question-deleted', (question) => {
+      // join the thread's _id room
+      socket.join(question.threadId);
+      console.log('question deleted');
+    });
+// adds an answer to the question and emits the new answer to the client
+    socket.on('question-answered', (question) => {
+      // join the thread's _id room
+      socket.join(question.threadId);
+      console.log('question answered');
+    });
+    
+    // when the client disconnects
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
-  });
   });
 
   // can consider moving httpServer.listen outside of db.once 'open' if we want to start the server before the database connection is established
