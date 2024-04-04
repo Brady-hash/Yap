@@ -1,4 +1,4 @@
-import Reac, {useEffect} from 'react';
+import React, {useEffect} from 'react';
 import { useQuery } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { QUERY_ME } from '../utils/queries';
