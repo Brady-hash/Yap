@@ -33,6 +33,7 @@ db.once('open', async () => {
                 participants: [user._id, ...participantIds],
             });
             messageThreads.push(thread);
+            await User.findByIdAndUpdate(user._id, { $addToSet: { messageThreads: thread._id } }, { new: true });
         }
 
         for (const thread of messageThreads) {
