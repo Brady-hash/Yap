@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { AuthContextProvider } from "./context/AuthContext.jsx";
+import AuthWrapper from './components/AuthWrapper.jsx'
 import { SocketContextProvider } from "./context/SocketContext.jsx";
 
 import App from './App.jsx';
@@ -13,7 +14,6 @@ import MyProfile from './pages/MyProfile.jsx';
 import NotFound from './pages/NotFound.jsx';
 import LoginPage from './pages/LoginPage.jsx'
 import './index.css';
-import { useAuthContext } from "./context/AuthContext";
 
 
 const router = createBrowserRouter([
@@ -22,13 +22,13 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <NotFound />,
     children: [
-      { index: true, element: <MessageHub /> },
-      { path: "/myprofile", element: <MyProfile /> },
-      { path: "/chatroom/:id", element: <ChatRoom /> },
-      { path: "/login", element: <LoginPage /> },
-      // { path: "/signup", element: <SignupPage /> }
-    ]
-  }
+      { index: true, element: <AuthWrapper><MessageHub /></AuthWrapper> },
+      { path: '/myprofile', element: <AuthWrapper><MyProfile /></AuthWrapper> },
+      { path: '/chatroom/:id', element: <AuthWrapper><ChatRoom /></AuthWrapper> },
+      { path: '/login', element: <LoginPage /> },
+      // { path: '/signup', element: <SignupPage /> }
+    ],
+  },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

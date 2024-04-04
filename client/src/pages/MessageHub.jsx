@@ -3,10 +3,19 @@ import { useQuery } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { QUERY_ME } from '../utils/queries';
 
+import  AuthService from '../utils/auth'
+import { useAuthContext } from '../context/AuthContext';
 
 function MessageHub() {
-  const { loading, data, error } = useQuery(QUERY_ME);
+  const { authUser } = useAuthContext();
   const navigate = useNavigate();
+
+  if (!authUser) {
+    AuthService.redirectToLogin();
+    return null;
+  }
+
+  const { loading, data, error } = useQuery(QUERY_ME);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
