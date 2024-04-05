@@ -15,7 +15,7 @@ const db = require('./config/connection');
 const PORT = process.env.PORT || 3001;
 const app = express();
 // create a new http server, passing the express app as the listener
-const httpServer = createServer(app);
+const httpServer = http.createServer(app);
 
 const server = new ApolloServer({
   typeDefs,
