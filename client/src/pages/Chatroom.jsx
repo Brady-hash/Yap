@@ -8,6 +8,7 @@ import { ArrowBack, MeetingRoom } from '@mui/icons-material';
 import { LeaveThreadButton } from '../components/messages/leaveThreadBtn';
 import { ThreadDetailsButton } from '../components/messages/threadDetailsBtn';
 import { BackButton } from '../components/messages/backBtn';
+import { Message } from '../components/messages/Message';
 
 import UserProfile from '../components/UserProfile';
 import { QUERY_ONE_THREAD } from '../utils/queries';
@@ -24,6 +25,8 @@ function Chatroom() {
     AuthService.redirectToLogin();
     return null;
   }
+  const currentUser = authUser.data;
+  console.log(currentUser)
   
   const { threadId } = useParams();
   const { loading, data, error } = useQuery(QUERY_ONE_THREAD, {
@@ -65,11 +68,6 @@ function Chatroom() {
 //         console.log('thread updated');
 //         });
 
-  const [detailsToggled, setDetailsToggled] = useState(false);
-
-    const toggleThreadDetails = () => {
-        setDetailsToggled(!detailsToggled);
-    }
 
 
   if (loading) return <p>Loading chatroom...</p>;
@@ -86,34 +84,14 @@ function Chatroom() {
         <ThreadDetailsButton thread={thread} />
         <LeaveThreadButton />
       </Box>
-      <Box sx={{ border: '2px solid white', height: '75%'}}>
+      <Box sx={{ overflow: 'auto', border: '2px solid white', height: '75%'}}>
         {messages.map((message) => (
-          <>
-            <p>{message.text}</p>
-          </>
+            <Message key={message._id} message={message} currentUser={currentUser}/>
         ))}
       </Box>
       <Box sx={{ border: '2px solid white', height: '15%'}}>
         {/* message input */}
       </Box>
-      {/* {thread && (
-        <>
-          <button className="border-2 border-white w-12 h-12" onClick={toggleParticipantsList}>
-            {showParticipantsList ? 'Hide Participants' : 'Show Participants'}
-          </button>
-          {showParticipantsList && (
-            <div className="participants-list">
-              {participants.map(participant => (
-                <div key={participant._id} onClick={() => handleUserClick(participant._id)}>
-                  <img src={participant.image} alt={participant.username} />
-                  <span>{participant.username}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )} */}
-
       {/* {!thread.isGroupChat && participants.length > 0 && (
         <div onClick={() => handleUserClick(participants[0]._id)}>
           <img src={participants[0].image} alt={participants[0].username} />
