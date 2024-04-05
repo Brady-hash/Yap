@@ -14,19 +14,14 @@ import UserProfile from '../components/UserProfile';
 import { QUERY_ONE_THREAD } from '../utils/queries';
 import io from 'socket.io-client';
 
-import  AuthService from '../utils/auth'
-import { useAuthContext } from '../context/AuthContext';
 
 function Chatroom() {
+  
   const { authUser } = useAuthContext();
-  // const navigate = useNavigate();
-
-  if (!authUser) {
-    AuthService.redirectToLogin();
-    return null;
-  }
   const currentUser = authUser.data;
   console.log(currentUser)
+  // change this possibly 
+
   
   const { threadId } = useParams();
   const { loading, data, error } = useQuery(QUERY_ONE_THREAD, {

@@ -1,7 +1,8 @@
 const { User, MessageThread, Message, Question, Answer } = require('../models');
 const { belongsToThread } = require('../utils/helpers');
-const { signToken, AuthenticationError } = require('../utils/auth');
+const { signToken } = require('../utils/auth');
 const bcrypt = require('bcrypt');
+const { GraphQLError } = require('graphql');
 const { server, io } = require('../server');
 // added login, 
 // updated addUser,
@@ -120,22 +121,24 @@ const resolvers = {
             try {
                 const user = await User.findOne({ email });
                 if (!user) {
-                    throw AuthenticationError
+                    throw new GraphQLError('User not found.');
                 }
-
+    
                 const correctPw = await user.isCorrectPw(password);
-
+    
                 if (!correctPw) {
-                    throw AuthenticationError
+                    throw new GraphQLError('Incorrect password.');
                 }
-
+    
                 const token = signToken(user);
-                return { token, user }
-
+                return { token, user: { _id: user._id, username: user.username, email: user.email } };
+    
             } catch(err) {
-                throw new Error(`Error loggin in: ${err}`);
+                throw new Error(`Error logging in: ${err}`);
             }
         },
+
+      
         addUser: async (parent, { username, email, password }) => {
             try {
                 const newUser = (await User.create({ username, email, password }));

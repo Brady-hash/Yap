@@ -4,23 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { QUERY_ME } from '../utils/queries';
 import LogoutButton from '../components/LogoutButton';
 
-import  AuthService from '../utils/auth'
-import { useAuthContext } from '../context/AuthContext';
-
 import io from 'socket.io-client';
 
 function MessageHub() {
-  const { authUser } = useAuthContext();
   const navigate = useNavigate();
-
-  if (!authUser) {
-    AuthService.redirectToLogin();
-    return null;
-  };
 
   const { loading, data, error } = useQuery(QUERY_ME);
 
   useEffect(() => {
+
     // listen for 'thread-updated' event
     socket.on('thread-updated', handleThreadEvent);
     // listen for 'thread-deleted' event
