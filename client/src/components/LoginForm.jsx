@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '../utils/mutations';
-import Auth from '../utils/auth';
+import { useAuthContext } from '../context/AuthContext';
 
 const LoginForm = () => {
     const [userFormData, setUserFormData] = useState({ email: '', password: '' });
     const [showAlert, setShowAlert] = useState(false);
-    const [login, { error }] = useMutation(LOGIN);
+    const [loginMutation, { error }] = useMutation(LOGIN);
+    const { login } = useAuthContext();
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -15,16 +16,20 @@ const LoginForm = () => {
 
     const handleFormSubmit = async (event) => {
         event.preventDefault();
-
+    
         try {
-            const { data } = await login({
-                variables: {...userFormData}
+            const { data } = await loginMutation({
+                variables: { ...userFormData }
             });
-
-            // console.log(data.login.token)
-
-            Auth.login(data.login.token);
-            setShowAlert(false);
+    
+            const { token, user } = data.login;
+    
+            if (token) {
+                login(data);
+                setShowAlert(false);
+            } else {
+                throw new Error('Token not received.');
+            }
         } catch (err) {
             console.error(err);
             setShowAlert(true);
