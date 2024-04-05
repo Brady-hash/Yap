@@ -1,14 +1,17 @@
 import { BiLogOut } from "react-icons/bi";
 import { useAuthContext } from '../context/AuthContext';
+
 const LogoutButton = () => {
-    const { loading, logout } = useAuthContext;
-    const handleLogout = async () => {
-        try {
-            await logout();
-        } catch (error) {
-            console.error('Logout failed:', error);
-        }
-    }
+	const { loading, logout } = useAuthContext;
+
+	const handleLogout = async () => {
+		try {
+			await logout();
+		} catch (error) {
+			console.error('Logout failed:', error);
+		}
+	}
+
     return (
         <div className='mt-auto'>
             {!loading ? (
@@ -19,4 +22,5 @@ const LogoutButton = () => {
         </div>
     );
 };
+
 export default LogoutButton;

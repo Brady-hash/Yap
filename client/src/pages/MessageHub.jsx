@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import { useQuery } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { QUERY_ME } from '../utils/queries';
+import LogoutButton from '../components/LogoutButton';
 
 import  AuthService from '../utils/auth'
 import { useAuthContext } from '../context/AuthContext';
@@ -51,6 +52,7 @@ function MessageHub() {
 
   return (
     <div>
+      <LogoutButton />
       {threads.map(thread => (
         <div className="border-2 border-white text-red" key={thread._id} onClick={() => handleThreadClick(thread._id)}>
           
