@@ -5,7 +5,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import { AuthContextProvider } from "./context/AuthContext.jsx";
 import AuthWrapper from './components/AuthWrapper.jsx'
-import { SocketContextProvider } from "./context/SocketContext.jsx";
 
 import App from './App.jsx';
 import ChatRoom from './pages/Chatroom.jsx';
@@ -36,11 +35,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthContextProvider>
-      <SocketContextProvider>
-        {/* this is a custom css reset for MUI */}
+        {/*this is a custom css reset for MUI */}
         <CssBaseline />
         <RouterProvider router={router} />
-      </SocketContextProvider>
     </AuthContextProvider>
   </React.StrictMode>
 );

@@ -103,7 +103,7 @@ query thread($threadId: ID!){
       _id
       name
       isGroupChat
-      admin {
+      admins {
         _id
         username
       }

@@ -46,7 +46,7 @@ type Auth{
 type MessageThread{
     _id: ID!
     name: String
-    admin: User
+    admins: [User]
     participants: [User]
     messages: [Message]
     questions: [Question]

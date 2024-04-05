@@ -3,8 +3,6 @@ import { Close } from "@mui/icons-material/";
 import { LeaveThreadButton } from "./leaveThreadBtn";
 
 export const ThreadDetails = ({ thread, detailsToggled, onClose }) => {
-    console.log(thread)
-    console.log(detailsToggled);
 
     return (
         <>
@@ -12,7 +10,7 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose }) => {
             variant="temporary" 
             anchor="right" 
             open={true}
-            onclose={onClose} 
+            onClose={onClose} 
             sx={{
                 width: 240, 
                 flexShrink: 0, 
@@ -38,10 +36,10 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose }) => {
                 </Box>
                 {thread.participants.map((participant) => (
                     <Box 
+                        key={participant._id} 
                         sx={{ border: 'solid white 2px', height: '75px', display: 'flex', alignItems: 'center' }}
                     >
                         <Typography 
-                            key={participant._id} 
                             variant='h5' 
                             sx={{ color: 'white'}}
                         >
