@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { Box } from '@mui/material/';
+
+import { Box, Typography, Button } from '@mui/material/';
+import { ArrowBack, MeetingRoom } from '@mui/icons-material';
+
+import { LeaveThreadButton } from '../components/messages/leaveThreadBtn';
+import { ThreadDetailsButton } from '../components/messages/threadDetailsBtn';
+import { BackButton } from '../components/messages/backBtn';
+import { Message } from '../components/messages/Message';
+
 import UserProfile from '../components/UserProfile';
 import { QUERY_ONE_THREAD } from '../utils/queries';
 import io from 'socket.io-client';
 
 
 function Chatroom() {
+  
+  const { authUser } = useAuthContext();
+  const currentUser = authUser.data;
+  console.log(currentUser)
+  // change this possibly 
+
   
   const { threadId } = useParams();
   const { loading, data, error } = useQuery(QUERY_ONE_THREAD, {
@@ -27,19 +41,21 @@ function Chatroom() {
     //     newSocket.close();
     // };
     // }, []);
+
+
 // handle the user click event
-  const handleUserClick = userId => {
-    setSelectedUserId(userId);
-    setShowUserProfile(true);
-  };
-// toggle the participants list
-  const toggleParticipantsList = () => {
-    setShowParticipantsList(prevState => !prevState);
-  };
-// close the user profile
-  const closeUserProfile = () => {
-    setShowUserProfile(false);
-  };
+//   const handleUserClick = userId => {
+//     setSelectedUserId(userId);
+//     setShowUserProfile(true);
+//   };
+// // toggle the participants list
+//   const toggleParticipantsList = () => {
+//     setShowParticipantsList(prevState => !prevState);
+//   };
+// // close the user profile
+//   const closeUserProfile = () => {
+//     setShowUserProfile(false);
+//   };
   
 //   useEffect(() => {
 //     if(!socket) return;
@@ -48,34 +64,29 @@ function Chatroom() {
 //         });
 
 
+
   if (loading) return <p>Loading chatroom...</p>;
   if (error) return <p>Error loading chatroom: {error.message}</p>;
 
   const thread = data ? data.thread : null;
   const participants = thread ? thread.participants : [];
-  console.log(participants)
+  const messages = thread ? thread.messages : [];
 
   return (
-    <Box sx={{ height: 'screen', width: 'screen'}}>
-      hello
-      {/* {thread && (
-        <>
-          <button className="border-2 border-white w-12 h-12" onClick={toggleParticipantsList}>
-            {showParticipantsList ? 'Hide Participants' : 'Show Participants'}
-          </button>
-          {showParticipantsList && (
-            <div className="participants-list">
-              {participants.map(participant => (
-                <div key={participant._id} onClick={() => handleUserClick(participant._id)}>
-                  <img src={participant.image} alt={participant.username} />
-                  <span>{participant.username}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )} */}
-
+    <Box sx={{ height: '100vh', width: '100vw', border: '2px solid white', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+      <Box sx={{ border: '2px solid white', height: '10%', display: 'flex', alignItems: 'center', justifyContent:'space-between', px: 1}}>
+        <BackButton />
+        <ThreadDetailsButton thread={thread} />
+        <LeaveThreadButton />
+      </Box>
+      <Box sx={{ overflow: 'auto', border: '2px solid white', height: '75%'}}>
+        {messages.map((message) => (
+            <Message key={message._id} message={message} currentUser={currentUser}/>
+        ))}
+      </Box>
+      <Box sx={{ border: '2px solid white', height: '15%'}}>
+        {/* message input */}
+      </Box>
       {/* {!thread.isGroupChat && participants.length > 0 && (
         <div onClick={() => handleUserClick(participants[0]._id)}>
           <img src={participants[0].image} alt={participants[0].username} />
