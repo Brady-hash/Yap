@@ -19,7 +19,7 @@ import { useAuthContext } from '../context/AuthContext';
 
 function Chatroom() {
   const { authUser } = useAuthContext();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   if (!authUser) {
     AuthService.redirectToLogin();
