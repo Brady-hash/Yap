@@ -1,28 +1,57 @@
-import { useAuthContext } from "../../context/AuthContext";
-import { extractTime } from "../../utils/extractTime";
-import useConversation from "../../zustand/useConversation";
+import { Container, Typography, Button, Avatar, Box } from "@mui/material";
 
-const Message = ({ message }) => {
-	const { authUser } = useAuthContext();
-	const { selectedConversation } = useConversation();
-	const fromMe = message.senderId === authUser._id;
-	const formattedTime = extractTime(message.createdAt);
-	const chatClassName = fromMe ? "chat-end" : "chat-start";
-	const profilePic = fromMe ? authUser.profilePic : selectedConversation?.profilePic;
-	const bubbleBgColor = fromMe ? "bg-blue-500" : "";
+export const Message = ({ message, currentUser, }) => {
+	console.log(message.timestamp.split('PM'))
 
-	const shakeClass = message.shouldShake ? "shake" : "";
+	const isCurrentUserMessage = message.sender._id === currentUser._id;
+	let timestamp = message.timestamp.split('PM');
+	timestamp = timestamp[0];
 
 	return (
-		<div className={`chat ${chatClassName}`}>
-			<div className='chat-image avatar'>
-				<div className='w-10 rounded-full'>
-					<img alt='Tailwind CSS chat bubble component' src={profilePic} />
-				</div>
-			</div>
-			<div className={`chat-bubble text-white ${bubbleBgColor} ${shakeClass} pb-2`}>{message.message}</div>
-			<div className='chat-footer opacity-50 text-xs flex gap-1 items-center'>{formattedTime}</div>
-		</div>
+
+		<Box>
+		<Container 
+		disableGutters
+		sx={{ 
+			border: 'solid white 2px', 
+			maxWidth: '80%',
+			minHeight: '50px', 
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: isCurrentUserMessage ? 'end' : 'start',
+			px: 1,
+			marginBottom: 2,
+			borderRadius: 3,
+			marginLeft: isCurrentUserMessage ? 'auto' : 1,
+			marginRight: isCurrentUserMessage ? 1 : 'auto', }}
+		>
+			<Box sx={{ width: '100%', height: '50px', display: 'flex', alignItems: 'start', position: 'relative'}}>
+				<Avatar 
+					src=''
+					sx={{
+						left: isCurrentUserMessage ? '' : 10,
+						right: isCurrentUserMessage ? 10 : '',
+						top: 5,
+						position: 'absolute',
+					}}
+				/>
+
+				<Typography 
+					variant='span' 
+					sx={{
+						position: 'absolute',
+						left: isCurrentUserMessage ? 0 : '',
+						right: isCurrentUserMessage ? '' : 0,
+						top: 5,
+						color: 'white'
+					}}
+				> {timestamp}
+				</Typography>
+			</Box>
+			<Typography variant="span" sx={{color: 'white'}}>{message.text}</Typography>
+		</Container>
+		</Box>
+
 	);
 };
-export default Message;
+
