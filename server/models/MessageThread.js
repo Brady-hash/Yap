@@ -4,7 +4,8 @@ const { format } = require('date-fns')
 const messageThreadSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question'}],
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],

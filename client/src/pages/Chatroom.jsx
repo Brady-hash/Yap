@@ -9,24 +9,27 @@ import { LeaveThreadButton } from '../components/messages/leaveThreadBtn';
 import { ThreadDetailsButton } from '../components/messages/threadDetailsBtn';
 import { BackButton } from '../components/messages/backBtn';
 import { Message } from '../components/messages/Message';
+import MessageInput from '../components/messages/MessageInput';
 
 import UserProfile from '../components/UserProfile';
-import { QUERY_ONE_THREAD } from '../utils/queries';
+import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 import io from 'socket.io-client';
+
+import { useAuthContext } from '../context/AuthContext';
 
 
 function Chatroom() {
   
   const { authUser } = useAuthContext();
   const currentUser = authUser.data;
-  console.log(currentUser)
-  // change this possibly 
 
   
   const { threadId } = useParams();
   const { loading, data, error } = useQuery(QUERY_ONE_THREAD, {
     variables: { threadId }
   });
+
+  
 
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -42,20 +45,6 @@ function Chatroom() {
     // };
     // }, []);
 
-
-// handle the user click event
-//   const handleUserClick = userId => {
-//     setSelectedUserId(userId);
-//     setShowUserProfile(true);
-//   };
-// // toggle the participants list
-//   const toggleParticipantsList = () => {
-//     setShowParticipantsList(prevState => !prevState);
-//   };
-// // close the user profile
-//   const closeUserProfile = () => {
-//     setShowUserProfile(false);
-//   };
   
 //   useEffect(() => {
 //     if(!socket) return;
@@ -73,30 +62,18 @@ function Chatroom() {
   const messages = thread ? thread.messages : [];
 
   return (
-    <Box sx={{ height: '100vh', width: '100vw', border: '2px solid white', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-      <Box sx={{ border: '2px solid white', height: '10%', display: 'flex', alignItems: 'center', justifyContent:'space-between', px: 1}}>
+    <Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Box sx={{ borderBottomRightRadius: 10, borderBottomLeftRadius: 10, height: '10%', display: 'flex', alignItems: 'center', justifyContent:'space-between', px: 1, boxShadow: 20}}>
         <BackButton />
         <ThreadDetailsButton thread={thread} />
         <LeaveThreadButton />
       </Box>
-      <Box sx={{ overflow: 'auto', border: '2px solid white', height: '75%'}}>
+      <Box id="messageContainer" sx={{ overflow: 'auto', height: '70%'}}>
         {messages.map((message) => (
             <Message key={message._id} message={message} currentUser={currentUser}/>
         ))}
       </Box>
-      <Box sx={{ border: '2px solid white', height: '15%'}}>
-        {/* message input */}
-      </Box>
-      {/* {!thread.isGroupChat && participants.length > 0 && (
-        <div onClick={() => handleUserClick(participants[0]._id)}>
-          <img src={participants[0].image} alt={participants[0].username} />
-          <span>{participants[0].username}</span>
-        </div>
-      )}
-
-      {showUserProfile && (
-        <UserProfile userId={selectedUserId} onClose={closeUserProfile} />
-      )} */}
+        <MessageInput currentUser={currentUser} thread={thread}/>
     </Box>
   );
 }

@@ -1,23 +1,22 @@
 import { Container, Typography, Button, Avatar, Box } from "@mui/material";
 
-export const Message = ({ message, currentUser, }) => {
-	console.log(message.timestamp.split('PM'))
-
+export const Message = ({ message, currentUser }) => {
 	const isCurrentUserMessage = message.sender._id === currentUser._id;
-	let timestamp = message.timestamp.split('PM');
+	let timestamp = message.timestamp.split('at');
 	timestamp = timestamp[0];
 
 	return (
 
 		<Box>
-		<Container 
-		disableGutters
+		<Box 
 		sx={{ 
-			border: 'solid white 2px', 
+			border: 'solid #444 2px', 
 			maxWidth: '80%',
 			minHeight: '50px', 
 			display: 'flex',
 			flexDirection: 'column',
+			boxShadow: 10,
+			justifyContent: '',
 			alignItems: isCurrentUserMessage ? 'end' : 'start',
 			px: 1,
 			marginBottom: 2,
@@ -31,7 +30,7 @@ export const Message = ({ message, currentUser, }) => {
 					sx={{
 						left: isCurrentUserMessage ? '' : 10,
 						right: isCurrentUserMessage ? 10 : '',
-						top: 5,
+						top: 15,
 						position: 'absolute',
 					}}
 				/>
@@ -42,14 +41,15 @@ export const Message = ({ message, currentUser, }) => {
 						position: 'absolute',
 						left: isCurrentUserMessage ? 0 : '',
 						right: isCurrentUserMessage ? '' : 0,
-						top: 5,
+						top: 10,
 						color: 'white'
 					}}
 				> {timestamp}
 				</Typography>
 			</Box>
-			<Typography variant="span" sx={{color: 'white'}}>{message.text}</Typography>
-		</Container>
+			<Typography variant='h4' sx={{color: '', textAlign: 'left', my: 2}}>{message.sender.username}</Typography>
+			<Typography variant="span" sx={{color: 'white', pb: 2, px: 1}}>{message.text}</Typography>
+		</Box>
 		</Box>
 
 	);

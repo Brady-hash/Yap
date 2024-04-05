@@ -4,7 +4,6 @@ import { ThreadDetails } from "./threadDetails";
 
 export const ThreadDetailsButton = ({ thread }) => {
     const users = thread.participants;
-    console.log(users);
     const [detailsToggled, setDetailsToggled] = useState(false);
 
     const toggleThreadDetails = () => {
@@ -18,7 +17,7 @@ export const ThreadDetailsButton = ({ thread }) => {
                 sx={{}}
                 onClick={toggleThreadDetails}
             >
-                <Typography variant='h5'>{thread.name}</Typography>
+                <Typography variant='h6'>{thread.name}</Typography>
             </Button>
             {detailsToggled && <ThreadDetails detailsToggled={detailsToggled} thread={thread} onClose={toggleThreadDetails}/>}
         </>

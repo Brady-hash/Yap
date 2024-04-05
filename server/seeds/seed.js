@@ -29,8 +29,9 @@ db.once('open', async () => {
             const participantIds = shuffledUserIds.slice(0, Math.floor(Math.random() * shuffledUserIds.length));
             const thread = await MessageThread.create({
                 name: `${user.username}'s Thread`,
-                admin: user._id,
+                admins: [user._id],
                 participants: [user._id, ...participantIds],
+                creator: user._id
             });
             messageThreads.push(thread);
             await User.findByIdAndUpdate(user._id, { $addToSet: { messageThreads: thread._id } }, { new: true });
@@ -39,7 +40,7 @@ db.once('open', async () => {
         for (const thread of messageThreads) {
             const message = await Message.create({
                 messageThread: thread._id,
-                sender: thread.admin,
+                sender: thread.creator,
                 text: `${thread.name}'s first message! Welcome!`,
             });
             await MessageThread.findByIdAndUpdate(thread._id, { $push: { messages: message._id } })

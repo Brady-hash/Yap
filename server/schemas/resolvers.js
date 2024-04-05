@@ -87,7 +87,7 @@ const resolvers = {
             try {
                 const threads = await MessageThread.find()
                     .populate({ path: 'messages', populate: { path: 'sender', select: 'username' }})
-                    .populate('admin')
+                    .populate({ path: 'admins', select: 'username'})
                     .populate('participants')
                     .populate('questions')
                     .populate({ path: 'questions', populate: 'creator' });
@@ -101,7 +101,7 @@ const resolvers = {
         thread: async (parent, { threadId }) => {
             try {
                 const thread = await MessageThread.findById(threadId)
-                    .populate('admin')
+                    .populate({ path: 'admins', select: 'username'})
                     .populate('participants')
                     .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
                     .populate({ path: 'questions', populate: 'creator' });
