@@ -1,6 +1,6 @@
 const { User, MessageThread, Message, Question, Answer } = require('../models');
 const { belongsToThread } = require('../utils/helpers');
-const { signToken } = require('../utils/auth');
+const { signToken, AuthenticationError } = require('../utils/auth');
 const bcrypt = require('bcrypt');
 const { GraphQLError } = require('graphql');
 const { server, io } = require('../server');
@@ -288,7 +288,7 @@ const resolvers = {
                     { new: true })
                     .populate({ path: 'messages', populate: { path: 'sender', select: 'username'}})
                     .populate('participants')
-                    .populate('admin');
+                    .populate({ path: 'admins', select: 'username'})
 
                 // emits an event to the client to update the thread in the UI with the new message
                 // io.emit('message-added', updatedThread);
@@ -300,8 +300,8 @@ const resolvers = {
         },
         updateMessage: async (parent, { messageId, text, userId }, context) => {
             try {
-                // const user = context.user;
-                const user = await User.findById(userId);
+                const user = context.user;
+                // const user = await User.findById(userId);
                 if (!user) {
                     throw new Error('You do not have permission to edit this message');
                 }
@@ -318,18 +318,19 @@ const resolvers = {
                 throw new Error(err);
             }
         },
-        deleteMessage: async (parent, { messageId, userId }) => {
+        deleteMessage: async (parent, { messageId, userId }, context) => {
             try {
-                const message = await Message.findById(messageId);
-                if (message.sender.toString() !== userId) {
-                    throw new Error('Error deleting message');
-                }
+                // if (!context.user) throw AuthenticationError
+                // const userId = context.user._id
 
-                await MessageThread.findByIdAndUpdate(messageId, { $pull: { messages: messageId }}, { new: true });
-                const deletedMessage = await Message.findByIdAndDelete(messageId);
+                const message = await Message.findById(messageId);
+
+                await MessageThread.findByIdAndUpdate(message.messageThread, { $pull: { messages: messageId }}, { new: true });
+                await Message.findByIdAndDelete(messageId);
                 // emits an event to the client to delete the message from the UI
                 // io.emit('message-deleted', deletedMessage);
-                return deletedMessage;
+                
+                return { message: 'success' }
 
             } catch(err) {
                 throw new Error(`Error deleting message: ${err}`);
