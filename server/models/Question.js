@@ -8,7 +8,8 @@ const questionSchema = new mongoose.Schema({
   option1: { type: String, required: true },
   option2: { type: String, required: true },  
   answers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Answer' }],
-  createdAt: { type: Date, default: Date.now, get: (dateValue) => format(dateValue, 'PPPppp') }
+  timestamp: { type: Date, default: Date.now, get: (dateValue) => format(dateValue, 'PPPppp') },
+  createdAt: { type: Date, default: Date.now }
 },
 {
   toJSON: {

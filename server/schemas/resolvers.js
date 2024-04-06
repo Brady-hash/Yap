@@ -110,6 +110,7 @@ const resolvers = {
                 }
                 // emits an event to the client to update the thread in the UI
                 // io.emit('thread-updated', thread);
+                console.log(thread)
                 return thread;
             } catch(err) {
                 throw new Error(`Error getting one thread: ${err}`);

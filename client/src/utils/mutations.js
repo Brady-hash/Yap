@@ -230,7 +230,7 @@ export const CREATE_QUESTION = gql`
       option1
       option2
       answerCount
-      createdAt
+      timestamp
     }
   }
 `;
