@@ -236,8 +236,8 @@ export const CREATE_QUESTION = gql`
 `;
 
 export const DELETE_QUESTION = gql`
-  mutation deleteQuestion($userId: ID!, $questionId: ID!){
-    deleteQuestion(userId: $userId, questionId: $questionId) {
+  mutation deleteQuestion($questionId: ID!){
+    deleteQuestion(questionId: $questionId) {
       message
     }
   }
@@ -257,6 +257,8 @@ export const ANSWER_QUESTION = gql`
       text
       option1
       option2
+      option1Count
+      option2Count
       answerCount
       option1Percentage
       answers {

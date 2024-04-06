@@ -56,6 +56,9 @@ db.once('open', async () => {
                 });
                 await MessageThread.findByIdAndUpdate(thread._id, { $push: { messages: message._id} } )
             }
+            for (const participantId of thread.participants) {
+                await User.findByIdAndUpdate(participantId, { $addToSet: { messageThreads: thread._id } });
+            }
         }
         
 

@@ -110,7 +110,7 @@ const resolvers = {
                 }
                 // emits an event to the client to update the thread in the UI
                 // io.emit('thread-updated', thread);
-                console.log(thread)
+                // console.log(thread)
                 return thread;
             } catch(err) {
                 throw new Error(`Error getting one thread: ${err}`);
@@ -474,8 +474,8 @@ const resolvers = {
         deleteQuestion: async (parent, { userId, questionId }, context) => {
             try {
                 const question = await Question.findById(questionId);
-                if (question.creator.toString() !== userId) {
-                    throw new Error('You cannot perform this action')
+                if (!context.user) {
+                    throw AuthenticationError
                 }
                 await Answer.deleteMany({ questionId: questionId })
 
@@ -530,6 +530,7 @@ const resolvers = {
                 await User.findByIdAndUpdate(userId, { $push: { answerChoices: newAnswer._id }})
                 // emits an event to the client to update the question in the UI with the new answer
                 // io.emit('question-answered', question);
+                
                 return updatedQuestion;
             } catch (err) {
                 throw new Error(`Error answering question: ${err}`);

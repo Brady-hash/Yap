@@ -100,7 +100,7 @@ type Mutation {
     leaveThread(userId: ID!, threadId: ID!): User
     createQuestion(userId: ID!, messageThread: ID!, text: String!, option1: String!, option2: String!): Question
     updateQuestion(userId: ID!, questionId: ID!, text: String, option1: String, option2: String): Question
-    deleteQuestion(userId: ID!, questionId: ID!): returnMessage
+    deleteQuestion(questionId: ID!): returnMessage
     answerQuestion(questionId: ID!, answer: String!): Question
 }
 

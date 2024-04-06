@@ -87,7 +87,7 @@ function Chatroom() {
       <Box id="messageContainer" sx={{ overflow: 'auto', height: '70%'}}>
         {combinedData.map((item, index) => {
           if (item.__typename === 'Message') return <Message key={item._id} message={item} currentUser={currentUser} isAdmin={isAdmin} refetch={refetch}/>
-          return <Poll key={item._id} poll={item}/>
+          return <Poll key={item._id} poll={item} isAdmin={isAdmin} refetch={refetch}/>
         })}
       </Box>
         <MessageInput currentUser={currentUser} thread={thread} updateCombinedData={updateCombinedData} combinedData={combinedData}/>
