@@ -6,6 +6,8 @@ import LogoutButton from '../components/LogoutButton';
 
 import io from 'socket.io-client';
 
+const socket = io('http://localhost:3000');
+
 function MessageHub() {
   const navigate = useNavigate();
 
