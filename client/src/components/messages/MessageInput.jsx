@@ -5,7 +5,7 @@ import { Box, Button, TextField } from "@mui/material";
 import { Send } from '@mui/icons-material/';
 import { CreatePoll } from "./createPoll";
 
-const MessageInput = ({ currentUser, thread }) => {
+const MessageInput = ({ currentUser, thread, updateCombinedData, combinedData }) => {
 
 	// console.log(currentUser)
 	// console.log(thread.admins)
@@ -20,11 +20,6 @@ const MessageInput = ({ currentUser, thread }) => {
 	const handleInputChange = (event) => {
 		setMessage(event.target.value);
 	};
-
-	useEffect(() => {
-		const messageContainer = document.getElementById('messageContainer');
-		messageContainer.scrollTo(0, messageContainer.scrollHeight);
-	}, [currentMessages])
 
 	const handleSubmit = async (event) => {
 		try {
@@ -42,6 +37,7 @@ const MessageInput = ({ currentUser, thread }) => {
 				const newMessage = data.addMessage.messages[data.addMessage.messages.length - 1];
 				setCurrentMessages(currentMessages => [...currentMessages, newMessage]);
 				setMessage('');
+				updateCombinedData(newMessage)
 			}
 			console.log(data)
 
@@ -80,7 +76,7 @@ const MessageInput = ({ currentUser, thread }) => {
                 gap: 1,
             }}
         >
-			{modalOpen ? <CreatePoll thread={thread} currentUser={currentUser} modalOpen={modalOpen} onClose={() => setModalOpen(false)}/> : 
+			{modalOpen ? <CreatePoll updateCombinedData={updateCombinedData} thread={thread} currentUser={currentUser} modalOpen={modalOpen} onClose={() => setModalOpen(false)}/> : 
 			
 			<TextField
                 fullWidth

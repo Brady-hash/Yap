@@ -25,8 +25,11 @@ type Question{
     text: String
     option1: String
     option2: String
+    option1Count: Int
+    option2Count: Int
     answerCount: Int
     answers: [Answer]
+    option1Percentage: Float
     timestamp: String
     createdAt: String
 }
@@ -98,7 +101,7 @@ type Mutation {
     createQuestion(userId: ID!, messageThread: ID!, text: String!, option1: String!, option2: String!): Question
     updateQuestion(userId: ID!, questionId: ID!, text: String, option1: String, option2: String): Question
     deleteQuestion(userId: ID!, questionId: ID!): returnMessage
-    answerQuestion(userId: ID!, questionId: ID!, answer: String!): Question
+    answerQuestion(questionId: ID!, answer: String!): Question
 }
 
 `

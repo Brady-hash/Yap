@@ -109,7 +109,7 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 				</Typography>
 			</Box>
 			<Box sx={{ display: 'flex', gap: 0}}>
-				<Typography variant='h4' sx={{color: '', textAlign: 'left', my: 1}}>{message.sender.username}</Typography>
+				<Typography variant='h4' sx={{color: 'white', textAlign: 'left', my: 1}}>{message.sender.username}</Typography>
 				{!isCurrentUserMessage && !isFriend && <AddFriendButton currentUser={currentUser} friendId={message.sender._id} isFriend={isFriend} setIsFriend={setIsFriend}/>}
 				{!isCurrentUserMessage && isFriend && <PeopleOutline sx={{fontSize: 30, color: 'gray', mx: 1}}/>}
 			</Box>
