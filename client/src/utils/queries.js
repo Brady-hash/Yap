@@ -99,30 +99,49 @@ query threads {
 
 export const QUERY_ONE_THREAD = gql`
 query thread($threadId: ID!){
-    thread(threadId: $threadId) {
+  thread(threadId: $threadId) {
+    _id
+    name
+    isGroupChat
+    timestamp
+    createdAt
+    admins {
       _id
-      name
-      isGroupChat
-      admins {
-        _id
-        username
-      }
-      participants {
-        _id
-        username
-      }
-      messages {
-        _id
-        text
-        messageThread
-        timestamp
-        sender {
-          _id
-          username
-        }
-      } 
+      username
     }
-  }  
+    participants {
+      _id
+      username
+    }
+    questions {
+      _id
+      text
+      option1
+      option2
+      answerCount
+      createdAt
+      timestamp
+      answers {
+        _id
+        userId {
+          _id
+        }
+        answerChoice
+      }
+    }
+    messages {
+      _id
+      text
+      messageThread
+      createdAt
+      timestamp
+      sender {
+        _id
+        username
+      }
+    } 
+  }
+} 
 `;
 
 export const QUERY_ME = gql`

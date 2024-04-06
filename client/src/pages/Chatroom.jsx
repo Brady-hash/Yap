@@ -9,6 +9,7 @@ import { ThreadDetailsButton } from '../components/messages/threadDetailsBtn';
 import { BackButton } from '../components/messages/backBtn';
 import { Message } from '../components/messages/Message';
 import MessageInput from '../components/messages/MessageInput';
+import { Poll } from '../components/messages/poll';
 
 import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 import io from 'socket.io-client';
@@ -53,6 +54,9 @@ function Chatroom() {
   const isAdmin = thread.admins.some(admin => admin._id.toString() === currentUser._id.toString());
   const messages = thread ? thread.messages : [];
 
+const combinedData = [...thread.messages, ...thread.questions].sort((a, b) => a.createdAt- b.createdAt);
+
+
   
 
   return (
@@ -63,9 +67,10 @@ function Chatroom() {
         <LeaveThreadButton />
       </Box>
       <Box id="messageContainer" sx={{ overflow: 'auto', height: '70%'}}>
-        {messages.map((message) => (
-            <Message key={message._id} message={message} currentUser={currentUser} isAdmin={isAdmin} refetch={refetch}/>
-        ))}
+        {combinedData.map((item, index) => {
+          if (item.__typename === 'Message') return <Message key={item._id} message={item} currentUser={currentUser} isAdmin={isAdmin} refetch={refetch}/>
+          return <Poll key={item._id} poll={item}/>
+        })}
       </Box>
         <MessageInput currentUser={currentUser} thread={thread}/>
     </Box>

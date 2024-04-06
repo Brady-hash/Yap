@@ -27,6 +27,7 @@ type Question{
     option2: String
     answerCount: Int
     answers: [Answer]
+    timestamp: String
     createdAt: String
 }
 
@@ -36,6 +37,7 @@ type Message{
     sender: User
     messageThread: ID!
     timestamp: String
+    createdAt: String
 }
 
 type Auth{
@@ -51,6 +53,7 @@ type MessageThread{
     messages: [Message]
     questions: [Question]
     isGroupChat: Boolean
+    timestamp: String
     createdAt: String
 }
 

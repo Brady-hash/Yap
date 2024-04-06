@@ -10,7 +10,8 @@ const messageThreadSchema = new mongoose.Schema(
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question'}],
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
     isGroupChat: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now, get: (dateValue) => format(dateValue, 'PPPppp') }
+    timestamp: { type: Date, default: Date.now, get: (dateValue) => format(dateValue, 'PPPppp') },
+    createdAt: { type: Date, default: Date.now }
   },
   {
     toJSON: {
