@@ -56,16 +56,20 @@ const io = new SocketServer(httpServer, {
 
 // socket.io server listens for 'connection' events
   io.on('connection', (socket) => {
+    console.log('user connected');
     // fetch all users and emit them to the client
    socket.on('users-fetched', (users) => {
+    socket.emit('users-fetched', users);
       // for each user, join the user's _id room
       users.forEach((user) => {
         socket.join(user._id);
+        console.log('users connected and emitted to client');
       });
       console.log('users connected');
     });
     // fetch a single user and emit them to the client
    socket.on('user-fetched', (user) => {
+    io.emit('user-fetched', user);
       // join the user's _id room
       socket.join(user._id);
       console.log('user connected');
@@ -74,14 +78,17 @@ const io = new SocketServer(httpServer, {
     socket.on('current-user-updated', (user) => {
       // leave the old user's room
       socket.leave(user._id);
+      io.emit('current-user-updated', user);
       // join the new user's room
       socket.join(user._id);
       console.log('user updated');
     });
 // update the threads and emit the updated threads to the client
     socket.on('threads-updated', (threads) => {
+      socket.emit('threads-updated', threads);
       // for each thread, join the thread's _id room
       threads.forEach((thread) => {
+        
         socket.join(thread._id);
         console.log('threads updated');
       });
@@ -90,106 +97,122 @@ const io = new SocketServer(httpServer, {
     socket.on('thread-updated', (thread) => {
       // join the thread's _id room
       socket.join(thread._id);
+      socket.emit('thread-updated', thread);
       console.log('thread updated');
     });
 // adds the user to the room with the user's _id to the client
     socket.on('user-added', (user) => {
+      io.emit('user-added', user);
       // join the user's _id room
       socket.join(user._id);
       console.log('user added');
-    });
-// updates the user and emits the updated user to the client
-    socket.on('user-updated', (user) => {
-      // join the user's _id room
-      socket.join(user._id);
-      console.log('user updated');
     });
 // deletes the user and emits the deleted user to the client
     socket.on('user-deleted', (user) => {
       // leave the user's _id room
       socket.leave(user._id);
+      io.emit('user-deleted', user);
       console.log('user deleted');
     });
 // creates a new thread and emits the new thread to the client
     socket.on('thread-created', (thread) => {
       // join the thread's _id room
       socket.join(thread._id);
+      socket.emit('thread-created', thread);
       console.log('thread created');
     });
 // deletes the thread and emits the deleted thread to the client
     socket.on('thread-deleted', (thread) => {
       // leave the thread's _id room
       socket.leave(thread._id);
+      io.emit('thread-deleted', thread);
       console.log('thread deleted');
     });
 // updates the thread and emits the updated thread to the client
     socket.on('thread-updated', (thread) => {
+      io.emit('thread-updated', thread);
       // join the thread's _id room
       socket.join(thread._id);
       console.log('thread updated');
     });
 // adds a message to the thread and emits the new message to the client
     socket.on('message-added', (message) => {
+      socket.emit('message-added', message);
       // join the thread's _id room
       socket.join(message.threadId);
       console.log('message added');
     });
 // updates the message and emits the updated message to the client
     socket.on('message-updated', (message) => {
+      socket.emit('message-updated', message);
       // join the thread's _id room
       socket.join(message.threadId);
+      
       console.log('message updated');
     });
 // deletes the message and emits the deleted message to the client
     socket.on('message-deleted', (message) => {
+      io.emit('message-deleted', message);
       // join the thread's _id room
       socket.join(message.threadId);
       console.log('message deleted');
     });
 // adds a friend to the user and emits the new friend to the client
     socket.on('friend-added', (friend) => {
+      socket.emit('friend-added', friend);
       // join the user's _id room
       socket.join(friend.userId);
       console.log('friend added');
     });
 // removes a friend from the user and emits the removed friend to the client
     socket.on('friend-removed', (friend) => {
-      // join the user's _id room
-      socket.join(friend.userId);
+      // emit the removed friend to the client
+      io.emit('friend-removed', friend);
+      // leave the friend's _id room
+      socket.leave(friend.userId);
       console.log('friend removed');
     });
 // user joins a thread and emits the user joining the thread to the client
     socket.on('user-joined-thread', (thread) => {
+      // broadcast to the thread's _id room that the user has joined the thread
+      socket.broadcast.to(thread._id).emit('user-joined-thread', thread);
       // join the thread's _id room
       socket.join(thread._id);
       console.log('user joined thread');
     });
 // user leaves a thread and emits the user leaving the thread to the client
     socket.on('user-left-thread', (thread) => {
-      // join the thread's _id room
-      socket.join(thread._id);
+      // broadcast to the thread's _id room that the user has left the thread
+      socket.broadcast.to(thread._id).emit('user-left-thread', thread);
+      // leave the thread's _id room
+      socket.leave(thread._id);
       console.log('user left thread');
     });
 // adds a question to the thread and emits the new question to the client
     socket.on('question-added', (question) => {
+      // emit the new question to the client
+      socket.emit('question-added', question);
       // join the thread's _id room
       socket.join(question.threadId);
       console.log('question added');
     });
 // updates the question and emits the updated question to the client
     socket.on('question-updated', (question) => {
+      socket.emit('question-updated', question);
       // join the thread's _id room
       socket.join(question.threadId);
       console.log('question updated');
     });
 // deletes the question and emits the deleted question to the client
     socket.on('question-deleted', (question) => {
+      io.emit('question-deleted', question);
       // join the thread's _id room
-      socket.join(question.threadId);
+      socket.leave(question.threadId);
       console.log('question deleted');
     });
 // adds an answer to the question and emits the new answer to the client
     socket.on('question-answered', (question) => {
+      socket.emit('question-answered', question);
       // join the thread's _id room
       socket.join(question.threadId);
       console.log('question answered');
