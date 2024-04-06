@@ -59,6 +59,8 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 		<Box>
 		<Box 
 		sx={{ 
+			background: 'black',
+			opacity: .95,
 			border: 'solid #444 2px', 
 			maxWidth: '80%',
 			minHeight: '50px', 
