@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+/* eslint-disable react/prop-types */
 import { Typography, Button, Avatar, Box, TextField } from "@mui/material";
 import { PeopleOutline } from "@mui/icons-material";
 import { useState } from "react";
@@ -7,6 +10,7 @@ import { DeleteMessageButton } from "./deleteMessage";
 import { AddFriendButton } from "./addFriendButton";
 import { EditMessageButton } from "./editMessageButton";
 import { EditMessageBox } from "./editMessageBox";
+import  { UserProfile } from '../UserProfile';
 
 export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 	
@@ -14,7 +18,8 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 	const [originalMessage, setOriginalMessage] = useState(currentMessage);
 	const [isEditing, setIsEditing] = useState(false);
 	const [updateMessage, { error }] = useMutation(UPDATE_MESSAGE);
-	const [isFriend, setIsFriend] = useState(currentUser.friends.some(friend => friend._id === message.sender._id))
+	const [isFriend, setIsFriend] = useState(currentUser.friends.some(friend => friend._id === message.sender._id));
+	const [showUserProfile, setShowUserProfile] = useState(false);
 
 	const startEditing = () => {
 		setOriginalMessage(currentMessage);
@@ -71,13 +76,21 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 			<Box sx={{ width: '100%', height: '75px', display: 'flex', alignItems: 'start', position: 'relative'}}>
 				<Avatar 
 					src=''
+					onClick={() => setShowUserProfile(true)}
 					sx={{
 						left: isCurrentUserMessage ? '' : 10,
 						right: isCurrentUserMessage ? 10 : '',
 						top: 15,
 						position: 'absolute',
+						cursor: 'pointer'
 					}}
 				/>
+				{showUserProfile && (
+                        <UserProfile 
+                            userId={message.sender._id} 
+                            onClose={() => setShowUserProfile(false)}
+                        />
+                    )}
 
 				<Typography 
 					variant='span' 

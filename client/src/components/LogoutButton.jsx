@@ -1,8 +1,9 @@
-import { BiLogOut } from "react-icons/bi";
+import { Button } from '@mui/material';
+import { Logout } from '@mui/icons-material';
 import { useAuthContext } from '../context/AuthContext';
 
 const LogoutButton = () => {
-	const { loading, logout } = useAuthContext;
+	const { loading, logout } = useAuthContext();
 
 	const handleLogout = async () => {
 		try {
@@ -13,13 +14,7 @@ const LogoutButton = () => {
 	}
 
     return (
-        <div className='mt-auto'>
-            {!loading ? (
-                <BiLogOut className='w-6 h-6 text-white cursor-pointer' onClick={handleLogout} />
-            ) : (
-                <span className='loading loading-spinner'></span>
-            )}
-        </div>
+        <Button sx={{ p: 0 }} onClick={handleLogout}><Logout sx={{ fontSize: 30, color: "white" }}/></Button>
     );
 };
 
