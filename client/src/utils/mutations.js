@@ -243,8 +243,8 @@ export const DELETE_QUESTION = gql`
   }
 `;
 export const ANSWER_QUESTION = gql`
-  mutation answerQuestion($userId: ID!, $questionId: ID!, $answer: String!){
-    answerQuestion(userId: $userId, questionId: $questionId, answer: $answer) {
+  mutation answerQuestion($questionId: ID!, $answer: String!){
+    answerQuestion(questionId: $questionId, answer: $answer) {
       _id
       creator {
         _id
@@ -258,6 +258,7 @@ export const ANSWER_QUESTION = gql`
       option1
       option2
       answerCount
+      option1Percentage
       answers {
         _id
         userId {

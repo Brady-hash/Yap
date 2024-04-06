@@ -118,6 +118,9 @@ query thread($threadId: ID!){
       text
       option1
       option2
+      option1Count
+      option2Count
+      option1Percentage
       answerCount
       createdAt
       timestamp

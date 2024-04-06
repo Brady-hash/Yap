@@ -494,15 +494,33 @@ const resolvers = {
         },
         answerQuestion: async (parent, { userId, questionId, answer }, context) => {
             try {
-                const user = await User.findById(userId);
-                if (!user) {
-                    throw new Error('Please login to answer question');
+                if (!context.user) {
+                    throw AuthenticationError;
                 }
-                const newAnswer = await Answer.create({ userId, questionId, answerChoice: answer })
+                const userId = context.user._id
+                const newAnswer = await Answer.create({ userId, questionId, answerChoice: answer });
 
-                const question = await Question.findByIdAndUpdate(
+                const question = await Question.findById(questionId).populate({ path: 'answers', populate: { path: 'userId', select: '_id'}});
+
+                const hasAnswered = question.answers.some(ans => ans.userId._id.toString() === userId);
+
+                if (hasAnswered) {
+                    throw new Error(`You have already submitted an answer to this poll!`);
+                }
+
+                let update = { $addToSet: { answers: newAnswer._id } };
+                if (answer === 'option1') {
+                    update.$inc = { option1Count: 1 };
+                } else if (answer === 'option2') {
+                    update.$inc = { option2Count: 1 };
+                } else {
+                    throw new Error('Invalid answer option');
+                }
+
+
+                const updatedQuestion = await Question.findByIdAndUpdate(
                     questionId, 
-                    { $push: { answers: newAnswer }}, 
+                    update, 
                     { new: true })
                     .populate('messageThread')
                     .populate('creator')
@@ -512,7 +530,7 @@ const resolvers = {
                 await User.findByIdAndUpdate(userId, { $push: { answerChoices: newAnswer._id }})
                 // emits an event to the client to update the question in the UI with the new answer
                 // io.emit('question-answered', question);
-                return question;
+                return updatedQuestion;
             } catch (err) {
                 throw new Error(`Error answering question: ${err}`);
             }

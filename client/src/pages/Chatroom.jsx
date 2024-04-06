@@ -26,6 +26,25 @@ function Chatroom() {
     variables: { threadId }
   });
 
+  const [combinedData, setCombinedData] = useState([]);
+
+  useEffect(() => {
+    if(data && data.thread) {
+      const updatedCombinedData = [...data.thread.messages, ...data.thread.questions].sort((a, b) => a.createdAt - b.createdAt);
+      setCombinedData(updatedCombinedData);
+    }
+  }, [data]);
+
+  useEffect(() => {
+		const messageContainer = document.getElementById('messageContainer');
+    if (messageContainer) {
+      setTimeout(() => {
+        messageContainer.scrollTo(0, messageContainer.scrollHeight);
+      }, 10)
+    }
+    return
+	}, [combinedData])
+
   const [socket, setSocket] = useState(null);
 
     // useEffect(() => {
@@ -54,10 +73,9 @@ function Chatroom() {
   const isAdmin = thread.admins.some(admin => admin._id.toString() === currentUser._id.toString());
   const messages = thread ? thread.messages : [];
 
-const combinedData = [...thread.messages, ...thread.questions].sort((a, b) => a.createdAt- b.createdAt);
-
-
-  
+  const updateCombinedData = (newData) => {
+    setCombinedData(prevData => [...prevData, newData].sort((a, b) => a.createdAt - b.createdAt));
+  };  
 
   return (
     <Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -72,7 +90,7 @@ const combinedData = [...thread.messages, ...thread.questions].sort((a, b) => a.
           return <Poll key={item._id} poll={item}/>
         })}
       </Box>
-        <MessageInput currentUser={currentUser} thread={thread}/>
+        <MessageInput currentUser={currentUser} thread={thread} updateCombinedData={updateCombinedData} combinedData={combinedData}/>
     </Box>
   );
 }

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { CREATE_QUESTION } from "../../utils/mutations";
 import { FormGroup, TextField, Button, Box } from "@mui/material";
 
-export const CreatePoll = ({ currentUser, thread, modalOpen, onClose }) => {
+export const CreatePoll = ({ currentUser, thread, modalOpen, onClose, updateCombinedData }) => {
         const styles = {
             borderRadius: 2,
             '& .MuiInputBase-input': {
@@ -44,8 +44,12 @@ export const CreatePoll = ({ currentUser, thread, modalOpen, onClose }) => {
                         option2: formState.option2,
                         userId: currentUser._id,
                         messageThread: thread._id
-                    }
+                    } 
                 });
+                if (data && data.createQuestion) {
+                    const newQuestion = data.createQuestion;
+                    updateCombinedData(newQuestion)
+                }
                 console.log('data', data)
 
             } catch(err) {
