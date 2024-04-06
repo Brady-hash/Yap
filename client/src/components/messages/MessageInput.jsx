@@ -7,8 +7,8 @@ import { CreatePoll } from "./createPoll";
 
 const MessageInput = ({ currentUser, thread }) => {
 
-	console.log(currentUser)
-	console.log(thread.admins)
+	// console.log(currentUser)
+	// console.log(thread.admins)
 
 	const isAdmin = thread.admins.some(admin => admin._id.toString() === currentUser._id.toString());
 	
@@ -103,7 +103,7 @@ const MessageInput = ({ currentUser, thread }) => {
 				  }}
             />}
             
-			<Box sx={{ border: 'solid white 2px', display: 'flex', flexDirection: 'column',justifyContent: 'center', gap: 2, height: '90%'}}>
+			<Box sx={{ display: 'flex', flexDirection: 'column',justifyContent: 'center', gap: 2, height: '90%'}}>
 				<Button variant="contained" color="primary" onClick={handleSubmit}>
                 	<Send />
             	</Button>
@@ -114,12 +114,6 @@ const MessageInput = ({ currentUser, thread }) => {
 				: ''}
 			</Box>
         </Box>
-		{/* {modalOpen ? 
-		<Box sx={{ top: '25%'}}>
-			<CreatePoll /> 
-		</Box>
-		
-		: ''} */}
 		</Box>
 		</>
 	);

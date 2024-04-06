@@ -92,7 +92,7 @@ export const ADD_MESSAGE = gql`
       _id
       name
       isGroupChat
-      admin {
+      admins {
         _id
         username
       }
@@ -114,8 +114,8 @@ export const ADD_MESSAGE = gql`
   }
 `;
 export const UPDATE_MESSAGE = gql`
-mutation updateMessage($userId: ID!, $messageId: ID!, $text: String!) {
-    updateMessage(userId: $userId, messageId: $messageId, text: $text) {
+mutation updateMessage($messageId: ID!, $text: String!) {
+    updateMessage(messageId: $messageId, text: $text) {
       _id
       text
       messageThread
@@ -128,10 +128,9 @@ mutation updateMessage($userId: ID!, $messageId: ID!, $text: String!) {
   }
 `;
 export const DELETE_MESSAGE = gql`
-mutation deleteMessage($messageId: ID!, $userId: ID!) {
-    deleteMessage(messageId: $messageId, userId: $userId) {
-      _id
-      text
+mutation deleteMessage($messageId: ID!) {
+    deleteMessage(messageId: $messageId) {
+      message
     }
   }
 `;

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
-import { Box, Typography, Button } from '@mui/material/';
-import { ArrowBack, MeetingRoom } from '@mui/icons-material';
+import { Box } from '@mui/material/';
 
 import { LeaveThreadButton } from '../components/messages/leaveThreadBtn';
 import { ThreadDetailsButton } from '../components/messages/threadDetailsBtn';
@@ -11,7 +10,6 @@ import { BackButton } from '../components/messages/backBtn';
 import { Message } from '../components/messages/Message';
 import MessageInput from '../components/messages/MessageInput';
 
-import UserProfile from '../components/UserProfile';
 import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 import io from 'socket.io-client';
 
@@ -19,21 +17,14 @@ import { useAuthContext } from '../context/AuthContext';
 
 
 function Chatroom() {
-  
-  const { authUser } = useAuthContext();
-  const currentUser = authUser.data;
 
+  const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
   
   const { threadId } = useParams();
-  const { loading, data, error } = useQuery(QUERY_ONE_THREAD, {
+  const { loading, data, error, refetch } = useQuery(QUERY_ONE_THREAD, {
     variables: { threadId }
   });
 
-  
-
-  const [showUserProfile, setShowUserProfile] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null);
-  const [showParticipantsList, setShowParticipantsList] = useState(false);
   const [socket, setSocket] = useState(null);
 
     // useEffect(() => {
@@ -58,8 +49,11 @@ function Chatroom() {
   if (error) return <p>Error loading chatroom: {error.message}</p>;
 
   const thread = data ? data.thread : null;
-  const participants = thread ? thread.participants : [];
+  const currentUser = userData ? userData.me : null;
+  const isAdmin = thread.admins.some(admin => admin._id.toString() === currentUser._id.toString());
   const messages = thread ? thread.messages : [];
+
+  
 
   return (
     <Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -70,7 +64,7 @@ function Chatroom() {
       </Box>
       <Box id="messageContainer" sx={{ overflow: 'auto', height: '70%'}}>
         {messages.map((message) => (
-            <Message key={message._id} message={message} currentUser={currentUser}/>
+            <Message key={message._id} message={message} currentUser={currentUser} isAdmin={isAdmin} refetch={refetch}/>
         ))}
       </Box>
         <MessageInput currentUser={currentUser} thread={thread}/>

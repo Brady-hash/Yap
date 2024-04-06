@@ -86,8 +86,8 @@ type Mutation {
     deleteThread(threadId: ID!, userId: ID!): MessageThread
     updateThread(threadId: ID!, userId: ID!, name: String!): MessageThread
     addMessage(text: String!, userId: ID!, threadId: ID!): MessageThread
-    updateMessage(userId: ID!, messageId: ID!, text: String!): Message
-    deleteMessage(messageId: ID!, userId: ID!): Message
+    updateMessage(messageId: ID!, text: String!): Message
+    deleteMessage(messageId: ID!): returnMessage
     addFriend(userId: ID!, friendId: ID!): User
     removeFriend(userId: ID!, friendId: ID!): User
     joinThread(userId: ID!, threadId: ID!): MessageThread
