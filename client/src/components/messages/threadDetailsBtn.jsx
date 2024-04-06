@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Typography, Button, Box } from "@mui/material";
 import { ThreadDetails } from "./threadDetails";
 
-export const ThreadDetailsButton = ({ thread }) => {
+export const ThreadDetailsButton = ({ thread, currentUser }) => {
     const users = thread.participants;
     const [detailsToggled, setDetailsToggled] = useState(false);
 
@@ -19,7 +19,7 @@ export const ThreadDetailsButton = ({ thread }) => {
             >
                 <Typography variant='h6'>{thread.name}</Typography>
             </Button>
-            {detailsToggled && <ThreadDetails detailsToggled={detailsToggled} thread={thread} onClose={toggleThreadDetails}/>}
+            {detailsToggled && <ThreadDetails detailsToggled={detailsToggled} thread={thread} onClose={toggleThreadDetails} currentUser={currentUser}/>}
         </>
     )
 };

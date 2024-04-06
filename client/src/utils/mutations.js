@@ -236,8 +236,8 @@ export const CREATE_QUESTION = gql`
 `;
 
 export const DELETE_QUESTION = gql`
-  mutation deleteQuestion($userId: ID!, $questionId: ID!){
-    deleteQuestion(userId: $userId, questionId: $questionId) {
+  mutation deleteQuestion($questionId: ID!){
+    deleteQuestion(questionId: $questionId) {
       message
     }
   }
@@ -257,6 +257,8 @@ export const ANSWER_QUESTION = gql`
       text
       option1
       option2
+      option1Count
+      option2Count
       answerCount
       option1Percentage
       answers {
@@ -269,4 +271,36 @@ export const ANSWER_QUESTION = gql`
       }
     }
   }
+`;
+
+export const ADMIN_USER = gql`
+mutation adminUser($threadId: ID!, $userId: ID!){
+  adminUser(threadId: $threadId, userId: $userId) {
+      _id
+      name
+      isGroupChat
+      timestamp
+      createdAt
+      admins {
+        _id
+        username
+      }
+  }
+}
+`;
+
+export const REMOVE_ADMIN = gql`
+mutation removeAdmin($threadId: ID!, $userId: ID!){
+  removeAdmin(threadId: $threadId, userId: $userId) {
+      _id
+      name
+      isGroupChat
+      timestamp
+      createdAt
+      admins {
+        _id
+        username
+      }
+  }
+}
 `;
