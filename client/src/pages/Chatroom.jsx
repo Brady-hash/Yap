@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
 import { Box } from '@mui/material/';
@@ -13,7 +13,6 @@ import { Poll } from '../components/messages/poll';
 
 import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 import io from 'socket.io-client';
-
 
 function Chatroom() {
 
@@ -81,7 +80,7 @@ function Chatroom() {
       <Box sx={{ borderBottomRightRadius: 10, borderBottomLeftRadius: 10, height: '10%', display: 'flex', alignItems: 'center', justifyContent:'space-between', px: 1, boxShadow: 20}}>
         <BackBtn />
         <ThreadDetailsBtn thread={thread} currentUser={currentUser}/>
-        <LeaveThreadBtn />
+        <LeaveThreadBtn thread={thread}/>
       </Box>
       <Box id="messageContainer" sx={{ overflow: 'auto', height: '70%'}}>
         {combinedData.map((item, index) => {

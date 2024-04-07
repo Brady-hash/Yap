@@ -409,16 +409,19 @@ const resolvers = {
                 throw new Error('Error joining thread', err)
             }
         },
-        leaveThread: async (parent, { threadId, userId }, context) => {
+        leaveThread: async (parent, { threadId }, context) => {
             try {
+                if (!context.user) {
+                 throw AuthenticationError   
+                }
+                const userId = context.user._id
                 const thread = await MessageThread.findById(threadId);
-                const user = await User.findById(userId);
-                if (!user || !thread) {
-                    throw new Error('You cannot perform this action')
+                if (!thread) {
+                    throw new Error('no thread found with this id')
                 }
                 await MessageThread.findByIdAndUpdate(threadId , { $pull: { participants: userId }})
 
-                const updatedUser = await User.findByIdAndUpdate(
+                await User.findByIdAndUpdate(
                     userId, 
                     { $pull: { messageThreads: threadId }}, 
                     { new: true })
@@ -427,7 +430,7 @@ const resolvers = {
                 // emits an event to the client to update the user in the UI with the thread removed from their messageThreads 
                 //and the user removed from the thread's participants
                 // io.emit('user-left-threat', {userId, threadId});
-                return updatedUser;
+                return {message: 'success' };
                 
             } catch(err) {
                 throw new Error(`Error leaving thread: ${err}`);
