@@ -81,7 +81,7 @@ function Chatroom() {
     <Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <Box sx={{ borderBottomRightRadius: 10, borderBottomLeftRadius: 10, height: '10%', display: 'flex', alignItems: 'center', justifyContent:'space-between', px: 1, boxShadow: 20}}>
         <BackButton />
-        <ThreadDetailsButton thread={thread} />
+        <ThreadDetailsButton thread={thread} currentUser={currentUser}/>
         <LeaveThreadButton />
       </Box>
       <Box id="messageContainer" sx={{ overflow: 'auto', height: '70%'}}>

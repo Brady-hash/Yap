@@ -1,20 +1,32 @@
 import { useState } from "react";
-import { Box, Drawer, Typography, Button, Avatar } from "@mui/material";
-import { Close } from "@mui/icons-material/";
+import { Box, Drawer, Typography, Button, Avatar, Badge } from "@mui/material";
+import { Close, Star, AdminPanelSettings, RemoveModerator } from "@mui/icons-material/";
 import { LeaveThreadButton } from "./leaveThreadBtn";
+import { RemoveAdmin } from "./removeAdmin";
+import { AddAdmin } from "./addAdmin";
 import  { UserProfile } from '../UserProfile';
 
 
-export const ThreadDetails = ({ thread, detailsToggled, onClose }) => {
+export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) => {
 
     const [showUserProfileTD, setShowUserProfileTD] = useState(null);
+
+    const [admins, setAdmins] = useState(thread.admins);
+    
+    const isAdmin = (participantId) => {
+        return thread.admins.some(admin => admin._id.toString() === participantId.toString());
+    };
+
+    const isCreator = (participantId) => {
+        return thread.creator === participantId
+    };
 
     return (
         <>
         <Drawer
             variant="temporary" 
             anchor="right" 
-            open={true}
+            open={detailsToggled}
             onClose={onClose} 
             sx={{
                 width: 240, 
@@ -23,7 +35,7 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose }) => {
                     width: '80%', 
                     boxSizing: 'border-box', 
                     border: 'solid white 2px', 
-                    bgcolor: 'black'
+                    bgcolor: '#444'
                 },
             }}
         >
@@ -42,13 +54,13 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose }) => {
                 {thread.participants.map((participant) => (
                     <Box 
                         key={participant._id} 
-                        sx={{ border: 'solid white 2px', height: '75px', display: 'flex', alignItems: 'center' }}
+                        sx={{ border: 'solid white 2px', height: '75px', display: 'flex', alignItems: 'center'}}
                     >
                         <Avatar
                             src=''
                             onClick={() => setShowUserProfileTD(participant._id)}
                             sx={{
-                                marginRight: 1 ,
+                                ml: 1 ,
                                 cursor: 'pointer'
                             }}
                         />
@@ -57,13 +69,21 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose }) => {
                         userId={participant._id}
                         onClose={() => setShowUserProfileTD(null)}
                         />
-                    )}
+                        )}
                         <Typography 
                             variant='h5' 
-                            sx={{ color: 'white'}}
+                            sx={{ color: 'white', ml: 3 }}
                         >
-                            {participant.username}
+                            {participant.username} 
                         </Typography>
+                        {/* if the current participant is an admin, but not the creator, we give them an admin tag*/}
+                        {isAdmin(participant._id) && !isCreator(participant._id) && <Typography variant='span' sx={{ position: 'absolute', right: 35, color: '#888'}}>(admin)</Typography>}
+                        {/* if the current participant is the creator, we give them a creator tag */}
+                        {isCreator(participant._id) && <Typography variant='span' sx={{ position: 'absolute', right: 35, color: '#888'}}>(creator)</Typography>}
+                        {/* if the current logged in user is the creator we give them the option of adding current admins*/}
+                        {isCreator(currentUser._id) && currentUser._id !== participant._id && !isAdmin(participant._id) && <AddAdmin threadId={thread._id} userId={participant._id}/>}
+                        {/* if the current logged in user is the creator we give them the option of removing admins */}
+                        {isCreator(currentUser._id) && currentUser._id !== participant._id && isAdmin(participant._id) && <RemoveAdmin threadId={thread._id} userId={participant._id}/>}
                     </Box>
                 ))}
             </Box>

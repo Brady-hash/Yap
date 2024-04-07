@@ -104,6 +104,7 @@ query thread($threadId: ID!){
     name
     isGroupChat
     timestamp
+    creator
     createdAt
     admins {
       _id

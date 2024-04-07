@@ -52,6 +52,7 @@ type MessageThread{
     _id: ID!
     name: String
     admins: [User]
+    creator: ID
     participants: [User]
     messages: [Message]
     questions: [Question]
@@ -88,6 +89,8 @@ type Mutation {
     addUser(username: String!, email: String!, password: String!): Auth
     updateUser(username: String, email: String, password: String): User
     deleteUser(userId: ID!): User
+    adminUser(threadId: ID!, userId: ID!): MessageThread
+    removeAdmin(threadId: ID!, userId: ID!): MessageThread
     createThread(userId: ID!, name: String!): MessageThread
     deleteThread(threadId: ID!, userId: ID!): MessageThread
     updateThread(threadId: ID!, userId: ID!, name: String!): MessageThread

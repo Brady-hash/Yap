@@ -535,6 +535,43 @@ const resolvers = {
             } catch (err) {
                 throw new Error(`Error answering question: ${err}`);
             }
+        },
+        adminUser: async (parent, { threadId, userId }, context) => {
+            try {
+                const thread = await MessageThread.findById(threadId);
+                // if(!context.user || context.user._id !== thread.creator) {
+                //     throw AuthenticationError
+                // }
+
+                const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { $addToSet: { admins: userId }}, { new: true })
+                    .populate({ path: 'admins', select: 'username'})
+                    .populate('participants')
+                    .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
+                    .populate({ path: 'questions', populate: 'creator' });
+
+                return updatedThread
+
+            } catch(err) {
+                throw new Error(`Error adding user to admin list: ${err}`);
+            }
+        },
+        removeAdmin: async (parent, { userId, threadId }, context) => {
+            try {
+                const thread = await MessageThread.findById(threadId);
+                // if(!context.user || context.user._id !== thread.creator) {
+                //     throw AuthenticationError
+                // }
+
+                const updatedThread = await MessageThread.findByIdAndUpdate(threadId, { $pull: { admins: userId }}, { new: true })
+                    .populate({ path: 'admins', select: 'username'})
+                    .populate('participants')
+                    .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
+                    .populate({ path: 'questions', populate: 'creator' });
+
+                return updatedThread
+            } catch(err) {
+                throw new Error(`Error removing admin: ${err}`);
+            }
         }
     }
 }

@@ -272,3 +272,35 @@ export const ANSWER_QUESTION = gql`
     }
   }
 `;
+
+export const ADMIN_USER = gql`
+mutation adminUser($threadId: ID!, $userId: ID!){
+  adminUser(threadId: $threadId, userId: $userId) {
+      _id
+      name
+      isGroupChat
+      timestamp
+      createdAt
+      admins {
+        _id
+        username
+      }
+  }
+}
+`;
+
+export const REMOVE_ADMIN = gql`
+mutation removeAdmin($threadId: ID!, $userId: ID!){
+  removeAdmin(threadId: $threadId, userId: $userId) {
+      _id
+      name
+      isGroupChat
+      timestamp
+      createdAt
+      admins {
+        _id
+        username
+      }
+  }
+}
+`;
