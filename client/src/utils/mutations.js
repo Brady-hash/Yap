@@ -218,14 +218,9 @@ mutation joinThread($userId: ID!, $threadId: ID!) {
 `;
 
 export const LEAVE_THREAD = gql`
-  mutation leaveThread($userId: ID!, $threadId: ID!){
-    leaveThread(userId: $userId, threadId: $threadId) {
-      _id
-      username
-      messageThreads {
-        _id
-        name
-      }
+  mutation leaveThread($threadId: ID!){
+    leaveThread(threadId: $threadId) {
+      message
     }
   }
 `;

@@ -13,8 +13,6 @@ import  { UserProfile } from '../UserProfile';
 export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) => {
 
     const [showUserProfileTD, setShowUserProfileTD] = useState(null);
-
-    const [admins, setAdmins] = useState(thread.admins);
     
     const isAdmin = (participantId) => {
         return thread.admins.some(admin => admin._id.toString() === participantId.toString());
@@ -42,7 +40,7 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) 
             }}
         >
             <Box>
-                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'fixed', bgcolor: '#555', width: '80%', zIndex: 10, boxShadow: 5}}>
                     <Button 
                         variant='outlined' 
                         sx={{maxWidth: '65px', height: '65px', m: 2}}
@@ -51,8 +49,9 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) 
                         <Close />
                     </Button>
                     <Typography variant='h5' sx={{color: 'white' }}>{thread.name}</Typography>
-                    <LeaveThreadBtn sx={{height: '65px', width: '65px', m: 2}}/>
+                    <LeaveThreadBtn sx={{height: '65px', width: '65px', m: 2}} thread={thread} currentUser={currentUser} />
                 </Box>
+                <Box sx={{pt: 13}}>
                 {thread.participants.map((participant) => (
                     <Box 
                         key={participant._id} 
@@ -88,6 +87,7 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) 
                         {isCreator(currentUser._id) && currentUser._id !== participant._id && isAdmin(participant._id) && <RemoveAdminBtn threadId={thread._id} userId={participant._id}/>}
                     </Box>
                 ))}
+                </Box>
                 {isCreator(currentUser._id) && <EditThread name={thread.name} threadId={thread._id}/>}
 
             </Box>

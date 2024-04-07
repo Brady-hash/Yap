@@ -100,7 +100,7 @@ type Mutation {
     addFriend(userId: ID!, friendId: ID!): User
     removeFriend(userId: ID!, friendId: ID!): User
     joinThread(userId: ID!, threadId: ID!): MessageThread
-    leaveThread(userId: ID!, threadId: ID!): User
+    leaveThread(threadId: ID!): returnMessage
     createQuestion(userId: ID!, messageThread: ID!, text: String!, option1: String!, option2: String!): Question
     updateQuestion(userId: ID!, questionId: ID!, text: String, option1: String, option2: String): Question
     deleteQuestion(questionId: ID!): returnMessage
