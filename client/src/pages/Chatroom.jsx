@@ -22,6 +22,7 @@ function Chatroom() {
   const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
   
   const { threadId } = useParams();
+  const navigate = useNavigate();
   const { loading, data, error, refetch } = useQuery(QUERY_ONE_THREAD, {
     variables: { threadId }
   });
@@ -43,7 +44,7 @@ function Chatroom() {
       }, 10)
     }
     return
-	}, [combinedData])
+	}, [combinedData]);
 
   const [socket, setSocket] = useState(null);
 
@@ -66,7 +67,7 @@ function Chatroom() {
 
 
   if (loading) return <p>Loading chatroom...</p>;
-  if (error) return <p>Error loading chatroom: {error.message}</p>;
+  if (error) navigate('/');
 
   const thread = data ? data.thread : null;
   const currentUser = userData ? userData.me : null;

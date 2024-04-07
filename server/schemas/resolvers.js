@@ -224,17 +224,20 @@ const resolvers = {
                 throw new Error(`Error creating new thread: ${err}`);
             }
         },
-        deleteThread: async (parent, { threadId, userId }, context) => {
+        deleteThread: async (parent, { threadId }, context) => {
             try {
+                // if (!context.user) {
+                //     throw AuthenticationError
+                // }
                 const thread = await MessageThread.findById(threadId);
 
                 if (!thread) {
                     throw new Error('Thread not found');
                 }
 
-                if (thread.admin.toString() !== userId /* context.user._id*/) {
-                    throw new Error('User not authorized to delete this thread');
-                }
+                // if (thread.creator.toString() !== context.user._id) {
+                //     throw AuthenticationError
+                // }
 
                 const questions = await Question.find({ messageThread: threadId });
                 questions.forEach(async question => {
@@ -248,23 +251,27 @@ const resolvers = {
                 const deletedThread = await MessageThread.findByIdAndDelete(threadId);
                 // emits an event to the client to remove the deleted thread from the UI
                 // io.emit('thread-deleted', threadId);
-                return deletedThread;
+                return { message: 'success' }
             } catch(err) {
                 throw new Error(`Error deleting thread: ${err}`);
             }
         },
-        updateThread: async (parent, { threadId, userId, name }, context) => {
+        updateThread: async (parent, { threadId, name }, context) => {
             try {
                 const thread = await MessageThread.findById(threadId);
-                if (thread.admin.toString() !== userId /* context.user._id*/) {
-                    throw new Error(`You do not have permission to edit thread settings`)
+                if (thread.creator.toString() !== context.user._id) {
+                    throw AuthenticationError
                 }
 
                 const updatedThread = await MessageThread.findByIdAndUpdate(
                     threadId, 
                     { name: name }, 
                     { new: true })
-                    .populate('messages');
+                    .populate({ path: 'messages', populate: { path: 'sender', select: 'username' }})
+                    .populate({ path: 'admins', select: 'username'})
+                    .populate('participants')
+                    .populate('questions')
+                    .populate({ path: 'questions', populate: 'creator' });
                 // emits an event to the client to update the thread in the UI with the new name
                 // io.emit('thread-updated', updatedThread);
                 return updatedThread;

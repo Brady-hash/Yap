@@ -66,23 +66,59 @@ export const CREATE_THREAD = gql`
 `;
 
 export const DELETE_THREAD = gql`
-  mutation deleteThread($threadId: ID!, $userId: ID!){
-    deleteThread(threadId: $threadId, userId: $userId) {
-      _id
-      name
+  mutation deleteThread($threadId: ID!){
+    deleteThread(threadId: $threadId) {
+      message
     }
   }
 `
 export const UPDATE_THREAD = gql`
-  mutation updateThread($threadId: ID!, $userId: ID!, $name: String!) {
-    updateThread(threadId: $threadId, userId: $userId, name: $name) {
+  mutation updateThread($threadId: ID!, $name: String!) {
+    updateThread(threadId: $threadId, name: $name) {
       _id
-      name
-      isGroupChat
-      participants {
+    name
+    isGroupChat
+    timestamp
+    creator
+    createdAt
+    admins {
+      _id
+      username
+    }
+    participants {
+      _id
+      username
+    }
+    questions {
+      _id
+      text
+      option1
+      option2
+      option1Count
+      option2Count
+      option1Percentage
+      answerCount
+      createdAt
+      timestamp
+      answers {
+        _id
+        userId {
+          _id
+        }
+        answerChoice
+      }
+    }
+    messages {
+      _id
+      text
+      messageThread
+      createdAt
+      timestamp
+      sender {
         _id
         username
       }
+    }
     }
   }
 `;
