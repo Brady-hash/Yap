@@ -1,4 +1,3 @@
-import React from 'react';
 import { useQuery } from '@apollo/client';
 import { Box, Typography, Button } from '@mui/material';
 import { Close } from "@mui/icons-material/";

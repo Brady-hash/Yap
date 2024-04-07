@@ -1,92 +1,94 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
+import { Box, Typography, Button, TextField } from '@mui/material';
 import { QUERY_ME } from '../utils/queries';
 import { UPDATE_USER } from '../utils/mutations';
 
-import  AuthService from '../utils/auth'
-import { useAuthContext } from '../context/AuthContext';
+import { BackBtn } from '../components/btns/BackBtn';
 
 function Profile() {
-  const { authUser } = useAuthContext();
-  const navigate = useNavigate();
+    const [userData, setUserData] = useState({ username: '', email: '', friendCount: '' });
+    const [isEditing, setEditing] = useState(false);
+    const { loading, error, data } = useQuery(QUERY_ME);
+    const [updateUserProfile] = useMutation(UPDATE_USER);
 
-  if (!authUser) {
-    AuthService.redirectToLogin();
-    return null;
-  }
-  
-  const [userData, setUserData] = useState({ username: '', email: '', friendCount: '' });
-  const [isEditing, setEditing] = useState(false);
+    useEffect(() => {
+        if (data) {
+            setUserData({
+                username: data.me.username || '', 
+                email: data.me.email || '', 
+                friendCount: data.me.friendCount || 0
+            });
+        }
+    }, [data]);
 
-  // GraphQL query to get the user's profile
-  const { loading, error, data } = useQuery(QUERY_ME);
-  
-  // Mutation to update user profile
-  const [updateUserProfile] = useMutation(UPDATE_USER);
+    if (loading) return <Typography>Loading...</Typography>;
+    if (error) return <Typography>Error loading profile!</Typography>;
 
-  useEffect(() => {
-    if (data) {
-      setUserData({ 
-        username: data.me.username || '', 
-        email: data.me.email || '', 
-        friendCount: data.me.friendCount || 0 });
-    }
-  }, [data]);
+    const handleEditToggle = () => {
+        setEditing(!isEditing);
+    };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error loading profile!</p>;
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setUserData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
 
-  const handleEditToggle = () => {
-    setEditing(!isEditing);
-  };
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            await updateUserProfile({ variables: { username: userData.username, email: userData.email } });
+            setEditing(false);
+            console.log('Successfully updated user info');
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setUserData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      await updateUserProfile({ variables: { username: userData.username, email: userData.email } });
-      setEditing(false);
-        console.log('Successfully updated user info');
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  return (
-    <div className="profile-page">
-      <h1>My Profile</h1>
-      <div className="profile-info">
-        {isEditing ? (
-          <form onSubmit={handleSubmit}>
-            <label>
-              Username:
-              <input type="text" name="username" value={userData.username} onChange={handleInputChange} />
-            </label>
-            <label>
-              Email:
-              <input type="email" name="email" value={userData.email} onChange={handleInputChange} />
-            </label>
-            <button type="submit">Save Changes</button>
-            <button onClick={handleEditToggle}>Cancel</button>
-          </form>
-        ) : (
-          <>
-            <p>Username: {userData.username}</p>
-            <p>Email: {userData.email}</p>
-            <p>Friends: {userData.friendCount}</p>
-            <button onClick={handleEditToggle}>Edit Profile</button>
-          </>
-        )}
-      </div>
-    </div>
-  );
+    return (
+        <Box sx={{ maxWidth: 600, margin: 'auto', padding: 3 }}>
+            < BackBtn />
+            <Typography variant="h4" sx={{ mb: 2 }}>My Profile</Typography>
+            <Box className="profile-info">
+                {isEditing ? (
+                    <form onSubmit={handleSubmit}>
+                        <TextField 
+                            label="Username"
+                            type="text" 
+                            name="username" 
+                            value={userData.username} 
+                            onChange={handleInputChange} 
+                            fullWidth 
+                            margin="normal"
+                        />
+                        <TextField 
+                            label="Email"
+                            type="email" 
+                            name="email" 
+                            value={userData.email} 
+                            onChange={handleInputChange} 
+                            fullWidth 
+                            margin="normal"
+                        />
+                        <Box sx={{ mt: 2 }}>
+                            <Button type="submit" variant="contained" color="primary">Save Changes</Button>
+                            <Button onClick={handleEditToggle} sx={{ ml: 1 }}>Cancel</Button>
+                        </Box>
+                    </form>
+                ) : (
+                    <>
+                        <Typography>Username: {userData.username}</Typography>
+                        <Typography>Email: {userData.email}</Typography>
+                        <Typography>Friends: {userData.friendCount}</Typography>
+                        <Button onClick={handleEditToggle} sx={{ mt: 1 }}>Edit Profile</Button>
+                    </>
+                )}
+            </Box>
+        </Box>
+    );
 }
 
 export default Profile;

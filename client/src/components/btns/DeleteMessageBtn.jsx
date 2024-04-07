@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import { DELETE_MESSAGE } from "../../utils/mutations";
 import { useMutation } from "@apollo/client";
 
-export const DeleteMessageButton = ({ currentUser, messageId, refetch }) => {
+export const DeleteMessageBtn = ({ currentUser, messageId, refetch }) => {
     const [deleteMessage, { error }] = useMutation(DELETE_MESSAGE, {
         variables: { messageId },
         onCompleted: () => {

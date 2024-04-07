@@ -511,9 +511,9 @@ const resolvers = {
 
                 const hasAnswered = question.answers.some(ans => ans.userId._id.toString() === userId);
 
-                if (hasAnswered) {
-                    throw new Error(`You have already submitted an answer to this poll!`);
-                }
+                // if (hasAnswered) {
+                //     throw new Error(`You have already submitted an answer to this poll!`);
+                // }
 
                 let update = { $addToSet: { answers: newAnswer._id } };
                 if (answer === 'option1') {
