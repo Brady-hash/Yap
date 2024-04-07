@@ -2,10 +2,8 @@ import {useEffect} from 'react';
 import { useQuery } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { QUERY_ME } from '../utils/queries';
-import { Box, Typography, Button } from '@mui/material';
-import { Person2Outlined } from "@mui/icons-material";
-
-import LogoutBtn from '../components/btns/LogoutBtn';
+import { Box, Typography } from '@mui/material';
+import { SideBarBtn } from '../components/btns/SideBarBtn';
 
 import io from 'socket.io-client';
 
@@ -47,17 +45,9 @@ function MessageHub() {
     navigate(`/chatroom/${threadId}`);
   };
 
-  const navigateToMyProfile = () => {
-    navigate('/myprofile');
-    };
-
   return (
     <Box>
-      <LogoutBtn />
-      <Button 
-        sx={{ color: "white" }}
-        onClick={navigateToMyProfile}
-      ><Person2Outlined /></Button>
+      <SideBarBtn />
       {threads.map(thread => (
         <Box 
           key={thread._id} 
