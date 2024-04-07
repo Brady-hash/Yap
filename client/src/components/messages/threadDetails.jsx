@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Box, Drawer, Typography, Button, Avatar, Badge } from "@mui/material";
 import { Close, Star, AdminPanelSettings, RemoveModerator } from "@mui/icons-material/";
+
+import { EditThread } from "./editThread";
+
 import { LeaveThreadBtn } from "../btns/LeaveThreadBtn";
 import { RemoveAdminBtn } from "../btns/RemoveAdminBtn";
 import { AddAdminBtn } from "../btns/AddAdminBtn";
-import  { UserProfile } from '../UserProfile';
 
+import  { UserProfile } from '../UserProfile';
 
 export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) => {
 
@@ -33,13 +36,12 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) 
                 flexShrink: 0, 
                 '& .MuiDrawer-paper': {
                     width: '80%', 
-                    boxSizing: 'border-box', 
-                    border: 'solid white 2px', 
+                    boxSizing: 'border-box',  
                     bgcolor: '#444'
                 },
             }}
         >
-            <Box sx={{ border: 'solid white 2px'}}>
+            <Box>
                 <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                     <Button 
                         variant='outlined' 
@@ -54,7 +56,7 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) 
                 {thread.participants.map((participant) => (
                     <Box 
                         key={participant._id} 
-                        sx={{ border: 'solid white 2px', height: '75px', display: 'flex', alignItems: 'center'}}
+                        sx={{ borderBottom: 'solid #666 2px', height: '75px', display: 'flex', alignItems: 'center'}}
                     >
                         <Avatar
                             src=''
@@ -86,6 +88,8 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) 
                         {isCreator(currentUser._id) && currentUser._id !== participant._id && isAdmin(participant._id) && <RemoveAdminBtn threadId={thread._id} userId={participant._id}/>}
                     </Box>
                 ))}
+                {isCreator(currentUser._id) && <EditThread name={thread.name} threadId={thread._id}/>}
+
             </Box>
         </Drawer>
         </>
