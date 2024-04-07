@@ -3,7 +3,7 @@ import { Button } from "@mui/material";
 import { useMutation } from "@apollo/client";
 import { ADMIN_USER } from "../../utils/mutations";
 
-export const AddAdmin = ({ userId, threadId }) => {
+export const AddAdminBtn = ({ userId, threadId }) => {
 
     const [adminUser, { error }] = useMutation(ADMIN_USER);
 

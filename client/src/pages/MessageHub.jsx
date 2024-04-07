@@ -1,8 +1,11 @@
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import { useQuery } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { QUERY_ME } from '../utils/queries';
-import LogoutButton from '../components/LogoutButton';
+import { Box, Typography, Button } from '@mui/material';
+import { Person2Outlined } from "@mui/icons-material";
+
+import LogoutBtn from '../components/btns/LogoutBtn';
 
 import io from 'socket.io-client';
 
@@ -40,20 +43,37 @@ function MessageHub() {
   const threads = data.me.messageThreads;
   const friends = data.me.friends;
 
-  const handleThreadClick = (threadId) => {
+  const navigateToThread = (threadId) => {
     navigate(`/chatroom/${threadId}`);
   };
 
+  const navigateToMyProfile = () => {
+    navigate('/myprofile');
+    };
+
   return (
-    <div>
-      <LogoutButton />
+    <Box>
+      <LogoutBtn />
+      <Button 
+        sx={{ color: "white" }}
+        onClick={navigateToMyProfile}
+      ><Person2Outlined /></Button>
       {threads.map(thread => (
-        <div className="border-2 border-white text-red" key={thread._id} onClick={() => handleThreadClick(thread._id)}>
-          
-          <h1>{thread.name}</h1>
-        </div>
+        <Box 
+          key={thread._id} 
+          onClick={() => navigateToThread(thread._id)}
+          sx={{
+            border: 2,
+            borderColor: 'white',
+            color: 'white',
+            cursor: 'pointer',
+            marginBottom: 1
+          }}
+        >
+          <Typography variant="h5">{thread.name}</Typography>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 }
 

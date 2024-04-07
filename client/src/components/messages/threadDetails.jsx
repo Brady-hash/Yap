@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Box, Drawer, Typography, Button, Avatar, Badge } from "@mui/material";
 import { Close, Star, AdminPanelSettings, RemoveModerator } from "@mui/icons-material/";
-import { LeaveThreadButton } from "./leaveThreadBtn";
-import { RemoveAdmin } from "./removeAdmin";
-import { AddAdmin } from "./addAdmin";
+import { LeaveThreadBtn } from "../btns/LeaveThreadBtn";
+import { RemoveAdminBtn } from "../btns/RemoveAdminBtn";
+import { AddAdminBtn } from "../btns/AddAdminBtn";
 import  { UserProfile } from '../UserProfile';
 
 
@@ -49,7 +49,7 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) 
                         <Close />
                     </Button>
                     <Typography variant='h5' sx={{color: 'white' }}>{thread.name}</Typography>
-                    <LeaveThreadButton sx={{height: '65px', width: '65px', m: 2}}/>
+                    <LeaveThreadBtn sx={{height: '65px', width: '65px', m: 2}}/>
                 </Box>
                 {thread.participants.map((participant) => (
                     <Box 
@@ -81,9 +81,9 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) 
                         {/* if the current participant is the creator, we give them a creator tag */}
                         {isCreator(participant._id) && <Typography variant='span' sx={{ position: 'absolute', right: 35, color: '#888'}}>(creator)</Typography>}
                         {/* if the current logged in user is the creator we give them the option of adding current admins*/}
-                        {isCreator(currentUser._id) && currentUser._id !== participant._id && !isAdmin(participant._id) && <AddAdmin threadId={thread._id} userId={participant._id}/>}
+                        {isCreator(currentUser._id) && currentUser._id !== participant._id && !isAdmin(participant._id) && <AddAdminBtn threadId={thread._id} userId={participant._id}/>}
                         {/* if the current logged in user is the creator we give them the option of removing admins */}
-                        {isCreator(currentUser._id) && currentUser._id !== participant._id && isAdmin(participant._id) && <RemoveAdmin threadId={thread._id} userId={participant._id}/>}
+                        {isCreator(currentUser._id) && currentUser._id !== participant._id && isAdmin(participant._id) && <RemoveAdminBtn threadId={thread._id} userId={participant._id}/>}
                     </Box>
                 ))}
             </Box>

@@ -3,7 +3,7 @@ import { PersonAddAlt } from "@mui/icons-material";
 import { useMutation } from "@apollo/client";
 import { ADD_FRIEND } from "../../utils/mutations";
 
-export const AddFriendButton = ({ currentUser, friendId, isFriend, setIsFriend }) => {
+export const AddFriendBtn = ({ currentUser, friendId, isFriend, setIsFriend }) => {
 
     const [addFriend, { error }] = useMutation(ADD_FRIEND);
 

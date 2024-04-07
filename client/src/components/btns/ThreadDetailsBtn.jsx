@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Typography, Button, Box } from "@mui/material";
-import { ThreadDetails } from "./threadDetails";
+import { ThreadDetails } from "../messages/threadDetails";
 
-export const ThreadDetailsButton = ({ thread, currentUser }) => {
+export const ThreadDetailsBtn = ({ thread, currentUser }) => {
     const users = thread.participants;
     const [detailsToggled, setDetailsToggled] = useState(false);
 
