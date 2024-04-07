@@ -436,22 +436,29 @@ const resolvers = {
                 throw new Error(`Error leaving thread: ${err}`);
             }
         },
-        createQuestion: async (parent, { userId, messageThread, text, option1, option2 }, context) => {
+        createQuestion: async (parent, { messageThread, text, option1, option2 }, context) => {
             try {
+                if (!context.user) {
+                    throw AuthenticationError
+                }
                 const thread = await MessageThread.findById(messageThread);
                 if (!thread) {
                     throw new Error('No thread with this id')
                 }
-                const newQuestion = await Question.create({ creator: userId, messageThread, text, option1, option2 });
+                const newQuestion = await Question.create({ creator: context.user._id, messageThread, text, option1, option2 });
 
-                await MessageThread.findByIdAndUpdate(
+                const updatedThread = await MessageThread.findByIdAndUpdate(
                     messageThread, 
                     { $push: { questions: newQuestion._id }}, 
-                    { new: true });
+                    { new: true })
+                    .populate({ path: 'admins', select: 'username'})
+                    .populate('participants')
+                    .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
+                    .populate({ path: 'questions', populate: 'creator' });
 
                 // emits an event to the client to update the thread in the UI with the new question
                 // io.emit('question-added', newQuestion);
-                return await Question.findById(newQuestion._id).populate('messageThread').populate('creator');
+                return updatedThread
             } catch(err) {
                 throw new Error(`Error creating question: ${err}`)
             }
@@ -514,9 +521,9 @@ const resolvers = {
 
                 const hasAnswered = question.answers.some(ans => ans.userId._id.toString() === userId);
 
-                // if (hasAnswered) {
-                //     throw new Error(`You have already submitted an answer to this poll!`);
-                // }
+                if (hasAnswered) {
+                    throw new Error(`You have already submitted an answer to this poll!`);
+                }
 
                 let update = { $addToSet: { answers: newAnswer._id } };
                 if (answer === 'option1') {

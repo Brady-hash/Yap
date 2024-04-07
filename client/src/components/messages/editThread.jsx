@@ -1,5 +1,6 @@
 import { Button, Box, TextField } from '@mui/material';
 import { Edit, FmdBad } from '@mui/icons-material';
+import { Confirm } from '../forms/Confirm';
 import { useMutation } from '@apollo/client';
 import { UPDATE_THREAD, DELETE_THREAD } from '../../utils/mutations';
 import { useState, useEffect } from 'react';
@@ -12,8 +13,7 @@ export const EditThread = ({ threadId, name }) => {
     const [deleteThread, { error: deleteThreadError }] = useMutation(DELETE_THREAD);
     const [newNameValue, setNewNameValue] = useState(name)
     const [isEditing, setIsEditing] = useState(false);
-
-    console.log(isEditing)
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     const handleUpdateThread = async () => {
         try {
@@ -36,7 +36,6 @@ export const EditThread = ({ threadId, name }) => {
                     threadId
                 }
             });
-            console.log(data.deleteThread)
             if (data.deleteThread.message === 'success') navigate('/')
         } catch(err) {
             throw new Error(`Error deleting thread: ${err}`);
@@ -82,7 +81,7 @@ export const EditThread = ({ threadId, name }) => {
                 <Button 
                     variant='contained' 
                     sx={{ bgcolor: 'red', '&:hover': { bgcolor: 'darkred'}}}
-                    onClick={handleDeleteThread}
+                    onClick={() => setConfirmOpen(true)}
                 >
                     delete thread</Button>
 
@@ -95,6 +94,7 @@ export const EditThread = ({ threadId, name }) => {
             <Button variant='contained' onClick={() => setIsEditing(!isEditing)}>Edit Thread<Edit /></Button>
         </Box>
         )}
+        <Confirm confirmOpen={confirmOpen} setConfirmOpen={setConfirmOpen} action={'delete this thread'} actionFunction={handleDeleteThread}/>
         </>
     )
 };
