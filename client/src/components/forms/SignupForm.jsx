@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import GenderCheckbox from "./GenderCheckbox";
-import { ADD_USER } from '../utils/mutations';
+import GenderCheckbox from "../GenderCheckbox";
+import { ADD_USER } from '../../utils/mutations';
 import { useMutation } from '@apollo/client';
 
 const SignupForm = () => {

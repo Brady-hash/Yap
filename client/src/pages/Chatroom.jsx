@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
 import { Box } from '@mui/material/';
 
-import { LeaveThreadButton } from '../components/messages/leaveThreadBtn';
-import { ThreadDetailsButton } from '../components/messages/threadDetailsBtn';
-import { BackButton } from '../components/messages/backBtn';
+import { LeaveThreadBtn } from '../components/btns/LeaveThreadBtn';
+import { ThreadDetailsBtn } from '../components/btns/ThreadDetailsBtn';
+import { BackBtn } from '../components/btns/BackBtn';
 import { Message } from '../components/messages/Message';
 import MessageInput from '../components/messages/MessageInput';
 import { Poll } from '../components/messages/poll';
 
 import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 import io from 'socket.io-client';
-
-import { useAuthContext } from '../context/AuthContext';
 
 
 function Chatroom() {
@@ -80,9 +78,9 @@ function Chatroom() {
   return (
     <Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <Box sx={{ borderBottomRightRadius: 10, borderBottomLeftRadius: 10, height: '10%', display: 'flex', alignItems: 'center', justifyContent:'space-between', px: 1, boxShadow: 20}}>
-        <BackButton />
-        <ThreadDetailsButton thread={thread} currentUser={currentUser}/>
-        <LeaveThreadButton />
+        <BackBtn />
+        <ThreadDetailsBtn thread={thread} currentUser={currentUser}/>
+        <LeaveThreadBtn />
       </Box>
       <Box id="messageContainer" sx={{ overflow: 'auto', height: '70%'}}>
         {combinedData.map((item, index) => {
