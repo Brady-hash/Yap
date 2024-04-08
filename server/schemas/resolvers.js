@@ -228,21 +228,42 @@ const resolvers = {
                 throw new Error(`Error deleting user: ${err}`);
             }
         },
-        createThread: async (parent, { userId, name }, context) => {
+        createThread: async (parent, { userId, name, participantUsernames}, context) => {
             try {
                 // const user = context.user
-
                 const user = await User.findById(userId);
                 if (!user) {
                     throw new Error('Please login or create an account to create a new thread')
                 }
-                const newThread = await MessageThread.create({ admin: /* context.user._id */ userId, name: name, participants: userId });
 
-                await User.findByIdAndUpdate(
-                    // context.user._id
-                    userId, 
-                    { $addToSet: { messageThreads: newThread._id }}, 
-                    { new: true });
+                const participants = await User.find({
+                    username: { $in: participantUsernames }
+                });
+                if (participants.length !== participantUsernames.length) {
+                    throw new Error('Some usernames do not exist');
+                }
+
+                const participantIds = participants.map(user => user._id);
+
+                if (!participantIds.includes(userId)) {
+                    participantIds.push(userId);
+                }
+
+                const newThread = await MessageThread.create({ 
+                    name: name,
+                    admin: userId, 
+                    creator: userId,
+                    participants: participantIds 
+                });
+
+                for (const participantId of participantIds) {
+                    await User.findByIdAndUpdate(
+                        participantId,
+                        { $addToSet: { messageThreads: newThread._id }},
+                        { new: true }
+                    );
+                }
+
 
                 // emits an event to the client to add the new thread to the UI
                 // io.emit('thread-created', newThread);
@@ -257,9 +278,12 @@ const resolvers = {
                     console.log('Thread added to algolia')
                 }).catch(err => console.log('Failed to add thread to algolia index', err))
 
+
                 return await MessageThread.findById(newThread._id)
-                    .populate({ path: 'admins', select: 'username'})
-                    .populate('participants', 'username');
+                    .populate('creator')
+                    .populate('admins')
+                    .populate('participants');
+
             } catch(err) {
                 throw new Error(`Error creating new thread: ${err}`);
             }
