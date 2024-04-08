@@ -203,7 +203,7 @@ mutation joinThread($userId: ID!, $threadId: ID!) {
     joinThread(userId: $userId, threadId: $threadId) {
       _id
       name
-      admin {
+      admins {
         _id
         username
       }

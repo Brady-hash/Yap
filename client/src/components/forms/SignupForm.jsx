@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import GenderCheckbox from "../GenderCheckbox";
-import { ADD_USER } from '../../utils/mutations';
+import { ADD_USER, LOGIN } from '../../utils/mutations';
 import { useMutation } from '@apollo/client';
 
 const SignupForm = () => {
 	const [inputs, setInputs] = useState({
-		fullName: "",
+		email: "",
 		username: "",
 		password: "",
 		confirmPassword: "",
@@ -14,6 +14,7 @@ const SignupForm = () => {
 	});
 
 	const [addUser, { loading, error }] = useMutation(ADD_USER);
+    const [loginUser, { error: loginError}] = useMutation(LOGIN);
 
 	const handleCheckboxChange = (gender) => {
 		setInputs({ ...inputs, gender });
@@ -35,6 +36,7 @@ const SignupForm = () => {
 				variables: { ...inputs }
 			});
 			console.log('Signup Success', data);
+            localStorage.setItem('token', data.addUser.token);
 		} catch (err) {
 			console.error('Signup error', err)
 		}
@@ -46,12 +48,12 @@ const SignupForm = () => {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>
-                        <span>Full Name</span>
+                        <span>Email</span>
                         <input
                             type="text"
-                            name="fullName"
-                            placeholder="Full Name"
-                            value={inputs.fullName}
+                            name="email"
+                            placeholder="Email"
+                            value={inputs.email}
                             onChange={handleInputChange}
                         />
                     </label>

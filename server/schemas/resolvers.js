@@ -3,6 +3,7 @@ const { belongsToThread } = require('../utils/helpers');
 const { signToken, AuthenticationError } = require('../utils/auth');
 const bcrypt = require('bcrypt');
 const { GraphQLError } = require('graphql');
+const { usersIndex, threadsIndex } = require('../utils/algoliaSearch/algoliaClient')
 const { server, io } = require('../server');
 // added login, 
 // updated addUser,
@@ -120,19 +121,19 @@ const resolvers = {
     Mutation: {
         login: async (parent, { email, password }) => {
             try {
-                const user = await User.findOne({ email });
+                const user = await User.findOne({ email }).populate('friends').populate('messageThreads');
                 if (!user) {
                     throw new GraphQLError('User not found.');
                 }
     
                 const correctPw = await user.isCorrectPw(password);
-    
+
                 if (!correctPw) {
                     throw new GraphQLError('Incorrect password.');
                 }
     
                 const token = signToken(user);
-                return { token, user: { _id: user._id, username: user.username, email: user.email } };
+                return { token, user: { _id: user._id, username: user.username, email: user.email, friends: user.friends, messageThreads: user.messageThreads } };
     
             } catch(err) {
                 throw new Error(`Error logging in: ${err}`);
@@ -146,6 +147,15 @@ const resolvers = {
                 const token = signToken(newUser);
                 // emits an event to the client to add the new user to the UI
                 // io.emit('user-added', newUser);
+                const algoliaUserData = {
+                    objectID: newUser._id.toString(),
+                    username: newUser.username
+                };
+                // for adding users to search index
+                await usersIndex.saveObject(algoliaUserData).then(() => {
+                    console.log('User added to algolia')
+                }).catch(err => console.log('Failed to add user to algolia index', err))
+
                 return { token, user: newUser };
             } catch(err) {
                 throw new Error(`Error adding a new user: ${err}`);
@@ -171,6 +181,16 @@ const resolvers = {
 
                 // emits an event to the client to update the user in the UI
                 // io.emit('user-updated', user);
+
+                //updating users in algolia
+                usersIndex.partialUpdateObject({
+                    objectID: user._id, 
+                    username: user.username,
+                }).then(() => {
+                    console.log('User updated in Algolia');
+                }).catch(err => {
+                    console.error('Failed to update user in Algolia index', err);
+                });
                 return user;
             } catch(err) {
                 throw new Error(`Error updating user: ${err}`);
@@ -178,6 +198,9 @@ const resolvers = {
         },
         deleteUser: async (parent, { userId }, context) => {
             try {
+                if (!context.user._id) {
+                    throw AuthenticationError
+                }
                 // const user = await User.findById(context.user._id)
 
                 const user = await User.findById(userId);
@@ -193,6 +216,12 @@ const resolvers = {
                 await User.updateMany({ $pull: { friends: userId }});
                 // emits an event to the client to remove the deleted user from the UI
                 // io.emit('user-deleted', userId);
+
+                // removing users from algolia search
+                await usersIndex.deleteObject(user._id.toString()).then(() => {
+                    console.log('User deleted from Algolia');
+                }).catch(err => console.error('Failed to delete user from Algolia index', err))
+
                 const deletedUser = await User.findByIdAndDelete(userId);
                 return deletedUser;
             } catch(err) {
@@ -235,10 +264,26 @@ const resolvers = {
                     );
                 }
 
+
+                // emits an event to the client to add the new thread to the UI
+                // io.emit('thread-created', newThread);
+
+                // adding thread to algolia search
+                const algoliaThreadData = {
+                    objectID: newThread._id.toString(),
+                    name: newThread.name
+                };
+
+                await threadsIndex.saveObject(algoliaThreadData).then(() => {
+                    console.log('Thread added to algolia')
+                }).catch(err => console.log('Failed to add thread to algolia index', err))
+
+
                 return await MessageThread.findById(newThread._id)
                     .populate('creator')
                     .populate('admins')
                     .populate('participants');
+
             } catch(err) {
                 throw new Error(`Error creating new thread: ${err}`);
             }
@@ -267,6 +312,11 @@ const resolvers = {
                 await Message.deleteMany({ messageThread: threadId });
                 await User.updateMany({ $pull: { messageThreads: threadId }});
 
+                // removing thread from algolia search
+                await threadsIndex.deleteObject(thread._id.toString()).then(() => {
+                    console.log('Thread deleted from Algolia');
+                }).catch(err => console.error('Failed to delete thread from Algolia index', err))
+
                 const deletedThread = await MessageThread.findByIdAndDelete(threadId);
                 // emits an event to the client to remove the deleted thread from the UI
                 // io.emit('thread-deleted', threadId);
@@ -278,9 +328,9 @@ const resolvers = {
         updateThread: async (parent, { threadId, name }, context) => {
             try {
                 const thread = await MessageThread.findById(threadId);
-                if (thread.creator.toString() !== context.user._id) {
-                    throw AuthenticationError
-                }
+                // if (thread.creator.toString() !== context.user._id) {
+                //     throw AuthenticationError
+                // }
 
                 const updatedThread = await MessageThread.findByIdAndUpdate(
                     threadId, 
@@ -293,6 +343,16 @@ const resolvers = {
                     .populate({ path: 'questions', populate: 'creator' });
                 // emits an event to the client to update the thread in the UI with the new name
                 // io.emit('thread-updated', updatedThread);
+
+                // updating thread in algolia search
+                threadsIndex.partialUpdateObject({
+                    objectID: threadId, 
+                    name: updatedThread.name,
+                }).then(() => {
+                    console.log('Thread updated in Algolia');
+                }).catch(err => {
+                    console.error('Failed to update thread in Algolia index', err);
+                });
                 return updatedThread;
             } catch(err) {
                 throw new Error(`Error updating thread: ${err}`);
@@ -418,7 +478,7 @@ const resolvers = {
                     threadId, 
                     { $addToSet: { participants: userId } }, 
                     { new: true }).populate('messages')
-                    .populate('admin')
+                    .populate('admins')
                     .populate('participants')
                     .populate({ path: 'messages', populate: { path: 'sender', select: 'username'}});
 
