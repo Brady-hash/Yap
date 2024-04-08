@@ -1,5 +1,5 @@
 import { Box, Typography, Button } from '@mui/material';
-import { DeleteForever } from '@mui/icons-material';
+import { DeletePollBtn } from '../btns/DeletePollBtn';
 import { useMutation } from '@apollo/client';
 import { useState, useEffect } from 'react';
 import { ANSWER_QUESTION, DELETE_QUESTION } from '../../utils/mutations';
@@ -7,8 +7,6 @@ import { ANSWER_QUESTION, DELETE_QUESTION } from '../../utils/mutations';
 export const Poll = ({ poll, refetch, isAdmin }) => {
 
     const [pollData, setPollData] = useState(poll)
-
-        console.log('pollData', pollData)
 
     const [answerQuestion, { error: answerQuestionError }] = useMutation(ANSWER_QUESTION, {
         onCompleted: (data) => {
@@ -25,7 +23,6 @@ export const Poll = ({ poll, refetch, isAdmin }) => {
         const data = await answerQuestion({
             variables: variables
         });
-        console.log('data',data)
     };
 
     const handleDeletePoll = () => {
@@ -39,24 +36,7 @@ export const Poll = ({ poll, refetch, isAdmin }) => {
     }
 
     const totalVotes = pollData.answerCount;
-    // console.log('totalvotes',totalVotes)
     const option1Percentage = totalVotes > 0 ? (pollData.option1Count / totalVotes) * 100 : 0;
-    const option2Percentage = totalVotes > 0 ? (pollData.option2Count / totalVotes) * 100 : 0;
-    // console.log('option1Percentage',option1Percentage)
-    // console.log('option2Percentage',option2Percentage)
-
-    let backgroundStyle = '';
-    if (totalVotes > 0) {
-        if (option1Percentage === 100) {
-            backgroundStyle = 'red'; // All votes are for option 1
-        } else if (option2Percentage === 100) {
-            backgroundStyle = 'blue'; // All votes are for option 2
-        } else {
-            // Determine the gradient direction based on which option has more votes
-            const gradientDirection = pollData.option2Count > pollData.option1Count ? 'to left' : 'to right';
-            backgroundStyle = `linear-gradient(${gradientDirection}, red ${option1Percentage}%, blue ${option2Percentage}%)`;
-        }
-    }
 
     return (
         <>
@@ -80,12 +60,10 @@ export const Poll = ({ poll, refetch, isAdmin }) => {
 
                     }}
                 >
-                    <Box sx={{ borderTopLeftRadius: 6, borderBottomLeftRadius: 6, bgcolor: 'red', width: `${option1Percentage}%`, height: '100%' }}></Box>
+                    <Box sx={{ ...(option1Percentage === 100 && { borderRadius: 1.5 }), borderTopLeftRadius: 6, borderBottomLeftRadius: 6, bgcolor: 'red', width: `${option1Percentage}%`, height: '100%' }}></Box>
                 </Box>
             </Box>
-            {isAdmin ?  
-                <Button sx={{position: 'absolute', zIndex: 10, top: 3, right: 3}} onClick={handleDeletePoll}><DeleteForever sx={{fontSize: 30}}/></Button>
-            : ''}
+            {isAdmin && <DeletePollBtn handleDeletePoll={handleDeletePoll}/>}
             </Box>
         </Box>
         </>

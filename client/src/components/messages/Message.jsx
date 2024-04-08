@@ -19,7 +19,10 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [updateMessage, { error }] = useMutation(UPDATE_MESSAGE);
 	const [isFriend, setIsFriend] = useState(currentUser.friends.some(friend => friend._id === message.sender._id));
-	const [showUserProfile, setShowUserProfile] = useState(false);
+	const [showUserProfileId, setShowUserProfileId] = useState(null);
+
+	const isCurrentUserMessage = message.sender._id === currentUser._id;
+	let timestamp = message.timestamp.split('at')[0];
 
 	const startEditing = () => {
 		setOriginalMessage(currentMessage);
@@ -48,12 +51,7 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 			console.log('error saving updated thread',err);
 		}
 	}
-
-	const isCurrentUserMessage = message.sender._id === currentUser._id;
-	let timestamp = message.timestamp.split('at')[0];
 	
-	// const isFriend = currentUser.friends.some(friend => friend._id === message.sender._id);
-
 	return (
 
 		<Box>
@@ -67,7 +65,6 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 			display: 'flex',
 			flexDirection: 'column',
 			boxShadow: 10,
-			justifyContent: '',
 			alignItems: isCurrentUserMessage ? 'end' : 'start',
 			px: 1,
 			marginBottom: 2,
@@ -78,7 +75,7 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 			<Box sx={{ width: '100%', height: '75px', display: 'flex', alignItems: 'start', position: 'relative'}}>
 				<Avatar 
 					src=''
-					onClick={() => setShowUserProfile(true)}
+					onClick={() => setShowUserProfileId(message.sender._id)}
 					sx={{
 						left: isCurrentUserMessage ? '' : 10,
 						right: isCurrentUserMessage ? 10 : '',
@@ -87,11 +84,11 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 						cursor: 'pointer'
 					}}
 				/>
-				{showUserProfile && (
+				{showUserProfileId && (
                         <UserProfile 
                             userId={message.sender._id} 
-                            onClose={() => setShowUserProfile(false)}
-                        />
+							onClose={() => setShowUserProfileId(null)}
+							/>
                     )}
 
 				<Typography 
@@ -109,7 +106,7 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 				</Typography>
 			</Box>
 			<Box sx={{ display: 'flex', gap: 0}}>
-				<Typography variant='h4' sx={{color: 'white', textAlign: 'left', my: 1}}>{message.sender.username}</Typography>
+				<Typography variant='h6' sx={{color: '#777', textAlign: 'left', my: 1}}>{message.sender.username}</Typography>
 				{!isCurrentUserMessage && !isFriend && <AddFriendBtn currentUser={currentUser} friendId={message.sender._id} isFriend={isFriend} setIsFriend={setIsFriend}/>}
 				{!isCurrentUserMessage && isFriend && <PeopleOutline sx={{fontSize: 30, color: 'gray', mx: 1}}/>}
 			</Box>
