@@ -1,14 +1,18 @@
 // CreateThreadForm.jsx
 import { useState, useContext } from 'react';
 import { useMutation } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 import { CREATE_THREAD } from '../../utils/mutations';
 import { Button, DialogTitle, DialogContent, TextField } from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
+import { useUserContext } from '../../context/UserContext';
 
 const CreateThreadForm = ({ onClose }) => {
     const [threadName, setThreadName] = useState('');
     const [participantUsernames, setParticipantUsernames] = useState('');
     const { authUser } = useContext(AuthContext);
+    const { addThread } = useUserContext(); 
+    const navigate = useNavigate();
 
     const [createThread] = useMutation(CREATE_THREAD);
 
@@ -16,14 +20,18 @@ const CreateThreadForm = ({ onClose }) => {
         const usernames = participantUsernames.split(',').map(name => name.trim());
         console.log(authUser);
             try {
-            await createThread({
+            const { data } = await createThread({
                 variables: {
                     userId: authUser.data._id,
                     name: threadName,
                     participantUsernames: usernames,
                 }
             });
-            onClose();
+            if (data) {
+                addThread(data.createThread)
+                onClose();
+                navigate(`/chatroom/${data.createThread._id}`)
+            }
         } catch (error) {
             console.error('Error creating thread:', error);
         }
