@@ -91,7 +91,7 @@ type Mutation {
     deleteUser(userId: ID!): User
     adminUser(threadId: ID!, userId: ID!): MessageThread
     removeAdmin(threadId: ID!, userId: ID!): MessageThread
-    createThread(userId: ID!, name: String!): MessageThread
+    createThread(userId: ID!, name: String!, participantUsernames: [String!]): MessageThread
     deleteThread(threadId: ID!): returnMessage
     updateThread(threadId: ID!, name: String!): MessageThread
     addMessage(text: String!, userId: ID!, threadId: ID!): MessageThread
