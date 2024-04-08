@@ -4,6 +4,9 @@ import { ADD_MESSAGE } from "../../utils/mutations";
 import { Box, Button, TextField } from "@mui/material";
 import { Send } from '@mui/icons-material/';
 import { CreatePoll } from "./createPoll";
+import {io} from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
 
 const MessageInput = ({ currentUser, thread }) => {
 
@@ -50,6 +53,12 @@ const MessageInput = ({ currentUser, thread }) => {
 			console.log(err)
 		}
 	}
+useEffect(() => {
+	socket.on('message-added', (message) => {
+		setCurrentMessages(currentMessages => [...currentMessages, message]);
+	});
+	return () => socket.disconnect();
+}, [socket]);
 
 	const handleKeyDown = (event) => {
 		if (event.key === 'Enter' && !event.shiftKey) {

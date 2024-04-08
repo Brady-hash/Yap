@@ -22,37 +22,18 @@ const server = new ApolloServer({
   resolvers,
 });
 
-const startApolloServer = async () => {
-  await server.start();
-  
-  app.use(express.urlencoded({ extended: true }));
-  app.use(express.json());
-  
-  app.use('/graphql', expressMiddleware(
-    server, 
-    { context: authMiddleware }
-  ));
-
-  // if we're in production, serve client/dist as static assets
-  if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/dist')));
-
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-    });
-  } 
   // io is the socket server that will be used for the chat feature
   // we pass the httpServer as the first argument to the SocketServer constructor
   // the second argument is an object with options for the socket.io server
-const io = new SocketServer(httpServer, {
-  // socket.io options
-  // allows cross-origin requests
-  cors: {
-    origin: '*',
-  },
-  // ping timeout :60 seconds
-  pingTimeout: 60000,
-});
+  const io = new SocketServer(httpServer, {
+    // socket.io options
+    // allows cross-origin requests
+    cors: {
+      origin: '*',
+    },
+    // ping timeout :60 seconds
+    pingTimeout: 60000,
+  });
 
 // socket.io server listens for 'connection' events
   io.on('connection', (socket) => {
@@ -224,6 +205,24 @@ const io = new SocketServer(httpServer, {
     });
   });
 
+server.start().then(() => {
+  
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
+  
+  app.use('/graphql', expressMiddleware(
+    server, 
+    { context: authMiddleware }
+  ));
+
+  // if we're in production, serve client/dist as static assets
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/dist')));
+
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+    });
+  } 
   // can consider moving httpServer.listen outside of db.once 'open' if we want to start the server before the database connection is established
   db.once('open', () => {
     httpServer.listen(PORT, () => {
@@ -231,6 +230,6 @@ const io = new SocketServer(httpServer, {
       console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
     });
   });
-};
+});
 
-startApolloServer();
+module.exports = { server, io };

@@ -18,31 +18,21 @@ import { useAuthContext } from '../context/AuthContext';
 
 
 function Chatroom() {
-
+const socket = io('http://localhost:3001');
   const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
   
   const { threadId } = useParams();
   const { loading, data, error, refetch } = useQuery(QUERY_ONE_THREAD, {
     variables: { threadId }
   });
+useEffect(() => {
+    socket.on('message-added', (message) => {
+      refetch();
+    });
+    return () => socket.disconnect();
+  }, [socket, refetch]);
 
-  const [socket, setSocket] = useState(null);
 
-    // useEffect(() => {
-    // // create a new socket connection
-    // const newSocket = io();
-    // setSocket(newSocket);
-    // return () => {
-    //     newSocket.close();
-    // };
-    // }, []);
-
-  
-//   useEffect(() => {
-//     if(!socket) return;
-//     socket.on('thread-updated', thread => {
-//         console.log('thread updated');
-//         });
 
 
 

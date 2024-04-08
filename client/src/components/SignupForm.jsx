@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import GenderCheckbox from "./GenderCheckbox";
 import { ADD_USER } from '../utils/mutations';
 import { useMutation } from '@apollo/client';
+import { useEffect } from "react";
+import { io } from "socket.io-client";
 
 const SignupForm = () => {
 	const [inputs, setInputs] = useState({
@@ -14,6 +16,14 @@ const SignupForm = () => {
 	});
 
 	const [addUser, { loading, error }] = useMutation(ADD_USER);
+    const socket = io('http://localhost:3000');
+
+    useEffect(() => {
+        socket.on('user-added', (user) => {
+            io.emit('user-added', user);
+        });
+        return () => socket.disconnect();
+    }, [socket]);
 
 	const handleCheckboxChange = (gender) => {
 		setInputs({ ...inputs, gender });
