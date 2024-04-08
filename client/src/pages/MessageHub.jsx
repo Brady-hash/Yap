@@ -12,7 +12,6 @@ const socket = io('http://localhost:3000');
 function MessageHub() {
   const navigate = useNavigate();
   const { userId, friends, threads } = useUserContext();
-  console.log(threads)
 
   useEffect(() => {
 
@@ -52,7 +51,7 @@ function MessageHub() {
             </Box>
         </Box>
         <Box sx={{ overflowY: 'auto' }}>
-            {threads.map(thread => (
+            {threads && threads.map(thread => (
                 <Box 
                     key={thread._id} 
                     onClick={() => navigateToThread(thread._id)}

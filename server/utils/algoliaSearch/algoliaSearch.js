@@ -1,6 +1,6 @@
-const { usersIndex, threadsIndex } = require('./algoliaClient');
-require('dotenv').config();
 const { MongoClient } = require('mongodb');
+
+const { usersIndex , threadsIndex } = require('./algoliaClient');
 
 const syncData = async () => {
   const mongoClient = new MongoClient('mongodb://127.0.0.1:27017/yap');
@@ -11,7 +11,6 @@ const syncData = async () => {
     
     const db = mongoClient.db();
     const users = await db.collection('users').find().toArray();
-    console.log(users)
     const threads = await db.collection('messagethreads').find().toArray();
 
     const algoliaUsers = users.map(doc => ({

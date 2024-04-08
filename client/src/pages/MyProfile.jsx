@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { Box, Typography, Button, TextField } from '@mui/material';
 import { QUERY_ME } from '../utils/queries';
 import { UPDATE_USER } from '../utils/mutations';
+import { useUserContext } from '../context/UserContext';
 
 import { BackBtn } from '../components/btns/BackBtn';
 
@@ -11,13 +12,14 @@ function Profile() {
     const [isEditing, setEditing] = useState(false);
     const { loading, error, data } = useQuery(QUERY_ME);
     const [updateUserProfile] = useMutation(UPDATE_USER);
+    const { friendCount } = useUserContext();
 
     useEffect(() => {
         if (data) {
             setUserData({
                 username: data.me.username || '', 
                 email: data.me.email || '', 
-                friendCount: data.me.friendCount || 0
+                friendCount: friendCount || 0
             });
         }
     }, [data]);

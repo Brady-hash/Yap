@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 const MyProfileBtn = () => {
     const navigate = useNavigate();
 
-
     const navigateToMyProfile = () => {
         navigate('/myprofile');
     };

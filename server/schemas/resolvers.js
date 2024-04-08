@@ -3,7 +3,14 @@ const { belongsToThread } = require('../utils/helpers');
 const { signToken, AuthenticationError } = require('../utils/auth');
 const bcrypt = require('bcrypt');
 const { GraphQLError } = require('graphql');
-const { usersIndex, threadsIndex } = require('../utils/algoliaSearch/algoliaClient')
+
+require('dotenv').config({ path: '../.env'})
+const algoliasearch = require('algoliasearch');
+const client = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_API_KEY);
+
+const threadsIndex = client.initIndex('threadsIndex');
+const usersIndex = client.initIndex('usersIndex');
+
 const { server, io } = require('../server');
 // added login, 
 // updated addUser,
@@ -143,7 +150,7 @@ const resolvers = {
       
         addUser: async (parent, { username, email, password }) => {
             try {
-                const newUser = (await User.create({ username, email, password }));
+                const newUser = await User.create({ username, email, password });
                 const token = signToken(newUser);
                 // emits an event to the client to add the new user to the UI
                 // io.emit('user-added', newUser);
@@ -498,7 +505,7 @@ const resolvers = {
                 if (!thread) {
                     throw new Error('no thread found with this id')
                 }
-                await MessageThread.findByIdAndUpdate(threadId , { $pull: { participants: userId }})
+                await MessageThread.findByIdAndUpdate(threadId , { $pull: { participants: userId, admins: userId }})
 
                 await User.findByIdAndUpdate(
                     userId, 
