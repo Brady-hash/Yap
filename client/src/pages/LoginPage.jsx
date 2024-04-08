@@ -16,7 +16,7 @@ const LoginPage = () => {
             alignItems: 'center',
         }}
         >
-             <Box sx={{ width: 400, my: 1 }}>
+             <Box sx={{ width: 325, my: 1 }}>
                 <img
                     src="/Yap-Logo.png"
                     alt="Logo"
