@@ -2,20 +2,24 @@ import { Button } from "@mui/material";
 import { PersonAddAlt } from "@mui/icons-material";
 import { useMutation } from "@apollo/client";
 import { ADD_FRIEND } from "../../utils/mutations";
+import { useUserContext } from "../../context/UserContext";
 
-export const AddFriendBtn = ({ currentUser, friendId, isFriend, setIsFriend }) => {
+export const AddFriendBtn = ({ friendId }) => {
 
-    const [addFriend, { error }] = useMutation(ADD_FRIEND);
+    const { addFriend, userId } = useUserContext();
+    // console.log(friends)
+
+    const [addFriendtoDatabase, { error }] = useMutation(ADD_FRIEND);
 
     const handleAddFriend = async () => {
         try {
-            await addFriend({
+            await addFriendtoDatabase({
                 variables: {
-                    userId: currentUser._id,
+                    userId,
                     friendId: friendId,
                 }
             });
-            setIsFriend(true)
+            addFriend(friendId)
         } catch(err) {
             console.log('error adding friend', err);
         }

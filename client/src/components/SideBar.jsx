@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { Box, Drawer, Button } from "@mui/material";
 import { Close } from "@mui/icons-material/";
 import LogoutBtn from '../components/btns/LogoutBtn';
 import MyProfileBtn from '../components/btns/MyProfileBtn';
+import { SearchBtn } from "./btns/SearchBtn";
+import { SearchForm } from "./forms/SearchForm";
 
-export const SideBar = ({ sideBarToggled, onClose}) => {
-
+export const SideBar = ({ sideBarToggled, onClose }) => {
+    const [searchOpen, setSearchOpen] = useState(false)
     return (
         <Drawer
             variant="temporary"
@@ -38,6 +41,8 @@ export const SideBar = ({ sideBarToggled, onClose}) => {
                 </Box>
                     < LogoutBtn />
                     < MyProfileBtn />
+                    < SearchBtn setSearchOpen={setSearchOpen} searchOpen={searchOpen} />
+                    {searchOpen && <SearchForm searchOpen={searchOpen} setSearchOpen={setSearchOpen}/>}
 
             </Box>
 

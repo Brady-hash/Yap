@@ -3,9 +3,10 @@
 /* eslint-disable react/prop-types */
 import { Typography, Button, Avatar, Box, TextField } from "@mui/material";
 import { PeopleOutline } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { UPDATE_MESSAGE } from "../../utils/mutations";
+import { useUserContext } from "../../context/UserContext";
 import { DeleteMessageBtn } from "../btns/DeleteMessageBtn";
 import { AddFriendBtn } from "../btns/AddFriendBtn";
 import { EditMessageBtn } from "../btns/EditMessageBtn";
@@ -13,16 +14,23 @@ import { EditMessageBox } from "./editMessageBox";
 import  { UserProfile } from '../UserProfile';
 
 export const Message = ({ message, currentUser, isAdmin, refetch }) => {
+
+	const { friends, addFriend, removeFriend, threads, userId } = useUserContext();
 	
 	const [currentMessage, setCurrentMessage] = useState(message.text);
 	const [originalMessage, setOriginalMessage] = useState(currentMessage);
 	const [isEditing, setIsEditing] = useState(false);
 	const [updateMessage, { error }] = useMutation(UPDATE_MESSAGE);
-	const [isFriend, setIsFriend] = useState(currentUser.friends.some(friend => friend._id === message.sender._id));
+	const [isFriend, setIsFriend] = useState(friends.some(friend => friend._id === message.sender._id));
 	const [showUserProfileId, setShowUserProfileId] = useState(null);
 
 	const isCurrentUserMessage = message.sender._id === currentUser._id;
 	let timestamp = message.timestamp.split('at')[0];
+
+	useEffect(() => {
+		setIsFriend(friends.some(friend => friend._id === message.sender._id));
+	}, [friends, message.sender._id]);
+	
 
 	const startEditing = () => {
 		setOriginalMessage(currentMessage);
@@ -107,7 +115,7 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 			</Box>
 			<Box sx={{ display: 'flex', gap: 0}}>
 				<Typography variant='h6' sx={{color: '#777', textAlign: 'left', my: 1}}>{message.sender.username}</Typography>
-				{!isCurrentUserMessage && !isFriend && <AddFriendBtn currentUser={currentUser} friendId={message.sender._id} isFriend={isFriend} setIsFriend={setIsFriend}/>}
+				{!isCurrentUserMessage && !isFriend && <AddFriendBtn currentUser={currentUser} friendId={message.sender._id}/>}
 				{!isCurrentUserMessage && isFriend && <PeopleOutline sx={{fontSize: 30, color: 'gray', mx: 1}}/>}
 			</Box>
 			{isEditing ?  

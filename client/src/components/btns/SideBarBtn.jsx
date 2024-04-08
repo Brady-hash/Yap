@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SideBar } from '../SideBar';
 import { Dehaze } from  '@mui/icons-material';
+import { SearchForm } from "../forms/SearchForm";
 
 export const SideBarBtn = () => {
     const [sideBarToggled, setSideBarToggled ] = useState(false)

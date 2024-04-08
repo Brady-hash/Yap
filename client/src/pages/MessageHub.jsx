@@ -1,7 +1,6 @@
 import {useEffect} from 'react';
-import { useQuery } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
-import { QUERY_ME } from '../utils/queries';
+import { useUserContext } from '../context/UserContext';
 import { Box, Typography } from '@mui/material';
 import { SideBarBtn } from '../components/btns/SideBarBtn';
 
@@ -11,8 +10,8 @@ const socket = io('http://localhost:3000');
 
 function MessageHub() {
   const navigate = useNavigate();
-
-  const { loading, data, error } = useQuery(QUERY_ME);
+  const { userId, friends, threads } = useUserContext();
+  console.log(threads)
 
   useEffect(() => {
 
@@ -34,12 +33,6 @@ function MessageHub() {
     // refetch the user data
     refetch();
   };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-
-  const threads = data.me.messageThreads;
-  const friends = data.me.friends;
 
   const navigateToThread = (threadId) => {
     navigate(`/chatroom/${threadId}`);
@@ -63,6 +56,7 @@ function MessageHub() {
           <Typography variant="h5">{thread.name}</Typography>
         </Box>
       ))}
+        {/* <SearchForm /> */}
     </Box>
   );
 }
