@@ -49,9 +49,17 @@ function Profile() {
     };
 
     return (
-        <Box sx={{ maxWidth: 600, margin: 'auto', padding: 3 }}>
-            < BackBtn />
-            <Typography variant="h4" sx={{ mb: 2 }}>My Profile</Typography>
+        <Box
+        component="main" 
+        maxWidth="xs"
+        sx={{ 
+            height: "100vh",
+            margin: 'auto',
+            padding: 2 
+            }}>
+            < BackBtn
+            />
+            <Typography variant="h4" sx={{ fontSize: 35, color:"white"}} >My Profile</Typography>
             <Box className="profile-info">
                 {isEditing ? (
                     <form onSubmit={handleSubmit}>
@@ -79,12 +87,23 @@ function Profile() {
                         </Box>
                     </form>
                 ) : (
-                    <>
-                        <Typography>Username: {userData.username}</Typography>
-                        <Typography>Email: {userData.email}</Typography>
-                        <Typography>Friends: {userData.friendCount}</Typography>
-                        <Button onClick={handleEditToggle} sx={{ mt: 1 }}>Edit Profile</Button>
-                    </>
+                    <Box sx={{ 
+                        color: "white", 
+                        width: '100%', 
+                        maxWidth: 360, 
+                        margin: 'auto', 
+                        marginTop: '5vh', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'flex-start'
+                    }}>
+                        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <Typography sx={{ mb: 2, textAlign: 'left' }}>Username: {userData.username}</Typography>
+                            <Typography sx={{ mb: 2, textAlign: 'left' }}>Email: {userData.email}</Typography>
+                            <Typography sx={{ mb: 2, textAlign: 'left' }}>Friends: {userData.friendCount}</Typography>
+                            <Button onClick={handleEditToggle} variant="contained" sx={{ mt: 1 }}>Edit Profile</Button>
+                        </Box>
+                    </Box>
                 )}
             </Box>
         </Box>

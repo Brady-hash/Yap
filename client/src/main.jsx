@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
+import darkTheme from './theme/theme.js'
 
 import { AuthContextProvider } from "./context/AuthContext.jsx";
 import AuthWrapper from './components/AuthWrapper.jsx'
@@ -34,10 +36,11 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AuthContextProvider>
-        {/*this is a custom css reset for MUI */}
+    {/* <ThemeProvider theme={darkTheme}> */}
+      <AuthContextProvider>
         <CssBaseline />
         <RouterProvider router={router} />
-    </AuthContextProvider>
+      </AuthContextProvider>
+    {/* </ThemeProvider> */}
   </React.StrictMode>
 );

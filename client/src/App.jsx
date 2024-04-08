@@ -9,7 +9,6 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { UserProvider } from './context/UserContext.jsx';
 import { Outlet } from 'react-router-dom';
-import { Toaster } from "react-hot-toast";
 
 const httpLink = createHttpLink({
 	uri: '/graphql',

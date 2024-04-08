@@ -1,5 +1,4 @@
 import { ArrowBack } from "@mui/icons-material";
-import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export const BackBtn = () => {
@@ -9,8 +8,7 @@ export const BackBtn = () => {
         navigate('/');
     }; 
     return (
-        <Button variant='contained' sx={{minWidth: '50px', height: '50px'}} onClick={handleClick}>
-            <ArrowBack sx={{ fontSize: 35 }} />
-        </Button>
+
+            <ArrowBack sx={{ fontSize: 35, color:"white"}}  onClick={handleClick}/>
     );
 };
