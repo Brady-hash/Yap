@@ -4,10 +4,22 @@ import { Confirm } from '../forms/Confirm';
 import { DELETE_QUESTION } from '../../utils/mutations';
 import { Button } from '@mui/material';
 import { DeleteForever } from '@mui/icons-material';
+import { useChatroomContext } from '../../context/ChatroomContext';
 
-export const DeletePollBtn = ({ handleDeletePoll }) => {
+export const DeletePollBtn = ({ poll }) => {
 
+    const { removeFromCombinedData, combinedData } = useChatroomContext();
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [deleteQuestion, { error }] = useMutation(DELETE_QUESTION, {
+        variables: { questionId: poll._id },
+        onCompleted: () => {
+            removeFromCombinedData(poll._id)
+        }
+    });
+
+    const handleDeletePoll = async () => {
+        await deleteQuestion(poll._id)
+    }
 
     return (
         <>

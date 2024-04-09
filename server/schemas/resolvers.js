@@ -12,6 +12,7 @@ const threadsIndex = client.initIndex('threadsIndex');
 const usersIndex = client.initIndex('usersIndex');
 
 const { server, io } = require('../server');
+const { populate } = require('../models/User');
 // added login, 
 // updated addUser,
 
@@ -258,7 +259,7 @@ const resolvers = {
 
                 const newThread = await MessageThread.create({ 
                     name: name,
-                    admin: userId, 
+                    admins: [userId], 
                     creator: userId,
                     participants: participantIds 
                 });
@@ -533,7 +534,7 @@ const resolvers = {
                 }
                 const newQuestion = await Question.create({ creator: context.user._id, messageThread, text, option1, option2 });
 
-                const updatedThread = await MessageThread.findByIdAndUpdate(
+                    await MessageThread.findByIdAndUpdate(
                     messageThread, 
                     { $push: { questions: newQuestion._id }}, 
                     { new: true })
@@ -542,9 +543,10 @@ const resolvers = {
                     .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
                     .populate({ path: 'questions', populate: 'creator' });
 
+
                 // emits an event to the client to update the thread in the UI with the new question
                 // io.emit('question-added', newQuestion);
-                return updatedThread
+                return newQuestion.populate('creator')
             } catch(err) {
                 throw new Error(`Error creating question: ${err}`)
             }
@@ -587,10 +589,10 @@ const resolvers = {
                     { $pull: { questions: questionId } }, 
                     { new: true });
 
-                await Question.findByIdAndDelete(questionId);
+                const deletedQuestion = await Question.findByIdAndDelete(questionId);
                 // emits an event to the client to delete the question from the UI
                 // io.emit('question-deleted', questionId);
-                return { message: 'successful deletion'};
+                return deletedQuestion;
             } catch (err) {
                 throw new Error(`Error deleting question: ${err}`);
             }

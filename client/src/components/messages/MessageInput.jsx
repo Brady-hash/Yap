@@ -4,18 +4,21 @@ import { ADD_MESSAGE } from "../../utils/mutations";
 import { Box, Button, TextField } from "@mui/material";
 import { Send } from '@mui/icons-material/';
 import { CreatePoll } from "./createPoll";
+import { useChatroomContext } from "../../context/ChatroomContext";
 
-const MessageInput = ({ currentUser, thread, updateCombinedData, combinedData }) => {
+const MessageInput = ({ thread }) => {
 
-	// console.log(currentUser)
-	// console.log(thread.admins)
+	const { userId, addToCombinedData, currentUserIsAdmin } = useChatroomContext();
 
-	const isAdmin = thread.admins.some(admin => admin._id.toString() === currentUser._id.toString());
-	
 	const [message, setMessage] = useState('');
-	const [addMessage, { error }] = useMutation(ADD_MESSAGE);
-	const [currentMessages, setCurrentMessages] = useState(thread.messages);
 	const [modalOpen, setModalOpen] = useState(false);
+	const [addMessage, { error }] = useMutation(ADD_MESSAGE, {
+		variables: {
+			text: message,
+			userId,
+			threadId: thread._id,
+		},
+	});
 
 	const handleInputChange = (event) => {
 		setMessage(event.target.value);
@@ -26,21 +29,11 @@ const MessageInput = ({ currentUser, thread, updateCombinedData, combinedData })
 			if (!message.trim()) {
 				return
 			} 
-			const { data } = await addMessage({
-				variables: {
-					text: message,
-					userId: currentUser._id,
-					threadId: thread._id,
-				}
-			});
-			if (data && data.addMessage) {
-				const newMessage = data.addMessage.messages[data.addMessage.messages.length - 1];
-				setCurrentMessages(currentMessages => [...currentMessages, newMessage]);
-				setMessage('');
-				updateCombinedData(newMessage)
+			const { data } = await addMessage();
+			if (data) {
+				addToCombinedData(data.addMessage)
 			}
-			console.log(data)
-
+			setMessage('')
 		} catch(err) {
 			`Error sending message: ${err}`;
 			console.log(err)
@@ -76,7 +69,7 @@ const MessageInput = ({ currentUser, thread, updateCombinedData, combinedData })
                 gap: 1,
             }}
         >
-			{modalOpen ? <CreatePoll updateCombinedData={updateCombinedData} thread={thread} currentUser={currentUser} modalOpen={modalOpen} onClose={() => setModalOpen(false)}/> : 
+			{modalOpen ? <CreatePoll thread={thread} userId={userId} modalOpen={modalOpen} onClose={() => setModalOpen(false)}/> : 
 			
 			<TextField
                 fullWidth
@@ -103,7 +96,7 @@ const MessageInput = ({ currentUser, thread, updateCombinedData, combinedData })
 				<Button variant="contained" color="primary" onClick={handleSubmit}>
                 	<Send />
             	</Button>
-				{isAdmin ? 
+				{currentUserIsAdmin ? 
 					<Button variant="contained" color="primary" onClick={() => setModalOpen(!modalOpen)}>
 						Poll
 					</Button>

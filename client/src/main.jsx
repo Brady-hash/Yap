@@ -10,6 +10,7 @@ import AuthWrapper from './components/AuthWrapper.jsx'
 
 import App from './App.jsx';
 import ChatRoom from './pages/Chatroom';
+import ChatroomWrapper from './context/ChatroomWrapper.jsx';
 import MessageHub from './pages/MessageHub';
 import MyProfile from './pages/MyProfile';
 import NotFound from './pages/NotFound';
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <AuthWrapper><MessageHub /></AuthWrapper> },
       { path: '/myprofile', element: <AuthWrapper><MyProfile /></AuthWrapper> },
-      { path: '/chatroom/:threadId', element: <AuthWrapper><ChatRoom /></AuthWrapper> },
+      { path: '/chatroom/:threadId', element: <AuthWrapper><ChatroomWrapper /></AuthWrapper> },
       { path: '/login', element: <LoginPage /> },
       { path: '/signup', element: <SignupPage /> }
     ],

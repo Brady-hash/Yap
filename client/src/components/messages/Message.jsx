@@ -11,11 +11,13 @@ import { DeleteMessageBtn } from "../btns/DeleteMessageBtn";
 import { AddFriendBtn } from "../btns/AddFriendBtn";
 import { EditMessageBtn } from "../btns/EditMessageBtn";
 import { EditMessageBox } from "./editMessageBox";
-import  { UserProfile } from '../UserProfile';
+import { UserProfile } from '../UserProfile';
+import { useChatroomContext } from "../../context/ChatroomContext";
 
 export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 
 	const { friends, addFriend, removeFriend, threads, userId } = useUserContext();
+	const { combinedData, updateCombinedData, threadData, currentUserIsAdmin } = useChatroomContext();
 	
 	const [currentMessage, setCurrentMessage] = useState(message.text);
 	const [originalMessage, setOriginalMessage] = useState(currentMessage);
@@ -24,7 +26,7 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 	const [isFriend, setIsFriend] = useState(friends.some(friend => friend._id === message.sender._id));
 	const [showUserProfileId, setShowUserProfileId] = useState(null);
 
-	const isCurrentUserMessage = message.sender._id === currentUser._id;
+	const isCurrentUserMessage = message.sender._id === userId;
 	let timestamp = message.timestamp.split('at')[0];
 
 	useEffect(() => {
@@ -109,7 +111,7 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 						color: 'white'
 					}}
 				> {timestamp}
-				{ isAdmin || isCurrentUserMessage  ? <DeleteMessageBtn messageId={message._id} currentUser={currentUser} refetch={refetch}/> : ''}
+				{ currentUserIsAdmin || isCurrentUserMessage  ? <DeleteMessageBtn messageId={message._id} currentUser={currentUser} refetch={refetch}/> : ''}
 				{isCurrentUserMessage && <EditMessageBtn onClick={startEditing}/>}
 				</Typography>
 			</Box>

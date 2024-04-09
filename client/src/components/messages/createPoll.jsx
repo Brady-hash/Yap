@@ -2,8 +2,10 @@ import { useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
 import { CREATE_QUESTION } from "../../utils/mutations";
 import { FormGroup, TextField, Button, Box } from "@mui/material";
+import { useChatroomContext } from "../../context/ChatroomContext";
 
-export const CreatePoll = ({ currentUser, thread, modalOpen, onClose, updateCombinedData }) => {
+export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
+    const { addToCombinedData, combinedData } = useChatroomContext();
         const styles = {
             borderRadius: 2,
             '& .MuiInputBase-input': {
@@ -24,7 +26,20 @@ export const CreatePoll = ({ currentUser, thread, modalOpen, onClose, updateComb
         }
 
         const [formState, setFormState] = useState({question: '', option1: '', option2: ''});
-        const [createQuestion, { data, loading, error }] = useMutation(CREATE_QUESTION);
+        const [createQuestion, { data, loading, error }] = useMutation(CREATE_QUESTION, {
+            variables: {
+                text: formState.question,
+                option1: formState.option1,
+                option2: formState.option2,
+                userId,
+                messageThread: thread._id
+            }, 
+            onCompleted: (data) => {
+                addToCombinedData(data.createQuestion);
+                setFormState({ question: '', option1: '', option2: '' });
+                onClose();
+            },
+        });
 
         const handleFormChange = (event) => {
             const { name, value } = event.target;
@@ -37,20 +52,7 @@ export const CreatePoll = ({ currentUser, thread, modalOpen, onClose, updateComb
         const handleSubmit = async (event) => {
             // event.preventDefault();
             try {
-                const { data } = await createQuestion({
-                    variables: {
-                        text: formState.question,
-                        option1: formState.option1,
-                        option2: formState.option2,
-                        userId: currentUser._id,
-                        messageThread: thread._id
-                    } 
-                });
-                if (data && data.createQuestion) {
-                    const newQuestion = data.createQuestion;
-                    updateCombinedData(newQuestion)
-                }
-                console.log('data', data)
+                await createQuestion();
 
             } catch(err) {
                 console.log(err);
