@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const { Question } = require('../models/Question');
+const  Question  = require('../models/Question');
 
 const questionList = [
   {
@@ -8,7 +8,7 @@ const questionList = [
     option2: 'Red',
     option1Count: 0,
     option2Count: 0,
-    mainPoll: true,
+    isMainPoll: true,
   },
   {
     text: 'Which programming language do you prefer?',
@@ -16,17 +16,41 @@ const questionList = [
     option2: 'Python',
     option1Count: 0,
     option2Count: 0,
-    mainPoll: true,
+    isMainPoll: true,
+  },
+  {
+    text: 'Which programming language do you hate?',
+    option1: 'JavaScript',
+    option2: 'Python',
+    option1Count: 0,
+    option2Count: 0,
+    isMainPoll: true,
+  },
+  {
+    text: 'Which programming language do you not like?',
+    option1: 'JavaScript',
+    option2: 'Python',
+    option1Count: 0,
+    option2Count: 0,
+    isMainPoll: true,
+  },
+  {
+    text: 'Which programming language do you prefer?',
+    option1: 'Script',
+    option2: 'Pytsssshon',
+    option1Count: 0,
+    option2Count: 0,
+    isMainPoll: true,
   },
 ];
 
 let currentQuestionIndex = 0;
 
 const scheduleMainPollSwitch = () => {
-  cron.schedule('0 0 * * *', async () => {
+  cron.schedule('* * * * *', async () => {
     try {
       // Find and delete the existing main poll
-      await Question.findOneAndDelete({ mainPoll: true });
+      await Question.findOneAndDelete({ isMainPoll: true });
 
       // Get the current question from the list
       const currentQuestion = questionList[currentQuestionIndex];
