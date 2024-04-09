@@ -61,7 +61,7 @@ const SignupForm = () => {
     };
 
     return (
-        <Box maxWidth="xs" sx={{ mt: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box maxWidth="xs" sx={{ mt: 1,  maxWidth: 360, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
                 <TextField
                     margin="normal"
