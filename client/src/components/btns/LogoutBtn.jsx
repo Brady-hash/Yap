@@ -16,6 +16,6 @@ const LogoutBtn = () => {
     return (
         <Button sx={{ p: 0 }} onClick={handleLogout}><Logout sx={{ fontSize: 30, color: "white" }}/></Button>
     );
-};
+}; 
 
 export default LogoutBtn;
