@@ -1,21 +1,17 @@
-import { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useUserContext } from '../context/UserContext';
 import { useMutation } from '@apollo/client';
 import { ANSWER_QUESTION } from '../utils/mutations';
 
 const MainPoll = () => {
-    const { mainPoll, refreshUserData } = useUserContext();
-    const [hasAnswered, setHasAnswered] = useState(false);
+    const { mainPoll, userId, refreshUserData, hasAnswered, selectedOption } = useUserContext();
+
     const [answerMainPoll] = useMutation(ANSWER_QUESTION, {
         onCompleted: () => {
             refreshUserData();
-            setHasAnswered(true); 
         },
         onError: (error) => {
-            if (error.message.includes('already submitted')) {
-                setHasAnswered(true);
-            }
+            console.error('Error answering main poll:', error);
         }
     });
 
@@ -30,9 +26,7 @@ const MainPoll = () => {
                 variables: { questionId: mainPoll._id, answer: answerOption }
             });
         } catch (error) {
-            if (!error.message.includes('already submitted')) {
-                console.error('Error answering main poll:', error);
-            }
+            console.error('Error answering main poll:', error);
         }
     };
 
@@ -43,23 +37,37 @@ const MainPoll = () => {
     const option2Percentage = 100 - option1Percentage;
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mb: 5, mt: 5 }}>
-            <Box sx={{ border: 'solid #444 2px', borderRadius: 3, boxShadow: 10, bgcolor: 'black', display: 'flex', flex: '1', minWidth: '70vw', maxWidth: '90vw', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', p: 5, mx: 1, position: 'relative' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mb: 5, mt: 1 }}>
+            <Typography variant='h3' sx={{ color: 'white', p: 2, textAlign: 'center' }}>The Daily Yap</Typography>
+            <Box sx={{ borderRadius: 3, boxShadow: 10, bgcolor: 'rgba(0, 0, 0, 0.5)', display: 'flex', flex: '1', minWidth: '70vw', maxWidth: '90vw', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', p: 5, mx: 1, position: 'relative' }}>
                 <Typography variant='h5' sx={{ color: 'white', p: 2, textAlign: 'center' }}>{mainPoll.text}</Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
-                    <Button variant='contained' sx={{ bgcolor: 'red', '&:hover': { bgcolor: 'darkred' }}} onClick={() => handleAnswerQuestion('option1')}>
+                    <Button
+                        variant='contained'
+                        sx={{ bgcolor: 'red', ':hover': { bgcolor: 'darkred' }}}
+                        onClick={() => handleAnswerQuestion('option1')}
+                        disabled={hasAnswered && selectedOption !== 'option1'}
+                    >
                         {mainPoll.option1}
                     </Button>
-                    <Button variant='contained' sx={{ bgcolor: 'blue', '&:hover': { bgcolor: 'darkblue' }}} onClick={() => handleAnswerQuestion('option2')}>
+                    <Button
+                        variant='contained'
+                        sx={{ bgcolor: 'blue', ':hover': { bgcolor: 'darkblue' }}}
+                        onClick={() => handleAnswerQuestion('option2')}
+                        disabled={hasAnswered && selectedOption !== 'option2'}
+                    >
                         {mainPoll.option2}
                     </Button>
                 </Box>
                 <Box sx={{ width: '100%', mt: 2 }}>
                     <Typography textAlign="center" color="white">Votes: {totalVotes}</Typography>
-                    <Box sx={{ display: 'flex', height: '30px', borderRadius: 2, bgcolor: '#444' }}>
+                    <Box sx={{ display: 'flex', height: '30px', borderRadius: 2, bgcolor: '#444', width: '100%' }}>
                         <Box sx={{ bgcolor: 'red', width: `${option1Percentage}%` }} />
                         <Box sx={{ bgcolor: 'blue', width: `${option2Percentage}%` }} />
                     </Box>
+                    <Typography textAlign="center" color="white" sx={{ mt: 1 }}>
+                        Red: {option1Percentage.toFixed(1)}%   vs   Blue: {option2Percentage.toFixed(1)}%
+                    </Typography>
                 </Box>
             </Box>
         </Box>

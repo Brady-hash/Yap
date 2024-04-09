@@ -1,4 +1,3 @@
-import {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { Box, Typography } from '@mui/material';
@@ -6,41 +5,17 @@ import { SideBarBtn } from '../components/btns/SideBarBtn';
 import { CreateThreadBtn } from '../components/btns/CreateThreadBtn'
 import MainPoll from '../components/Mainpoll'
 
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:3000');
 
 function MessageHub() {
   const navigate = useNavigate();
   const { userId, friends, threads } = useUserContext();
-
-  useEffect(() => {
-
-    // listen for 'thread-updated' event
-    socket.on('thread-updated', handleThreadEvent);
-    // listen for 'thread-deleted' event
-    socket.on('thread-deleted', handleThreadEvent);
-    // listen for 'thread-created' event
-    socket.on('thread-created', handleThreadEvent);
-    return () => {
-      // remove event listeners
-      socket.off('thread-updated', handleThreadEvent);
-      socket.off('thread-deleted', handleThreadEvent);
-      socket.off('thread-created', handleThreadEvent);
-    };
-  }, []);
-
-  const handleThreadEvent = () => {
-    // refetch the user data
-    refetch();
-  };
 
   const navigateToThread = (threadId) => {
     navigate(`/chatroom/${threadId}`);
   };
 
   return (
-    <Box sx={{ position: 'relative', height: '100vh' }}>
+    <Box sx={{ position: 'relative', minHeight: '100vh' }}> {/* Ensure background extends with content */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
             <SideBarBtn />
             <Box sx={{ width: 75, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
@@ -51,31 +26,35 @@ function MessageHub() {
                 />
             </Box>
         </Box>
-        <MainPoll />
-        <Box sx={{ overflowY: 'auto' }}>
-            {threads && threads.map(thread => (
-                <Box 
-                    key={thread._id} 
-                    onClick={() => navigateToThread(thread._id)}
-                    sx={{
-                        border: 2,
-                        borderColor: 'white',
-                        color: 'white',
-                        cursor: 'pointer',
-                        marginBottom: 1
-                    }}
-                >
-                    <Typography variant="h5">{thread.name}</Typography>
-                </Box>
-            ))}
+        <Box sx={{ maxWidth: '800px', margin: 'auto' }}>
+            <MainPoll />
+            <Box sx={{ overflowY: 'auto' }}>
+                {threads && threads.map(thread => (
+                    <Box 
+                        key={thread._id} 
+                        onClick={() => navigateToThread(thread._id)}
+                        sx={{
+                            borderRadius: 2,
+                            bgcolor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            cursor: 'pointer',
+                            marginTop: 1,
+                            marginLeft: 2,
+                            marginRight: 2,
+                            padding: 1
+                        }}
+                    >
+                        <Typography 
+                        variant="h5">{thread.name}</Typography>
+                    </Box>
+                ))}
+            </Box>
         </Box>
-        <Box sx={{ position: 'fixed', bottom: 15, right: 12 }}>
+        <Box sx={{  borderRadius: 3 , position: 'fixed', bottom: 15, right: 12 }}>
             <CreateThreadBtn />
         </Box>
-
     </Box>
 );
 }
-
 
 export default MessageHub;
