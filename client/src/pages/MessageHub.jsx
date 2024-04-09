@@ -6,10 +6,6 @@ import { SideBarBtn } from '../components/btns/SideBarBtn';
 import { CreateThreadBtn } from '../components/btns/CreateThreadBtn'
 import MainPoll from '../components/Mainpoll'
 
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:3000');
-
 function MessageHub() {
   const navigate = useNavigate();
   const { userId, friends, threads } = useUserContext();
