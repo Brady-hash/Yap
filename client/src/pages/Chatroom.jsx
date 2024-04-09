@@ -13,8 +13,6 @@ import MessageInput from '../components/messages/MessageInput';
 import { Poll } from '../components/messages/poll';
 
 import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
-import { useUserContext } from '../context/UserContext';
-import io from 'socket.io-client';
 
 function Chatroom() {
 
@@ -25,7 +23,8 @@ function Chatroom() {
   const { threadId } = useParams();
   const navigate = useNavigate();
   const { loading, data, error, refetch } = useQuery(QUERY_ONE_THREAD, {
-    variables: { threadId }
+    variables: { threadId },
+    pollInterval: 10000,
   });
 
   useEffect(() => {
@@ -38,30 +37,9 @@ function Chatroom() {
     return
 	}, [combinedData]);
 
-  const [socket, setSocket] = useState(null);
-
-    // useEffect(() => {
-    // // create a new socket connection
-    // const newSocket = io();
-    // setSocket(newSocket);
-    // return () => {
-    //     newSocket.close();
-    // };
-    // }, []);
-
-  
-//   useEffect(() => {
-//     if(!socket) return;
-//     socket.on('thread-updated', thread => {
-//         console.log('thread updated');
-//         });
-
-
 
   if (loading) return <p>Loading chatroom...</p>;
   if (error) navigate('/');
-
-  // const currentUserIsAdmin = threadData.thread.admins.some(admin => admin._id.toString() === userData._id);
 
   return (
     <Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>

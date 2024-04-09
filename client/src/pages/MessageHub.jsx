@@ -14,26 +14,6 @@ function MessageHub() {
   const navigate = useNavigate();
   const { userId, friends, threads } = useUserContext();
 
-  useEffect(() => {
-
-    // listen for 'thread-updated' event
-    socket.on('thread-updated', handleThreadEvent);
-    // listen for 'thread-deleted' event
-    socket.on('thread-deleted', handleThreadEvent);
-    // listen for 'thread-created' event
-    socket.on('thread-created', handleThreadEvent);
-    return () => {
-      // remove event listeners
-      socket.off('thread-updated', handleThreadEvent);
-      socket.off('thread-deleted', handleThreadEvent);
-      socket.off('thread-created', handleThreadEvent);
-    };
-  }, []);
-
-  const handleThreadEvent = () => {
-    // refetch the user data
-    refetch();
-  };
 
   const navigateToThread = (threadId) => {
     navigate(`/chatroom/${threadId}`);
