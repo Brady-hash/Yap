@@ -76,6 +76,7 @@ type Query {
     me: User
     threads: [MessageThread]
     thread(threadId: ID!): MessageThread
+    mainPoll: Question
 
     #possibly adding these, could be overkill
     userThreads(userId: ID!): [MessageThread]

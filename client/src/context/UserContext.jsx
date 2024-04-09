@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { QUERY_ME } from '../utils/queries';
+import { QUERY_ME, QUERY_MAIN_POLL } from '../utils/queries';
 
 const UserContext = createContext();
 
@@ -11,26 +11,30 @@ export const UserProvider = ({ children }) => {
     const [friendCount, setFriendCount] = useState(0);
     const [userId, setUserId] = useState(null);
     const [threads, setThreads] = useState([]);
-    const { data, loading, error, refetch } = useQuery(QUERY_ME);
+    const [mainPoll, setMainPoll] = useState(null);
+
+    const { data: userData, loading: userLoading, refetch: refetchUser } = useQuery(QUERY_ME);
+    const { data: mainPollData, loading: mainPollLoading, refetch: refetchPoll } = useQuery(QUERY_MAIN_POLL);
 
     useEffect(() => {
-        if (!loading && data && data.me) {
-            setFriends(data.me.friends || []);
-            setUserId(data.me._id);
-            setThreads(data.me.messageThreads || []);
-            setFriendCount(data.me.friendCount || 0);
+        if (!userLoading && userData && userData.me) {
+            setFriends(userData.me.friends || []);
+            setUserId(userData.me._id);
+            setThreads(userData.me.messageThreads || []);
+            setFriendCount(userData.me.friendCount || 0);
         }
-    }, [data, loading]);
+    }, [userData, userLoading]);
+
+    useEffect(() => {
+        if (!mainPollLoading && mainPollData && mainPollData.mainPoll) {
+            setMainPoll(mainPollData.mainPoll);
+        }
+    }, [mainPollData, mainPollLoading]);
 
     const refreshUserData = async () => {
         try {
-            const { data } = await refetch();
-            if (data && data.me) {
-                setFriends(data.me.friends || []);
-                setUserId(data.me._id);
-                setThreads(data.me.messageThreads || []);
-                setFriendCount(data.me.friendCount || 0);
-            }
+            await refetchUser();
+            await refetchPoll(); 
         } catch (error) {
             console.error("Failed to refetch data:", error);
         }
@@ -39,26 +43,37 @@ export const UserProvider = ({ children }) => {
     const addFriend = (friendId) => {
         if (!friends.some(friend => friend._id === friendId)) {
             setFriends(currentFriends => [...currentFriends, friendId]);
-            setFriendCount(friendCount + 1)
+            setFriendCount(friendCount + 1);
         }
     };
 
     const removeFriend = (friendId) => {
         setFriends(currentFriends => currentFriends.filter(id => id !== friendId));
-        setFriendCount(friendCount - 1)
+        setFriendCount(friendCount - 1);
     };
 
     const addThread = (thread) => {
-        setThreads(currentThreads => [...currentThreads, { _id: thread._id, name: thread.name }])
+        setThreads(currentThreads => [...currentThreads, { _id: thread._id, name: thread.name }]);
         refreshUserData();
     };
 
     const removeThread = (threadId) => {
         setThreads(currentThreads => currentThreads.filter(thread => thread._id !== threadId));
-    }
+    };
 
     return (
-        <UserContext.Provider value={{ userId, threads, friends, friendCount, addFriend, removeFriend, addThread, removeThread }}>
+        <UserContext.Provider value={{
+            userId,
+            threads,
+            friends,
+            friendCount,
+            mainPoll,
+            addFriend,
+            removeFriend,
+            addThread,
+            removeThread,
+            refreshUserData
+        }}>
             {children}
         </UserContext.Provider>
     );

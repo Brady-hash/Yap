@@ -1,0 +1,9 @@
+{
+    "text": "This is a test message.",
+    "option1": "test",
+    "option2": "demo",
+    "option1Count":  0,
+    "option2Count": 0,
+    "isMainPoll": true
+
+}

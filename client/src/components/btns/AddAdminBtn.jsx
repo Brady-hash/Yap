@@ -19,7 +19,7 @@ export const AddAdminBtn = ({ userId, threadId }) => {
             throw new Error(`Error adding admin: ${err}`);
         }
     }
-
+ 
     return (
         <>
         <Button 
