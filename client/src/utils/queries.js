@@ -166,16 +166,3 @@ query me{
   }
 }
 `;
-
-export const QUERY_MAIN_POLL = gql`
-  query GetMainPoll {
-    mainPoll {
-      _id
-      text
-      option1
-      option2
-      option1Count
-      option2Count
-    }
-  }
-`;

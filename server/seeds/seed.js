@@ -4,7 +4,6 @@ const { User, MessageThread, Message, Question, Answer } = require('../models');
 const cleanAll = require('./cleanDb');
 
 const userData = require('./userData.json');
-const questionData = require('./questionData.json');
 
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -18,15 +17,6 @@ db.once('open', async () => {
     try {
 
         await cleanAll();
-
-        const mainQuestion = await Question.create({
-            text: questionData.text,
-            option1: questionData.option1,
-            option2: questionData.option2,
-            option1Count: questionData.option1Count,
-            option2Count: questionData.option2Count,
-            isMainPoll: questionData.isMainPoll
-        });
 
         const users = await User.create(userData);
         let userIds = users.map(user => user._id);
