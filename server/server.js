@@ -8,7 +8,6 @@ const { Server: SocketServer } = require('socket.io');
 
 const path = require('path');
 
-const { scheduleMainPollSwitch } = require('./utils/cronJobs');
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
 
@@ -229,8 +228,6 @@ server.start().then(() => {
     httpServer.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
       console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
-
-      scheduleMainPollSwitch();
     });
   });
 });

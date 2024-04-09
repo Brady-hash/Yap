@@ -4,7 +4,6 @@ import { useUserContext } from '../context/UserContext';
 import { Box, Typography } from '@mui/material';
 import { SideBarBtn } from '../components/btns/SideBarBtn';
 import { CreateThreadBtn } from '../components/btns/CreateThreadBtn'
-import MainPoll from '../components/Mainpoll'
 
 import io from 'socket.io-client';
 
@@ -54,7 +53,6 @@ useEffect(() => {
                 />
             </Box>
         </Box>
-        <MainPoll />
         <Box sx={{ overflowY: 'auto' }}>
             {threads && threads.map(thread => (
                 <Box 
