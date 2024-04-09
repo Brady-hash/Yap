@@ -25,7 +25,7 @@ const resolvers = {
                     .populate('messageThreads')
                     .populate('answerChoices');
                 // emits an event to the client to update the users in the UI
-                // io.emit('users-fetched', users);
+                io.emit('users-fetched', users);
                 return users;
             } catch(err) {
                 throw new Error(`Error getting users: ${err}`);
@@ -33,10 +33,10 @@ const resolvers = {
         },
         user: async (parent, { userId }, context) => {
             try {
-                // if (!context.user) {
-                //     throw AuthenticationError
-                // }
-                // const userId = context.user._id
+                if (!context.user) {
+                    throw new AuthenticationError('Please login')
+                }
+                const userId = context.user._id
                 const user = await User.findById(userId)
                     .populate('friends')
                     .populate('messageThreads')
@@ -46,8 +46,8 @@ const resolvers = {
                     throw new Error('No user with this id');
                 }
                 // emits an event to the client to update the user in the UI
-                // io.emit('user-fetched', user);
-                return user
+                io.emit('user-fetched', user);
+                return user;
             } catch(err) {
                 throw new Error(`Error getting one user: ${err}`);
             }
@@ -81,12 +81,12 @@ const resolvers = {
         me: async (parent, {}, context) => {
             try {
                 if (!context.user) {
-                    throw AuthenticationError
+                    throw new AuthenticationError ('Please login')
                 }
                 const userId = context.user._id;
                 const currentUser = await User.findById(userId).populate('friends').populate('messageThreads');
                 // emits an event to the client to update the current user in the UI
-                // io.emit('current-user-updated', currentUser);
+                io.emit('current-user-updated', currentUser);
                 return currentUser;
             } catch(err) {
                 throw new Error(`Error getting current user: ${err}`);
@@ -100,8 +100,11 @@ const resolvers = {
                     .populate('participants')
                     .populate('questions')
                     .populate({ path: 'questions', populate: 'creator' });
-                    // emits an event to the client to update the threads in the UI
-                    // io.emit('threads-updated', threads);
+                    const { socket} = context;
+                    // emits an event to the client to update the threads in the UI 
+                    if (socket) {
+                        socket.emit('threads-updated', threads);
+                    }
                 return threads;
             } catch(err) {
                 throw new Error(`Error getting threads: ${err}`);
@@ -120,6 +123,8 @@ const resolvers = {
                 // emits an event to the client to update the thread in the UI
                 // io.emit('thread-updated', thread);
                 // console.log(thread)
+                io.emit('thread-updated', thread);
+                console.log(thread)
                 return thread;
             } catch(err) {
                 throw new Error(`Error getting one thread: ${err}`);
@@ -146,9 +151,7 @@ const resolvers = {
             } catch(err) {
                 throw new Error(`Error logging in: ${err}`);
             }
-        },
-
-      
+        },      
         addUser: async (parent, { username, email, password }) => {
             try {
                 const newUser = await User.create({ username, email, password });
@@ -164,6 +167,7 @@ const resolvers = {
                     console.log('User added to algolia')
                 }).catch(err => console.log('Failed to add user to algolia index', err))
 
+                io.emit('user-added', newUser);
                 return { token, user: newUser };
             } catch(err) {
                 throw new Error(`Error adding a new user: ${err}`);
@@ -199,6 +203,7 @@ const resolvers = {
                 }).catch(err => {
                     console.error('Failed to update user in Algolia index', err);
                 });
+                io.emit('user-updated', user);
                 return user;
             } catch(err) {
                 throw new Error(`Error updating user: ${err}`);
@@ -230,6 +235,7 @@ const resolvers = {
                     console.log('User deleted from Algolia');
                 }).catch(err => console.error('Failed to delete user from Algolia index', err))
 
+                io.emit('user-deleted', userId);
                 const deletedUser = await User.findByIdAndDelete(userId);
                 return deletedUser;
             } catch(err) {
@@ -287,6 +293,7 @@ const resolvers = {
                 }).catch(err => console.log('Failed to add thread to algolia index', err))
 
 
+                io.emit('thread-created', newThread);
                 return await MessageThread.findById(newThread._id)
                     .populate('creator')
                     .populate('admins')
@@ -298,9 +305,9 @@ const resolvers = {
         },
         deleteThread: async (parent, { threadId }, context) => {
             try {
-                // if (!context.user) {
-                //     throw AuthenticationError
-                // }
+                if (!context.user) {
+                    throw AuthenticationError
+                }
                 const thread = await MessageThread.findById(threadId);
 
                 if (!thread) {
@@ -329,6 +336,8 @@ const resolvers = {
                 // emits an event to the client to remove the deleted thread from the UI
                 // io.emit('thread-deleted', threadId);
                 return { message: 'success' }
+                io.emit('thread-deleted', threadId);
+                return deletedThread;
             } catch(err) {
                 throw new Error(`Error deleting thread: ${err}`);
             }
@@ -349,6 +358,11 @@ const resolvers = {
                     .populate('participants')
                     .populate('questions')
                     .populate({ path: 'questions', populate: 'creator' });
+                    .populate('messages');
+                    if (!updatedThread) {
+                        throw new Error('No thread with this id');
+                    }
+                if (socket) {
                 // emits an event to the client to update the thread in the UI with the new name
                 // io.emit('thread-updated', updatedThread);
 
@@ -361,6 +375,8 @@ const resolvers = {
                 }).catch(err => {
                     console.error('Failed to update thread in Algolia index', err);
                 });
+                socket.emit('thread-updated', updatedThread);
+                }
                 return updatedThread;
             } catch(err) {
                 throw new Error(`Error updating thread: ${err}`);
@@ -384,9 +400,10 @@ const resolvers = {
                     .populate({ path: 'messages', populate: { path: 'sender', select: 'username'}})
                     .populate('participants')
                     .populate({ path: 'admins', select: 'username'})
-
+                if (socket) {
                 // emits an event to the client to update the thread in the UI with the new message
-                // io.emit('message-added', updatedThread);
+                socket.emit('message-added', updatedThread);
+                }
                 return updatedThread;
                 
             } catch(err) {
@@ -405,9 +422,10 @@ const resolvers = {
                     { text: text }, 
                     { new: true })
                     .populate('sender');
-
+                if (socket) {
                 // emits an event to the client to update the message in the UI with the new text
-                // io.emit('message-updated', updatedMessage);
+                socket.emit('message-updated', updatedMessage);
+                }
                 return updatedMessage;
             } catch(err) {
                 throw new Error(err);
@@ -422,9 +440,10 @@ const resolvers = {
 
                 await MessageThread.findByIdAndUpdate(message.messageThread, { $pull: { messages: messageId }}, { new: true });
                 await Message.findByIdAndDelete(messageId);
+                if (socket) {
                 // emits an event to the client to delete the message from the UI
-                // io.emit('message-deleted', deletedMessage);
-                
+                socket.emit('message-deleted', deletedMessage);
+                }
                 return { message: 'success' }
 
             } catch(err) {
@@ -444,9 +463,10 @@ const resolvers = {
                     { $addToSet: { friends: friendId }}, 
                     { new: true })
                     .populate('friends')
-
+                if (socket) {
                 // emits an event to the client to update the user in the UI with the new friend
-                // io.emit('friend-added', updatedUser);
+                socket.emit('friend-added', updatedUser);
+                }
                 return updatedUser;
             } catch(err) {
                 throw new Error(`Error adding friend: ${err}`);
@@ -465,8 +485,10 @@ const resolvers = {
                     { $pull: { friends: friendId } }, 
                     { new: true })
                     .populate('friends');
+                if (socket) {
                 // emits an event to the client to update the user in the UI with the friend removed
-                // io.emit('friend-removed', updatedUser);
+                socket.emit('friend-removed', updatedUser);
+                }
                 return updatedUser;
             } catch(err) {
                 throw new Error(`Error removing friend: ${err}`);
@@ -489,8 +511,10 @@ const resolvers = {
                     .populate('admins')
                     .populate('participants')
                     .populate({ path: 'messages', populate: { path: 'sender', select: 'username'}});
-
-                // io.emit('user-joined-thread', updatedThread);
+                if (socket) {
+                    // emits an event to the client to update the thread in the UI with the new participant
+                socket.emit('user-joined-thread', updatedThread);
+                }
                 return updatedThread;
             } catch(err) {
                 throw new Error('Error joining thread', err)
@@ -513,11 +537,14 @@ const resolvers = {
                     { $pull: { messageThreads: threadId }}, 
                     { new: true })
                     .populate('friends');
-
+                if (socket) {
                 // emits an event to the client to update the user in the UI with the thread removed from their messageThreads 
                 //and the user removed from the thread's participants
                 // io.emit('user-left-threat', {userId, threadId});
                 return {message: 'success' };
+                socket.emit('user-left-threat', {userId, threadId});
+                }
+                return updatedUser;
                 
             } catch(err) {
                 throw new Error(`Error leaving thread: ${err}`);
@@ -543,10 +570,16 @@ const resolvers = {
                     .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
                     .populate({ path: 'questions', populate: 'creator' });
 
-
                 // emits an event to the client to update the thread in the UI with the new question
                 // io.emit('question-added', newQuestion);
-                return newQuestion.populate('creator')
+                if (socket) {
+                // emits an event to the client to update the thread in the UI with the new question
+                // io.emit('question-added', newQuestion);
+      
+                socket.emit('question-added', newQuestion);
+                }
+                return await Question.findById(newQuestion._id).populate('messageThread').populate('creator');
+
             } catch(err) {
                 throw new Error(`Error creating question: ${err}`)
             }
@@ -568,9 +601,10 @@ const resolvers = {
                     { new: true })
                     .populate('creator')
                     .populate('messageThread');
-
+                if (socket) {
                 // emits an event to the client to update the question in the UI with the new text and options
-                // io.emit('question-updated', updatedQuestion);
+                socket.emit('question-updated', updatedQuestion);
+                }
                 return updatedQuestion;
             } catch(err) {
                 throw new Error(`Error editing question: ${err}`)
@@ -589,10 +623,19 @@ const resolvers = {
                     { $pull: { questions: questionId } }, 
                     { new: true });
 
+
                 const deletedQuestion = await Question.findByIdAndDelete(questionId);
                 // emits an event to the client to delete the question from the UI
                 // io.emit('question-deleted', questionId);
+                
+
+                await Question.findByIdAndDelete(questionId);
+                if (socket) {
+                // emits an event to the client to delete the question from the UI
+                socket.emit('question-deleted', questionId);
+                }
                 return deletedQuestion;
+
             } catch (err) {
                 throw new Error(`Error deleting question: ${err}`);
             }
@@ -633,10 +676,14 @@ const resolvers = {
                     .populate({ path: 'answers', populate: { path: 'userId', select: 'username' }});
 
                 await User.findByIdAndUpdate(userId, { $push: { answerChoices: newAnswer._id }})
+                if (socket) {
                 // emits an event to the client to update the question in the UI with the new answer
                 // io.emit('question-answered', question);
                 
                 return updatedQuestion;
+                socket.emit('question-answered', question);
+                }
+                return question;
             } catch (err) {
                 throw new Error(`Error answering question: ${err}`);
             }

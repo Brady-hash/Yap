@@ -16,18 +16,21 @@ function MessageHub() {
   useEffect(() => {
 
     // listen for 'thread-updated' event
+
+  const { loading, data, error } = useQuery(QUERY_ME);
+useEffect(() => {
     socket.on('thread-updated', handleThreadEvent);
-    // listen for 'thread-deleted' event
     socket.on('thread-deleted', handleThreadEvent);
-    // listen for 'thread-created' event
     socket.on('thread-created', handleThreadEvent);
-    return () => {
-      // remove event listeners
-      socket.off('thread-updated', handleThreadEvent);
-      socket.off('thread-deleted', handleThreadEvent);
-      socket.off('thread-created', handleThreadEvent);
-    };
-  }, []);
+    socket.on('message-added', handleThreadEvent);
+    socket.on('message-updated', handleThreadEvent);
+    socket.on('message-deleted', handleThreadEvent);
+    socket.on('user-added', handleThreadEvent);
+    socket.on('user-deleted', handleThreadEvent);
+    socket.on('user-joined-thread', handleThreadEvent);
+    socket.on('user-left-thread', handleThreadEvent);
+  }, [socket]);
+ 
 
   const handleThreadEvent = () => {
     // refetch the user data
