@@ -14,9 +14,7 @@ function MessageHub() {
   const navigate = useNavigate();
   const { userId, friends, threads } = useUserContext();
 
-  useEffect(() => {
-
-    // listen for 'thread-updated' event
+  
 
   const { loading, data, error } = useQuery(QUERY_ME);
 useEffect(() => {

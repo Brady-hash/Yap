@@ -15,12 +15,12 @@ import { Poll } from '../components/messages/poll';
 import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 import { useUserContext } from '../context/UserContext';
 import io from 'socket.io-client';
-
+const socket = io('http://localhost:3001');
 function Chatroom() {
 
 const { combinedData, updateCombinedData, thread, currentUserIsAdmin } = useChatroomContext();
 
-const socket = io('http://localhost:3001');
+
 
   const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
   
@@ -40,23 +40,7 @@ const socket = io('http://localhost:3001');
     return
 	}, [combinedData]);
 
-  const [socket, setSocket] = useState(null);
-
-    // useEffect(() => {
-    // // create a new socket connection
-    // const newSocket = io();
-    // setSocket(newSocket);
-    // return () => {
-    //     newSocket.close();
-    // };
-    // }, []);
-
-  
-//   useEffect(() => {
-//     if(!socket) return;
-//     socket.on('thread-updated', thread => {
-//         console.log('thread updated');
-//         });
+ 
 useEffect(() => {
     socket.on('message-added', (message) => {
       refetch();
