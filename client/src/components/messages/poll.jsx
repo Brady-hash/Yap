@@ -5,40 +5,26 @@ import { useState, useEffect } from 'react';
 import { ANSWER_QUESTION, DELETE_QUESTION } from '../../utils/mutations';
 import { useChatroomContext } from '../../context/ChatroomContext';
 
-export const Poll = ({ poll, refetch, isAdmin }) => {
+export const Poll = ({ poll }) => {
 
-    const { currentUserIsAdmin } = useChatroomContext();
-    const [pollData, setPollData] = useState(poll)
+    const { currentUserIsAdmin, updatePollDataInCombinedData, combinedData } = useChatroomContext();
 
-    const [answerQuestion, { error: answerQuestionError }] = useMutation(ANSWER_QUESTION, {
-        onCompleted: (data) => {
-            setPollData(data.answerQuestion)
-        }
-    });
-
-    // const [deleteQuestion, { error: deleteQuestionError }] = useMutation(DELETE_QUESTION);
+    const [answerQuestion, { error: answerQuestionError }] = useMutation(ANSWER_QUESTION);
 
     const handleAnswerQuestion = async (event) => {
         const answerOption = event.currentTarget.name;
-        let variables = { questionId: poll._id, answer: answerOption}
-
-        const data = await answerQuestion({
-            variables: variables
+        await answerQuestion({
+            variables: { questionId: poll._id, answer: answerOption },
+            onCompleted: (data) => {
+                // Assuming the mutation returns the updated poll as 'answerQuestion'
+                updatePollDataInCombinedData(data.answerQuestion);
+            }
         });
     };
 
-    // const handleDeletePoll = () => {
-    //     console.log(poll._id)
-    //     deleteQuestion({
-    //         variables: { questionId: poll._id },
-    //         onCompleted: () => {
-    //             refetch()
-    //         }
-    //     })
-    // }
-
+    const pollData = combinedData.find(item => item.__typename === 'Question' && item._id === poll._id);
     const totalVotes = pollData.answerCount;
-    const option1Percentage = totalVotes > 0 ? (pollData.option1Count / totalVotes) * 100 : 0;
+    const option1Percentage = pollData.option1Percentage;
 
     return (
         <>
@@ -65,7 +51,7 @@ export const Poll = ({ poll, refetch, isAdmin }) => {
                     <Box sx={{ ...(option1Percentage === 100 && { borderRadius: 1.5 }), borderTopLeftRadius: 6, borderBottomLeftRadius: 6, bgcolor: 'red', width: `${option1Percentage}%`, height: '100%' }}></Box>
                 </Box>
             </Box>
-            {currentUserIsAdmin && <DeletePollBtn poll={poll}/>}
+            {currentUserIsAdmin && <DeletePollBtn poll={pollData}/>}
             </Box>
         </Box>
         </>

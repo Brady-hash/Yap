@@ -6,7 +6,7 @@ import { useMutation } from "@apollo/client";
 import { useState } from "react";
 import { useChatroomContext } from "../../context/ChatroomContext";
 
-export const DeleteMessageBtn = ({ currentUser, messageId, refetch }) => {
+export const DeleteMessageBtn = ({ messageId }) => {
 
     const { removeFromCombinedData } = useChatroomContext();
     const [confirmOpen, setConfirmOpen] = useState(false);

@@ -3,7 +3,7 @@ const { GraphQLError } = require('graphql');
 
 // set token secret and expiration date
 const secret = 'mysecretsshhhhh';
-const expiration = '2h';
+const expiration = '24h';
 
 module.exports = {
   AuthenticationError: new GraphQLError('Could not authenticate user.', {

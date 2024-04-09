@@ -8,7 +8,7 @@ import { useChatroomContext } from "../../context/ChatroomContext";
 
 const MessageInput = ({ thread }) => {
 
-	const { userId, addToCombinedData, currentUserIsAdmin } = useChatroomContext();
+	const { userId, addToCombinedData, currentUserIsAdmin, combinedData } = useChatroomContext();
 
 	const [message, setMessage] = useState('');
 	const [modalOpen, setModalOpen] = useState(false);
@@ -32,6 +32,12 @@ const MessageInput = ({ thread }) => {
 			const { data } = await addMessage();
 			if (data) {
 				addToCombinedData(data.addMessage)
+				const messageContainer = document.getElementById('messageContainer');
+					if (messageContainer) {
+				setTimeout(() => {
+					messageContainer.scrollTo(0, messageContainer.scrollHeight);
+				}, 10);
+		}
 			}
 			setMessage('')
 		} catch(err) {

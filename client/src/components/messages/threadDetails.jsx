@@ -11,7 +11,7 @@ import { useChatroomContext } from "../../context/ChatroomContext";
 
 import  { UserProfile } from '../UserProfile';
 
-export const ThreadDetails = ({ detailsToggled, onClose, currentUser }) => {
+export const ThreadDetails = ({ detailsToggled, onClose }) => {
 
     const { thread, currentUserIsAdmin, userId } = useChatroomContext();
     const [showUserProfileTD, setShowUserProfileTD] = useState(null);
@@ -56,7 +56,7 @@ export const ThreadDetails = ({ detailsToggled, onClose, currentUser }) => {
                         <Close />
                     </Button>
                     <Typography variant='h5' sx={{color: 'white' }}>{thread.name}</Typography>
-                    <LeaveThreadBtn sx={{height: '65px', width: '65px', m: 2}} thread={thread} currentUser={currentUser} />
+                    <LeaveThreadBtn sx={{height: '65px', width: '65px', m: 2}} thread={thread}  />
                 </Box>
                 <Box sx={{pt: 13}}>
                 {thread.participants.map((participant) => (
@@ -89,7 +89,7 @@ export const ThreadDetails = ({ detailsToggled, onClose, currentUser }) => {
                         {/* if the current participant is the creator, we give them a creator tag */}
                         {isCreator(participant._id) && <Typography variant='span' sx={{ position: 'absolute', right: 35, color: '#888'}}>(creator)</Typography>}
                         {/* if the current logged in user is the creator we give them the option of adding current admins*/}
-                        {isCreator(userId) && currentUser._id !== participant._id && !isAdmin(participant._id) && <AddAdminBtn threadId={thread._id} userId={participant._id}/>}
+                        {isCreator(userId) && userId !== participant._id && !isAdmin(participant._id) && <AddAdminBtn threadId={thread._id} userId={participant._id}/>}
                         {/* if the current logged in user is the creator we give them the option of removing admins */}
                         {isCreator(userId) && userId !== participant._id && isAdmin(participant._id) && <RemoveAdminBtn threadId={thread._id} userId={participant._id}/>}
                     </Box>
