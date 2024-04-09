@@ -15,7 +15,7 @@ import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 import io from 'socket.io-client';
 
 function Chatroom() {
-
+const socket = io('http://localhost:3001');
   const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
   
   const { threadId } = useParams();
@@ -60,6 +60,14 @@ function Chatroom() {
 //     socket.on('thread-updated', thread => {
 //         console.log('thread updated');
 //         });
+useEffect(() => {
+    socket.on('message-added', (message) => {
+      refetch();
+    });
+    return () => socket.disconnect();
+  }, [socket, refetch]);
+
+
 
 
 

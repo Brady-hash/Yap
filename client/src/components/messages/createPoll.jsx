@@ -2,6 +2,7 @@ import { useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
 import { CREATE_QUESTION } from "../../utils/mutations";
 import { FormGroup, TextField, Button, Box } from "@mui/material";
+import {io} from 'socket.io-client';
 
 export const CreatePoll = ({ currentUser, thread, modalOpen, onClose, updateCombinedData }) => {
         const styles = {
@@ -25,7 +26,11 @@ export const CreatePoll = ({ currentUser, thread, modalOpen, onClose, updateComb
 
         const [formState, setFormState] = useState({question: '', option1: '', option2: ''});
         const [createQuestion, { data, loading, error }] = useMutation(CREATE_QUESTION);
-
+useEffect(() => {
+    const socket = io('http://localhost:3000');
+    socket.on('question-added', (question) => {
+        console.log('question added', question);
+        // update the state with the new question
         const handleFormChange = (event) => {
             const { name, value } = event.target;
             setFormState(prevState => ({
@@ -33,6 +38,10 @@ export const CreatePoll = ({ currentUser, thread, modalOpen, onClose, updateComb
                 [name]: value,
             }));
         };
+    });
+    return () => socket.disconnect();
+}, [createQuestion]);
+      
 
         const handleSubmit = async (event) => {
             // event.preventDefault();

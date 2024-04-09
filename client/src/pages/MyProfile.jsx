@@ -6,6 +6,11 @@ import { UPDATE_USER } from '../utils/mutations';
 import { useUserContext } from '../context/UserContext';
 
 import { BackBtn } from '../components/btns/BackBtn';
+import  AuthService from '../utils/auth'
+import { useAuthContext } from '../context/AuthContext';
+import {io} from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
 
 function Profile() {
     const [userData, setUserData] = useState({ username: '', email: '', friendCount: '' });
@@ -23,6 +28,27 @@ function Profile() {
             });
         }
     }, [data]);
+  useEffect(() => {
+    if (data) {
+      setUserData({ 
+        username: data.me.username || '', 
+        email: data.me.email || '', 
+        friendCount: data.me.friendCount || 0 });
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const handleUserUpdated = (updatedUserData) => {
+      console.log('user-updated', updatedUserData);
+      setUserData(updatedUserData);
+    };
+    socket.on('user-updated', handleUserUpdated);
+    return () =>{
+      socket.off('user-updated', handleUserUpdated);
+       socket.disconnect();
+    }
+  }, [socket]);
+
 
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography>Error loading profile!</Typography>;

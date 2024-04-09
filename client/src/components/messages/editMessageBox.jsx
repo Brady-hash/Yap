@@ -1,11 +1,19 @@
 import { Box, TextField, Button } from '@mui/material';
 import { DoneAll, Close } from '@mui/icons-material';
+import { useEffect } from 'react';
+import { io } from 'socket.io-client';
 
 export const EditMessageBox = ({ currentMessage, setCurrentMessage, cancelEditing, handleSaveEditedMessage }) => {
-
+const socket = io('http://localhost:3000');
     const handleInputChange = (event) => {
 		setCurrentMessage(event.target.value);
 	};
+    useEffect(() => {
+        if (socket) {
+            socket.on('message-updated', handleSaveEditedMessage);
+        }
+        return () => socket.disconnect();
+    }, [currentMessage, handleSaveEditedMessage]);
 
     return (
         <>
