@@ -12,7 +12,6 @@ const threadsIndex = client.initIndex('threadsIndex');
 const usersIndex = client.initIndex('usersIndex');
 
 const { server, io } = require('../server');
-const { populate } = require('../models/User');
 // added login, 
 // updated addUser,
 
@@ -265,7 +264,7 @@ const resolvers = {
 
                 const newThread = await MessageThread.create({ 
                     name: name,
-                    admins: [userId], 
+                    admin: userId, 
                     creator: userId,
                     participants: participantIds 
                 });
@@ -305,9 +304,9 @@ const resolvers = {
         },
         deleteThread: async (parent, { threadId }, context) => {
             try {
-                if (!context.user) {
-                    throw AuthenticationError
-                }
+                // if (!context.user) {
+                //     throw AuthenticationError
+                // }
                 const thread = await MessageThread.findById(threadId);
 
                 if (!thread) {
@@ -561,7 +560,7 @@ const resolvers = {
                 }
                 const newQuestion = await Question.create({ creator: context.user._id, messageThread, text, option1, option2 });
 
-                    await MessageThread.findByIdAndUpdate(
+                const updatedThread = await MessageThread.findByIdAndUpdate(
                     messageThread, 
                     { $push: { questions: newQuestion._id }}, 
                     { new: true })
@@ -570,16 +569,14 @@ const resolvers = {
                     .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
                     .populate({ path: 'questions', populate: 'creator' });
 
-                // emits an event to the client to update the thread in the UI with the new question
-                // io.emit('question-added', newQuestion);
+                    { new: true });
                 if (socket) {
                 // emits an event to the client to update the thread in the UI with the new question
                 // io.emit('question-added', newQuestion);
-      
+                return updatedThread
                 socket.emit('question-added', newQuestion);
                 }
                 return await Question.findById(newQuestion._id).populate('messageThread').populate('creator');
-
             } catch(err) {
                 throw new Error(`Error creating question: ${err}`)
             }
@@ -623,19 +620,12 @@ const resolvers = {
                     { $pull: { questions: questionId } }, 
                     { new: true });
 
-
-                const deletedQuestion = await Question.findByIdAndDelete(questionId);
-                // emits an event to the client to delete the question from the UI
-                // io.emit('question-deleted', questionId);
-                
-
                 await Question.findByIdAndDelete(questionId);
                 if (socket) {
                 // emits an event to the client to delete the question from the UI
                 socket.emit('question-deleted', questionId);
                 }
-                return deletedQuestion;
-
+                return { message: 'successful deletion'};
             } catch (err) {
                 throw new Error(`Error deleting question: ${err}`);
             }

@@ -3,11 +3,9 @@ import { DeletePollBtn } from '../btns/DeletePollBtn';
 import { useMutation } from '@apollo/client';
 import { useState, useEffect } from 'react';
 import { ANSWER_QUESTION, DELETE_QUESTION } from '../../utils/mutations';
-import { useChatroomContext } from '../../context/ChatroomContext';
 
 export const Poll = ({ poll, refetch, isAdmin }) => {
 
-    const { currentUserIsAdmin } = useChatroomContext();
     const [pollData, setPollData] = useState(poll)
 
     const [answerQuestion, { error: answerQuestionError }] = useMutation(ANSWER_QUESTION, {
@@ -16,7 +14,7 @@ export const Poll = ({ poll, refetch, isAdmin }) => {
         }
     });
 
-    // const [deleteQuestion, { error: deleteQuestionError }] = useMutation(DELETE_QUESTION);
+    const [deleteQuestion, { error: deleteQuestionError }] = useMutation(DELETE_QUESTION);
 
     const handleAnswerQuestion = async (event) => {
         const answerOption = event.currentTarget.name;
@@ -27,15 +25,15 @@ export const Poll = ({ poll, refetch, isAdmin }) => {
         });
     };
 
-    // const handleDeletePoll = () => {
-    //     console.log(poll._id)
-    //     deleteQuestion({
-    //         variables: { questionId: poll._id },
-    //         onCompleted: () => {
-    //             refetch()
-    //         }
-    //     })
-    // }
+    const handleDeletePoll = () => {
+        console.log(poll._id)
+        deleteQuestion({
+            variables: { questionId: poll._id },
+            onCompleted: () => {
+                refetch()
+            }
+        })
+    }
 
     const totalVotes = pollData.answerCount;
     const option1Percentage = totalVotes > 0 ? (pollData.option1Count / totalVotes) * 100 : 0;
@@ -65,7 +63,7 @@ export const Poll = ({ poll, refetch, isAdmin }) => {
                     <Box sx={{ ...(option1Percentage === 100 && { borderRadius: 1.5 }), borderTopLeftRadius: 6, borderBottomLeftRadius: 6, bgcolor: 'red', width: `${option1Percentage}%`, height: '100%' }}></Box>
                 </Box>
             </Box>
-            {currentUserIsAdmin && <DeletePollBtn poll={poll}/>}
+            {isAdmin && <DeletePollBtn handleDeletePoll={handleDeletePoll}/>}
             </Box>
         </Box>
         </>
