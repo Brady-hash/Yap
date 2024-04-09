@@ -11,6 +11,7 @@ import { DeleteMessageBtn } from "../btns/DeleteMessageBtn";
 import { AddFriendBtn } from "../btns/AddFriendBtn";
 import { EditMessageBtn } from "../btns/EditMessageBtn";
 import { EditMessageBox } from "./editMessageBox";
+import { useChatroomContext } from "../../context/ChatroomContext";
 import  { UserProfile } from '../UserProfile';
 import { io } from "socket.io-client";
 
@@ -19,6 +20,7 @@ const socket = io('http://localhost:3000');
 export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 
 	const { friends, addFriend, removeFriend, threads, userId } = useUserContext();
+	const { combinedData, updateCombinedData, threadData, currentUserIsAdmin } = useChatroomContext();
 	
 	const [currentMessage, setCurrentMessage] = useState(message.text);
 	const [originalMessage, setOriginalMessage] = useState(currentMessage);
@@ -27,7 +29,7 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 	const [isFriend, setIsFriend] = useState(friends.some(friend => friend._id === message.sender._id));
 	const [showUserProfileId, setShowUserProfileId] = useState(null);
 
-	const isCurrentUserMessage = message.sender._id === currentUser._id;
+	const isCurrentUserMessage = message.sender._id === userId;
 	let timestamp = message.timestamp.split('at')[0];
 
 	useEffect(() => {
@@ -126,7 +128,7 @@ useEffect(() => {
 						color: 'white'
 					}}
 				> {timestamp}
-				{ isAdmin || isCurrentUserMessage  ? <DeleteMessageBtn messageId={message._id} currentUser={currentUser} refetch={refetch}/> : ''}
+				{ currentUserIsAdmin || isCurrentUserMessage  ? <DeleteMessageBtn messageId={message._id} currentUser={currentUser} refetch={refetch}/> : ''}
 				{isCurrentUserMessage && <EditMessageBtn onClick={startEditing}/>}
 				</Typography>
 			</Box>

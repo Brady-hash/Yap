@@ -248,22 +248,11 @@ export const UPDATE_QUESTION = gql`
 export const CREATE_QUESTION = gql`
   mutation createQuestion($messageThread: ID!, $text: String!, $option1: String!, $option2: String!){
     createQuestion(messageThread: $messageThread, text: $text, option1: $option1, option2: $option2) {
-    _id
-    name
-    isGroupChat
-    timestamp
-    creator
-    createdAt
-    admins {
       _id
-      username
-    }
-    participants {
-      _id
-      username
-    }
-    questions {
-      _id
+      creator {
+        _id
+        username
+      }
       text
       option1
       option2
@@ -271,27 +260,11 @@ export const CREATE_QUESTION = gql`
       option2Count
       option1Percentage
       answerCount
-      createdAt
-      timestamp
       answers {
         _id
-        userId {
-          _id
-        }
-        answerChoice
       }
-    }
-    messages {
-      _id
-      text
-      messageThread
-      createdAt
       timestamp
-      sender {
-        _id
-        username
-      }
-    }
+      createdAt
     }
   }
 `;
@@ -299,7 +272,7 @@ export const CREATE_QUESTION = gql`
 export const DELETE_QUESTION = gql`
   mutation deleteQuestion($questionId: ID!){
     deleteQuestion(questionId: $questionId) {
-      message
+      _id
     }
   }
 `;

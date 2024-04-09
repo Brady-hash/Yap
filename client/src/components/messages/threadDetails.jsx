@@ -7,20 +7,27 @@ import { EditThread } from "./editThread";
 import { LeaveThreadBtn } from "../btns/LeaveThreadBtn";
 import { RemoveAdminBtn } from "../btns/RemoveAdminBtn";
 import { AddAdminBtn } from "../btns/AddAdminBtn";
+import { useChatroomContext } from "../../context/ChatroomContext";
 
 import  { UserProfile } from '../UserProfile';
 
-export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) => {
+export const ThreadDetails = ({ detailsToggled, onClose, currentUser }) => {
 
+    const { thread, currentUserIsAdmin, userId } = useChatroomContext();
     const [showUserProfileTD, setShowUserProfileTD] = useState(null);
+    
+    console.log('participants',thread.participants)
+    console.log('creator',thread.creator)
     
     const isAdmin = (participantId) => {
         return thread.admins.some(admin => admin._id.toString() === participantId.toString());
     };
 
     const isCreator = (participantId) => {
-        return thread.creator === participantId
+
+        return thread.creator === participantId;
     };
+
 
     return (
         <>
@@ -82,13 +89,13 @@ export const ThreadDetails = ({ thread, detailsToggled, onClose, currentUser }) 
                         {/* if the current participant is the creator, we give them a creator tag */}
                         {isCreator(participant._id) && <Typography variant='span' sx={{ position: 'absolute', right: 35, color: '#888'}}>(creator)</Typography>}
                         {/* if the current logged in user is the creator we give them the option of adding current admins*/}
-                        {isCreator(currentUser._id) && currentUser._id !== participant._id && !isAdmin(participant._id) && <AddAdminBtn threadId={thread._id} userId={participant._id}/>}
+                        {isCreator(userId) && currentUser._id !== participant._id && !isAdmin(participant._id) && <AddAdminBtn threadId={thread._id} userId={participant._id}/>}
                         {/* if the current logged in user is the creator we give them the option of removing admins */}
-                        {isCreator(currentUser._id) && currentUser._id !== participant._id && isAdmin(participant._id) && <RemoveAdminBtn threadId={thread._id} userId={participant._id}/>}
+                        {isCreator(userId) && userId !== participant._id && isAdmin(participant._id) && <RemoveAdminBtn threadId={thread._id} userId={participant._id}/>}
                     </Box>
                 ))}
                 </Box>
-                {isCreator(currentUser._id) && <EditThread name={thread.name} threadId={thread._id}/>}
+                {isCreator(userId) && <EditThread name={thread.name} threadId={thread._id}/>}
 
             </Box>
         </Drawer>

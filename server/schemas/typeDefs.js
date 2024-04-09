@@ -101,9 +101,9 @@ type Mutation {
     removeFriend(userId: ID!, friendId: ID!): User
     joinThread(userId: ID!, threadId: ID!): MessageThread
     leaveThread(threadId: ID!): returnMessage
-    createQuestion(messageThread: ID!, text: String!, option1: String!, option2: String!): MessageThread
+    createQuestion(messageThread: ID!, text: String!, option1: String!, option2: String!): Question
     updateQuestion(userId: ID!, questionId: ID!, text: String, option1: String, option2: String): Question
-    deleteQuestion(questionId: ID!): returnMessage
+    deleteQuestion(questionId: ID!): Question
     answerQuestion(questionId: ID!, answer: String!): Question
 }
 
