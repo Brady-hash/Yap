@@ -3,12 +3,13 @@
 /* eslint-disable react/prop-types */
 import { Typography, Button, Avatar, Box, TextField } from "@mui/material";
 import { PeopleOutline } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { UPDATE_MESSAGE } from "../../utils/mutations";
-import { DeleteMessageButton } from "./deleteMessage";
-import { AddFriendButton } from "./addFriendButton";
-import { EditMessageButton } from "./editMessageButton";
+import { useUserContext } from "../../context/UserContext";
+import { DeleteMessageBtn } from "../btns/DeleteMessageBtn";
+import { AddFriendBtn } from "../btns/AddFriendBtn";
+import { EditMessageBtn } from "../btns/EditMessageBtn";
 import { EditMessageBox } from "./editMessageBox";
 import  { UserProfile } from '../UserProfile';
 import { io } from "socket.io-client";
@@ -16,13 +17,23 @@ import { io } from "socket.io-client";
 const socket = io('http://localhost:3000');
 
 export const Message = ({ message, currentUser, isAdmin, refetch }) => {
+
+	const { friends, addFriend, removeFriend, threads, userId } = useUserContext();
 	
 	const [currentMessage, setCurrentMessage] = useState(message.text);
 	const [originalMessage, setOriginalMessage] = useState(currentMessage);
 	const [isEditing, setIsEditing] = useState(false);
 	const [updateMessage, { error }] = useMutation(UPDATE_MESSAGE);
-	const [isFriend, setIsFriend] = useState(currentUser.friends.some(friend => friend._id === message.sender._id));
-	const [showUserProfile, setShowUserProfile] = useState(false);
+	const [isFriend, setIsFriend] = useState(friends.some(friend => friend._id === message.sender._id));
+	const [showUserProfileId, setShowUserProfileId] = useState(null);
+
+	const isCurrentUserMessage = message.sender._id === currentUser._id;
+	let timestamp = message.timestamp.split('at')[0];
+
+	useEffect(() => {
+		setIsFriend(friends.some(friend => friend._id === message.sender._id));
+	}, [friends, message.sender._id]);
+	
 
 	const startEditing = () => {
 		setOriginalMessage(currentMessage);
@@ -51,6 +62,7 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 			console.log('error saving updated thread',err);
 		}
 	}
+	
 
 	const isCurrentUserMessage = message.sender._id === currentUser._id;
 	let timestamp = message.timestamp.split('at')[0];
@@ -78,7 +90,6 @@ useEffect(() => {
 			display: 'flex',
 			flexDirection: 'column',
 			boxShadow: 10,
-			justifyContent: '',
 			alignItems: isCurrentUserMessage ? 'end' : 'start',
 			px: 1,
 			marginBottom: 2,
@@ -89,7 +100,7 @@ useEffect(() => {
 			<Box sx={{ width: '100%', height: '75px', display: 'flex', alignItems: 'start', position: 'relative'}}>
 				<Avatar 
 					src=''
-					onClick={() => setShowUserProfile(true)}
+					onClick={() => setShowUserProfileId(message.sender._id)}
 					sx={{
 						left: isCurrentUserMessage ? '' : 10,
 						right: isCurrentUserMessage ? 10 : '',
@@ -98,11 +109,11 @@ useEffect(() => {
 						cursor: 'pointer'
 					}}
 				/>
-				{showUserProfile && (
+				{showUserProfileId && (
                         <UserProfile 
                             userId={message.sender._id} 
-                            onClose={() => setShowUserProfile(false)}
-                        />
+							onClose={() => setShowUserProfileId(null)}
+							/>
                     )}
 
 				<Typography 
@@ -115,13 +126,13 @@ useEffect(() => {
 						color: 'white'
 					}}
 				> {timestamp}
-				{ isAdmin || isCurrentUserMessage  ? <DeleteMessageButton messageId={message._id} currentUser={currentUser} refetch={refetch}/> : ''}
-				{isCurrentUserMessage && <EditMessageButton onClick={startEditing}/>}
+				{ isAdmin || isCurrentUserMessage  ? <DeleteMessageBtn messageId={message._id} currentUser={currentUser} refetch={refetch}/> : ''}
+				{isCurrentUserMessage && <EditMessageBtn onClick={startEditing}/>}
 				</Typography>
 			</Box>
 			<Box sx={{ display: 'flex', gap: 0}}>
-				<Typography variant='h4' sx={{color: '', textAlign: 'left', my: 1}}>{message.sender.username}</Typography>
-				{!isCurrentUserMessage && !isFriend && <AddFriendButton currentUser={currentUser} friendId={message.sender._id} isFriend={isFriend} setIsFriend={setIsFriend}/>}
+				<Typography variant='h6' sx={{color: '#777', textAlign: 'left', my: 1}}>{message.sender.username}</Typography>
+				{!isCurrentUserMessage && !isFriend && <AddFriendBtn currentUser={currentUser} friendId={message.sender._id}/>}
 				{!isCurrentUserMessage && isFriend && <PeopleOutline sx={{fontSize: 30, color: 'gray', mx: 1}}/>}
 			</Box>
 			{isEditing ?  

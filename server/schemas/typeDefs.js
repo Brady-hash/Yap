@@ -25,8 +25,11 @@ type Question{
     text: String
     option1: String
     option2: String
+    option1Count: Int
+    option2Count: Int
     answerCount: Int
     answers: [Answer]
+    option1Percentage: Float
     timestamp: String
     createdAt: String
 }
@@ -49,6 +52,7 @@ type MessageThread{
     _id: ID!
     name: String
     admins: [User]
+    creator: ID
     participants: [User]
     messages: [Message]
     questions: [Question]
@@ -85,20 +89,22 @@ type Mutation {
     addUser(username: String!, email: String!, password: String!): Auth
     updateUser(username: String, email: String, password: String): User
     deleteUser(userId: ID!): User
-    createThread(userId: ID!, name: String!): MessageThread
-    deleteThread(threadId: ID!, userId: ID!): MessageThread
-    updateThread(threadId: ID!, userId: ID!, name: String!): MessageThread
+    adminUser(threadId: ID!, userId: ID!): MessageThread
+    removeAdmin(threadId: ID!, userId: ID!): MessageThread
+    createThread(userId: ID!, name: String!, participantUsernames: [String!]): MessageThread
+    deleteThread(threadId: ID!): returnMessage
+    updateThread(threadId: ID!, name: String!): MessageThread
     addMessage(text: String!, userId: ID!, threadId: ID!): MessageThread
     updateMessage(messageId: ID!, text: String!): Message
     deleteMessage(messageId: ID!): returnMessage
     addFriend(userId: ID!, friendId: ID!): User
     removeFriend(userId: ID!, friendId: ID!): User
     joinThread(userId: ID!, threadId: ID!): MessageThread
-    leaveThread(userId: ID!, threadId: ID!): User
-    createQuestion(userId: ID!, messageThread: ID!, text: String!, option1: String!, option2: String!): Question
+    leaveThread(threadId: ID!): returnMessage
+    createQuestion(messageThread: ID!, text: String!, option1: String!, option2: String!): MessageThread
     updateQuestion(userId: ID!, questionId: ID!, text: String, option1: String, option2: String): Question
-    deleteQuestion(userId: ID!, questionId: ID!): returnMessage
-    answerQuestion(userId: ID!, questionId: ID!, answer: String!): Question
+    deleteQuestion(questionId: ID!): returnMessage
+    answerQuestion(questionId: ID!, answer: String!): Question
 }
 
 `

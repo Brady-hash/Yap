@@ -7,8 +7,8 @@ import {
 	createHttpLink,
   } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { UserProvider } from './context/UserContext.jsx';
 import { Outlet } from 'react-router-dom';
-import { Toaster } from "react-hot-toast";
 
 const httpLink = createHttpLink({
 	uri: '/graphql',
@@ -32,7 +32,9 @@ const client = new ApolloClient({
 function App() {
 	return (
 		<ApolloProvider client={client}>
+			<UserProvider>
 				<Outlet />
+			</UserProvider>
 		</ApolloProvider>
 	);
 }

@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
 import { Logout } from '@mui/icons-material';
-import { useAuthContext } from '../context/AuthContext';
+import { useAuthContext } from '../../context/AuthContext';
 
-const LogoutButton = () => {
+const LogoutBtn = () => {
 	const { loading, logout } = useAuthContext();
 
 	const handleLogout = async () => {
@@ -18,4 +18,4 @@ const LogoutButton = () => {
     );
 };
 
-export default LogoutButton;
+export default LogoutBtn;

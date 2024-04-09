@@ -104,6 +104,7 @@ query thread($threadId: ID!){
     name
     isGroupChat
     timestamp
+    creator
     createdAt
     admins {
       _id
@@ -118,6 +119,9 @@ query thread($threadId: ID!){
       text
       option1
       option2
+      option1Count
+      option2Count
+      option1Percentage
       answerCount
       createdAt
       timestamp

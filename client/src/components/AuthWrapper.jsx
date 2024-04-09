@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import AuthService from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
@@ -12,14 +12,11 @@ const AuthWrapper = ({ children }) => {
       // Check if the token is expired
       if (authUser && AuthService.isTokenExpired(authUser.token)) {
         try {
-          // Attempt to refresh the token or perform any necessary actions
-          // For example:
-          // const newToken = await AuthService.refreshToken(authUser.token);
-          // login({ token: newToken });
-          console.log('Token expired. Refreshing token...');
+          //Later refresh token functionality 
+          console.log('Token refresh');
         } catch (error) {
           console.error('Error refreshing token:', error);
-          logout(); // Logout user if token refresh fails
+          logout(); 
           navigate('/login');
         }
       }

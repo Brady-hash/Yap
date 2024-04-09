@@ -7,12 +7,12 @@ import { AuthContextProvider } from "./context/AuthContext.jsx";
 import AuthWrapper from './components/AuthWrapper.jsx'
 
 import App from './App.jsx';
-import ChatRoom from './pages/Chatroom.jsx';
-import MessageHub from './pages/MessageHub.jsx';
-import MyProfile from './pages/MyProfile.jsx';
-import NotFound from './pages/NotFound.jsx';
-import LoginPage from './pages/LoginPage.jsx'
-import SignupPage from './components/SignupForm.jsx'
+import ChatRoom from './pages/Chatroom';
+import MessageHub from './pages/MessageHub';
+import MyProfile from './pages/MyProfile';
+import NotFound from './pages/NotFound';
+import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 import './index.css';
 
 
@@ -34,10 +34,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AuthContextProvider>
-        {/*this is a custom css reset for MUI */}
+      <AuthContextProvider>
         <CssBaseline />
         <RouterProvider router={router} />
-    </AuthContextProvider>
+      </AuthContextProvider>
   </React.StrictMode>
 );

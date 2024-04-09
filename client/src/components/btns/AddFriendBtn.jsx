@@ -2,32 +2,28 @@ import { Button } from "@mui/material";
 import { PersonAddAlt } from "@mui/icons-material";
 import { useMutation } from "@apollo/client";
 import { ADD_FRIEND } from "../../utils/mutations";
-import { useEffect } from "react";
-import { io } from "socket.io-client";
+import { useUserContext } from "../../context/UserContext";
 
-export const AddFriendButton = ({ currentUser, friendId, isFriend, setIsFriend }) => {
+export const AddFriendBtn = ({ friendId }) => {
 
-    const [addFriend, { error }] = useMutation(ADD_FRIEND);
-useEffect(() => {
-    const socket = io('http://localhost:3000');
+    const { addFriend, userId } = useUserContext();
+    // console.log(friends)
+
+    const [addFriendtoDatabase, { error }] = useMutation(ADD_FRIEND);
+
     const handleAddFriend = async () => {
         try {
-            await addFriend({
+            await addFriendtoDatabase({
                 variables: {
-                    userId: currentUser._id,
+                    userId,
                     friendId: friendId,
                 }
             });
-            setIsFriend(true);
+            addFriend(friendId)
         } catch(err) {
             console.log('error adding friend', err);
         }
-    };
-    io.on('friend-added', handleAddFriend);
-    return () => io.off('friend-added', handleAddFriend);
-}
-    ), [addFriend, currentUser._id, friendId, setIsFriend];
-
+    }
 
     return (
         <>

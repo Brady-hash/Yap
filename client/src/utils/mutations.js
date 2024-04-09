@@ -47,11 +47,11 @@ export const LOGIN = gql`
 `;
 
 export const CREATE_THREAD = gql`
-  mutation createThread($userId: ID!, $name: String!){
-    createThread(userId: $userId, name: $name) {
+  mutation createThread($userId: ID!, $name: String!, $participantUsernames: [String!]){
+    createThread(userId: $userId, name: $name, participantUsernames: $participantUsernames) {
       _id
       name
-      admin {
+      admins {
         _id
         username
       }
@@ -66,23 +66,59 @@ export const CREATE_THREAD = gql`
 `;
 
 export const DELETE_THREAD = gql`
-  mutation deleteThread($threadId: ID!, $userId: ID!){
-    deleteThread(threadId: $threadId, userId: $userId) {
-      _id
-      name
+  mutation deleteThread($threadId: ID!){
+    deleteThread(threadId: $threadId) {
+      message
     }
   }
 `
 export const UPDATE_THREAD = gql`
-  mutation updateThread($threadId: ID!, $userId: ID!, $name: String!) {
-    updateThread(threadId: $threadId, userId: $userId, name: $name) {
+  mutation updateThread($threadId: ID!, $name: String!) {
+    updateThread(threadId: $threadId, name: $name) {
       _id
-      name
-      isGroupChat
-      participants {
+    name
+    isGroupChat
+    timestamp
+    creator
+    createdAt
+    admins {
+      _id
+      username
+    }
+    participants {
+      _id
+      username
+    }
+    questions {
+      _id
+      text
+      option1
+      option2
+      option1Count
+      option2Count
+      option1Percentage
+      answerCount
+      createdAt
+      timestamp
+      answers {
+        _id
+        userId {
+          _id
+        }
+        answerChoice
+      }
+    }
+    messages {
+      _id
+      text
+      messageThread
+      createdAt
+      timestamp
+      sender {
         _id
         username
       }
+    }
     }
   }
 `;
@@ -167,7 +203,7 @@ mutation joinThread($userId: ID!, $threadId: ID!) {
     joinThread(userId: $userId, threadId: $threadId) {
       _id
       name
-      admin {
+      admins {
         _id
         username
       }
@@ -182,14 +218,9 @@ mutation joinThread($userId: ID!, $threadId: ID!) {
 `;
 
 export const LEAVE_THREAD = gql`
-  mutation leaveThread($userId: ID!, $threadId: ID!){
-    leaveThread(userId: $userId, threadId: $threadId) {
-      _id
-      username
-      messageThreads {
-        _id
-        name
-      }
+  mutation leaveThread($threadId: ID!){
+    leaveThread(threadId: $threadId) {
+      message
     }
   }
 `;
@@ -215,36 +246,66 @@ export const UPDATE_QUESTION = gql`
 `;
 
 export const CREATE_QUESTION = gql`
-  mutation createQuestion($userId: ID!, $messageThread: ID!, $text: String!, $option1: String!, $option2: String!){
-    createQuestion(userId: $userId, messageThread: $messageThread, text: $text, option1: $option1, option2: $option2) {
+  mutation createQuestion($messageThread: ID!, $text: String!, $option1: String!, $option2: String!){
+    createQuestion(messageThread: $messageThread, text: $text, option1: $option1, option2: $option2) {
+    _id
+    name
+    isGroupChat
+    timestamp
+    creator
+    createdAt
+    admins {
       _id
-      messageThread {
-        _id
-        name
-      }
-      creator {
-        _id
-        username
-      }
+      username
+    }
+    participants {
+      _id
+      username
+    }
+    questions {
+      _id
       text
       option1
       option2
+      option1Count
+      option2Count
+      option1Percentage
       answerCount
+      createdAt
       timestamp
+      answers {
+        _id
+        userId {
+          _id
+        }
+        answerChoice
+      }
+    }
+    messages {
+      _id
+      text
+      messageThread
+      createdAt
+      timestamp
+      sender {
+        _id
+        username
+      }
+    }
     }
   }
 `;
 
 export const DELETE_QUESTION = gql`
-  mutation deleteQuestion($userId: ID!, $questionId: ID!){
-    deleteQuestion(userId: $userId, questionId: $questionId) {
+  mutation deleteQuestion($questionId: ID!){
+    deleteQuestion(questionId: $questionId) {
       message
     }
   }
 `;
 export const ANSWER_QUESTION = gql`
-  mutation answerQuestion($userId: ID!, $questionId: ID!, $answer: String!){
-    answerQuestion(userId: $userId, questionId: $questionId, answer: $answer) {
+  mutation answerQuestion($questionId: ID!, $answer: String!){
+    answerQuestion(questionId: $questionId, answer: $answer) {
       _id
       creator {
         _id
@@ -257,7 +318,10 @@ export const ANSWER_QUESTION = gql`
       text
       option1
       option2
+      option1Count
+      option2Count
       answerCount
+      option1Percentage
       answers {
         _id
         userId {
@@ -268,4 +332,36 @@ export const ANSWER_QUESTION = gql`
       }
     }
   }
+`;
+
+export const ADMIN_USER = gql`
+mutation adminUser($threadId: ID!, $userId: ID!){
+  adminUser(threadId: $threadId, userId: $userId) {
+      _id
+      name
+      isGroupChat
+      timestamp
+      createdAt
+      admins {
+        _id
+        username
+      }
+  }
+}
+`;
+
+export const REMOVE_ADMIN = gql`
+mutation removeAdmin($threadId: ID!, $userId: ID!){
+  removeAdmin(threadId: $threadId, userId: $userId) {
+      _id
+      name
+      isGroupChat
+      timestamp
+      createdAt
+      admins {
+        _id
+        username
+      }
+  }
+}
 `;
