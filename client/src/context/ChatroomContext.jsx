@@ -19,7 +19,8 @@ export const ChatroomProvider = ({ children }) => {
     const {data: threadData, loading: threadLoading, error: threadError} = useQuery(QUERY_ONE_THREAD, {
         variables: {
             threadId
-        }
+        },
+        pollInterval: 10000,
     });
     const thread = threadData?.thread || null
 

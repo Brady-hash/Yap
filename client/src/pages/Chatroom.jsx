@@ -23,8 +23,7 @@ function Chatroom() {
   const { threadId } = useParams();
   const navigate = useNavigate();
   const { loading, data, error, refetch } = useQuery(QUERY_ONE_THREAD, {
-    variables: { threadId },
-    pollInterval: 10000,
+    variables: { threadId }
   });
 
   useEffect(() => {
