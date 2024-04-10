@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Box, Drawer, Typography, Button, Avatar, Badge } from "@mui/material";
-import { Close, Star, AdminPanelSettings, RemoveModerator } from "@mui/icons-material/";
+import { Box, Drawer, Typography, Button, Avatar } from "@mui/material";
+import { Close } from "@mui/icons-material/";
 
 import { EditThread } from "./editThread";
 
 import { LeaveThreadBtn } from "../btns/LeaveThreadBtn";
 import { RemoveAdminBtn } from "../btns/RemoveAdminBtn";
-import { AddToThreadBtn } from "../btns/AddToThreadBtn";
 import { AddAdminBtn } from "../btns/AddAdminBtn";
 import { KickUserBtn } from "../btns/KickUserBtn";
 import { useChatroomContext } from "../../context/ChatroomContext";

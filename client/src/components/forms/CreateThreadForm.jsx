@@ -1,4 +1,3 @@
-// CreateThreadForm.jsx
 import { useState, useContext } from 'react';
 import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';

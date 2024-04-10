@@ -1,7 +1,5 @@
-import { Box, Typography, Avatar, Button } from '@mui/material';
+import { Box, Typography, Avatar } from '@mui/material';
 import { useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { QUERY_ME } from '../../utils/queries';
 import { UserProfile } from '../UserProfile';
 import { AddFriendBtn } from '../btns/AddFriendBtn';
 import { RemoveFriendBtn } from '../btns/RemoveFriendBtn';

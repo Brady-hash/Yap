@@ -13,7 +13,6 @@ const MyProfileBtn = ({ sx }) => {
         <Button 
             variant='contained' 
             onClick={navigateToMyProfile} 
-			// sx={{ bgcolor: '#222831', right: 10, '&:hover': { bgcolor: '#455d7a'}}}
             sx={sx}
         >
             <Typography variant='h7'>Profile</Typography>

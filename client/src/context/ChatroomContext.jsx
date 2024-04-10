@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 
 const ChatroomContext = createContext();
@@ -19,7 +19,7 @@ export const ChatroomProvider = ({ children }) => {
         variables: {
             threadId
         },
-        // pollInterval: 10000,
+        pollInterval: 5000,
     });
     const [thread, setThread] = useState({});
 

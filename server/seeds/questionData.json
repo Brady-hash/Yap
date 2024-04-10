@@ -1,7 +1,7 @@
 {
-    "text": "This is a test message.",
-    "option1": "test",
-    "option2": "demo",
+    "text": "Do we like Yap",
+    "option1": "Yes",
+    "option2": "Yes!",
     "option1Count":  0,
     "option2Count": 0,
     "isMainPoll": true

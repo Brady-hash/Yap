@@ -1,4 +1,3 @@
-// CreateThreadBtn.jsx
 import { useState } from 'react';
 import { Dialog } from '@mui/material';
 import { AddCircle } from "@mui/icons-material";

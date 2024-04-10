@@ -1,5 +1,4 @@
 import { Button } from '@mui/material';
-import { PlaylistAdd } from '@mui/icons-material';
 import { useUserContext } from '../../context/UserContext';
 import { useMutation } from '@apollo/client';
 import { JOIN_THREAD } from '../../utils/mutations';

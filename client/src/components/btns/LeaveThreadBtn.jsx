@@ -13,11 +13,7 @@ export const LeaveThreadBtn= ({ sx, thread }) => {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const navigate = useNavigate();
 
-    const [leaveThread, { error }] = useMutation(LEAVE_THREAD, {
-        // onCompleted: () => {
-        //     navigate('/');
-        // }
-    });
+    const [leaveThread, { error }] = useMutation(LEAVE_THREAD);
 
     const handleLeaveThread = async () => {
         try {

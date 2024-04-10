@@ -60,7 +60,7 @@ const scheduleMainPollSwitch = () => {
 
       console.log('Main poll scheduled successfully:', newQuestion);
 
-      // Increment the index to switch to the next question
+      // Increment the index
       currentQuestionIndex = (currentQuestionIndex + 1) % questionList.length;
     } catch (error) {
       console.error('Error scheduling main poll:', error);
@@ -79,7 +79,7 @@ async function createMainPoll(questionData) {
     return newQuestion; // Return the newly created question
   } catch (error) {
     console.error('Error creating main poll:', error);
-    throw error; // Throw the error for handling in the calling function
+    throw error;
   }
 }
 

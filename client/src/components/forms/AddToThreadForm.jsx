@@ -1,4 +1,4 @@
-import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useChatroomContext } from '../../context/ChatroomContext';
 import { useUserContext } from '../../context/UserContext';
 import { useMutation } from '@apollo/client';
