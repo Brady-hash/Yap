@@ -1,4 +1,4 @@
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { OpenThreadBtn } from '../btns/OpenThreadBtn';
 import { JoinThreadBtn } from '../btns/JoinThreadBtn';
 import { useUserContext } from '../../context/UserContext';

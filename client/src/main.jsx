@@ -7,7 +7,6 @@ import { AuthContextProvider } from "./context/AuthContext.jsx";
 import AuthWrapper from './components/AuthWrapper.jsx'
 
 import App from './App.jsx';
-import ChatRoom from './pages/Chatroom';
 import ChatroomWrapper from './context/ChatroomWrapper.jsx';
 import MessageHub from './pages/MessageHub';
 import MyProfile from './pages/MyProfile';

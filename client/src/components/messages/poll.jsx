@@ -1,8 +1,7 @@
 import { Box, Typography, Button } from '@mui/material';
 import { DeletePollBtn } from '../btns/DeletePollBtn';
 import { useMutation } from '@apollo/client';
-import { useState, useEffect } from 'react';
-import { ANSWER_QUESTION, DELETE_QUESTION } from '../../utils/mutations';
+import { ANSWER_QUESTION } from '../../utils/mutations';
 import { useChatroomContext } from '../../context/ChatroomContext';
 
 export const Poll = ({ poll }) => {

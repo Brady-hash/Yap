@@ -1,6 +1,5 @@
 import { Confirm } from "../forms/Confirm";
 import { DeleteForever } from "@mui/icons-material";
-import { Button } from '@mui/material';
 import { DELETE_MESSAGE } from "../../utils/mutations";
 import { useMutation } from "@apollo/client";
 import { useState } from "react";

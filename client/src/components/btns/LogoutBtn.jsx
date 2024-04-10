@@ -14,10 +14,9 @@ const LogoutBtn = ({ sx }) => {
 	}
 
     return (
-        <Button 
+        <Button
 			variant='contained' 
 			onClick={handleLogout}
-			// sx={{ bgcolor: '#222831', right: 10, '&:hover': { bgcolor: '#455d7a'}}}
 			sx={sx}
 		>
 			<Typography variant='h7'>Logout</Typography>

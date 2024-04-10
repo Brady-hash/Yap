@@ -4,7 +4,7 @@ import { Confirm } from '../forms/Confirm';
 import { AddToThreadBtn } from '../btns/AddToThreadBtn';
 import { useMutation } from '@apollo/client';
 import { UPDATE_THREAD, DELETE_THREAD } from '../../utils/mutations';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../../context/UserContext';
 

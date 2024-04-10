@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { ADD_MESSAGE } from "../../utils/mutations";
 import { Box, Button, TextField } from "@mui/material";

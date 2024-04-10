@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { Button, Typography } from '@mui/material';
-import { Search, ThreeP } from '@mui/icons-material';
+import { Search } from '@mui/icons-material';
 
 export const SearchBtn = ({ setSearchOpen, sx }) => {
     return (

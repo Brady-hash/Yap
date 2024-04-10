@@ -1,5 +1,3 @@
-// ChatroomWrapper.jsx
-import React from 'react';
 import { ChatroomProvider } from '../context/ChatroomContext';
 import Chatroom from '../pages/Chatroom';
 
