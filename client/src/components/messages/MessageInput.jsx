@@ -8,7 +8,7 @@ import { useChatroomContext } from "../../context/ChatroomContext";
 
 const MessageInput = ({ thread }) => {
 
-	const { userId, addToCombinedData, currentUserIsAdmin } = useChatroomContext();
+	const { userId, addToCombinedData, currentUserIsAdmin, combinedData } = useChatroomContext();
 
 	const [message, setMessage] = useState('');
 	const [modalOpen, setModalOpen] = useState(false);
@@ -19,6 +19,17 @@ const MessageInput = ({ thread }) => {
 			threadId: thread._id,
 		},
 	});
+	
+	useEffect(() => {
+		const messageContainer = document.getElementById('messageContainer');
+		if (messageContainer) {
+			setTimeout(() => {
+				messageContainer.scrollTo(0, messageContainer.scrollHeight);
+			}, 10);
+		}
+	}, [combinedData]); // Depend on the last message timestamp
+	
+
 
 	const handleInputChange = (event) => {
 		setMessage(event.target.value);

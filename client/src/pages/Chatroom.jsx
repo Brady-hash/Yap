@@ -27,15 +27,15 @@ function Chatroom() {
     variables: { threadId }
   });
 
-  useEffect(() => {
-		const messageContainer = document.getElementById('messageContainer');
-    if (messageContainer) {
-      setTimeout(() => {
-        messageContainer.scrollTo(0, messageContainer.scrollHeight);
-      }, 10)
-    }
-    return
-	}, [combinedData]);
+  // useEffect(() => {
+	// 	const messageContainer = document.getElementById('messageContainer');
+  //   if (messageContainer) {
+  //     setTimeout(() => {
+  //       messageContainer.scrollTo(0, messageContainer.scrollHeight);
+  //     }, 10)
+  //   }
+  //   return
+	// }, [combinedData]);
 
 
   if (loading) return <p>Loading chatroom...</p>;
