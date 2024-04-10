@@ -4,8 +4,8 @@ const  Question  = require('../models/Question');
 const questionList = [
   {
     text: 'What is your favorite color?',
-    option1: 'Blue',
-    option2: 'Red',
+    option1: 'Red',
+    option2: 'Blue',
     option1Count: 0,
     option2Count: 0,
     isMainPoll: true,

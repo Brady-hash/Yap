@@ -23,13 +23,17 @@ export const DeleteMessageBtn = ({ messageId }) => {
     }
     return (
         <>
-        <Button 
-            variant='text' sx={{ p: 0 }} 
-            onClick={() => setConfirmOpen(true)}
-        >
-            <DeleteForever sx={{fontSize: 30}}/>
-        </Button>
-        <Confirm confirmOpen={confirmOpen} setConfirmOpen={setConfirmOpen} action={'delete this message'} actionFunction={handleDeleteMessage}/>    
+            <DeleteForever 
+                variant="text"
+                sx={{ p: 0, fontSize: 30, color: '#be3144', cursor:'pointer' }}
+                onClick={() => setConfirmOpen(true)}
+            />
+            <Confirm
+                confirmOpen={confirmOpen}
+                setConfirmOpen={setConfirmOpen}
+                action="delete this message"
+                actionFunction={handleDeleteMessage}
+            />
         </>
-    )
+    );
 };
