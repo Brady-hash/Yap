@@ -8,7 +8,7 @@ import { useChatroomContext } from "../../context/ChatroomContext";
 
 const MessageInput = ({ thread }) => {
 
-	const { userId, addToCombinedData, currentUserIsAdmin } = useChatroomContext();
+	const { userId, addToCombinedData, currentUserIsAdmin, combinedData } = useChatroomContext();
 
 	const [message, setMessage] = useState('');
 	const [modalOpen, setModalOpen] = useState(false);
@@ -24,6 +24,15 @@ const MessageInput = ({ thread }) => {
 		setMessage(event.target.value);
 	};
 
+	const scrollToBottom = () => {
+		const messageContainer = document.getElementById('messageContainer');
+		if (messageContainer) {
+		  setTimeout(() => {
+			messageContainer.scrollTo(0, messageContainer.scrollHeight);
+		  }, 100);
+		}
+	  };
+
 	const handleSubmit = async (event) => {
 		try {
 			if (!message.trim()) {
@@ -32,6 +41,7 @@ const MessageInput = ({ thread }) => {
 			const { data } = await addMessage();
 			if (data) {
 				addToCombinedData(data.addMessage)
+				scrollToBottom();
 			}
 			setMessage('')
 		} catch(err) {

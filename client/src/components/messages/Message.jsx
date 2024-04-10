@@ -14,7 +14,7 @@ import { EditMessageBox } from "./editMessageBox";
 import { UserProfile } from '../UserProfile';
 import { useChatroomContext } from "../../context/ChatroomContext";
 
-export const Message = ({ message, currentUser, isAdmin, refetch }) => {
+export const Message = ({ message, isAdmin, refetch }) => {
 
 	const { friends, addFriend, removeFriend, threads, userId } = useUserContext();
 	const { combinedData, updateCombinedData, threadData, currentUserIsAdmin } = useChatroomContext();
@@ -111,13 +111,13 @@ export const Message = ({ message, currentUser, isAdmin, refetch }) => {
 						color: 'white'
 					}}
 				> {timestamp}
-				{ currentUserIsAdmin || isCurrentUserMessage  ? <DeleteMessageBtn messageId={message._id} currentUser={currentUser} refetch={refetch}/> : ''}
+				{ currentUserIsAdmin || isCurrentUserMessage  ? <DeleteMessageBtn messageId={message._id} refetch={refetch}/> : ''}
 				{isCurrentUserMessage && <EditMessageBtn onClick={startEditing}/>}
 				</Typography>
 			</Box>
 			<Box sx={{ display: 'flex', gap: 0}}>
 				<Typography variant='h6' sx={{color: '#777', textAlign: 'left', my: 1}}>{message.sender.username}</Typography>
-				{!isCurrentUserMessage && !isFriend && <AddFriendBtn currentUser={currentUser} friendId={message.sender._id}/>}
+				{!isCurrentUserMessage && !isFriend && <AddFriendBtn friendId={message.sender._id}/>}
 				{!isCurrentUserMessage && isFriend && <PeopleOutline sx={{fontSize: 30, color: 'gray', mx: 1}}/>}
 			</Box>
 			{isEditing ?  

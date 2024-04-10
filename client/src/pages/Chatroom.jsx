@@ -13,11 +13,12 @@ import MessageInput from '../components/messages/MessageInput';
 import { Poll } from '../components/messages/poll';
 
 import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
-import { useUserContext } from '../context/UserContext';
 
 function Chatroom() {
 
-  const { combinedData, updateCombinedData, thread, currentUserIsAdmin } = useChatroomContext();
+  const { combinedData, updateCombinedData, thread, currentUserIsAdmin, updatePollDataInCombinedData } = useChatroomContext();
+  console.log(combinedData)
+
   const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
   
   const { threadId } = useParams();
@@ -27,19 +28,19 @@ function Chatroom() {
   });
 
   useEffect(() => {
-		const messageContainer = document.getElementById('messageContainer');
-    if (messageContainer) {
-      setTimeout(() => {
-        messageContainer.scrollTo(0, messageContainer.scrollHeight);
-      }, 10)
+    if (!loading) { // Assuming 'loading' indicates the loading state of your chat content
+      const messageContainer = document.getElementById('messageContainer');
+      if (messageContainer) {
+        setTimeout(() => {
+          messageContainer.scrollTo(0, messageContainer.scrollHeight);
+        }, 100); // Adjusted timeout for safety
+      }
     }
-    return
-	}, [combinedData]);
+  }, [loading]);
 
 
   if (loading) return <p>Loading chatroom...</p>;
   if (error) navigate('/');
-
 
   return (
     <Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -51,7 +52,7 @@ function Chatroom() {
       <Box id="messageContainer" sx={{ overflow: 'auto', height: '70%'}}>
         {combinedData.map((item, index) => {
           if (item.__typename === 'Message') {
-            return <Message key={item._id} message={item} currentUser={userData} currentUserIsAdmin={currentUserIsAdmin} refetch={refetch} />;
+            return <Message key={item._id} message={item} currentUserIsAdmin={currentUserIsAdmin} refetch={refetch} />;
           } else if (item.__typename === 'Question') {
             return <Poll key={item._id} poll={item} currentUserIsAdmin={currentUserIsAdmin} refetch={refetch} />;
           } else {

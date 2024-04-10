@@ -5,7 +5,6 @@ import { SideBarBtn } from '../components/btns/SideBarBtn';
 import { CreateThreadBtn } from '../components/btns/CreateThreadBtn'
 import MainPoll from '../components/Mainpoll'
 
-
 function MessageHub() {
   const navigate = useNavigate();
   const { userId, friends, threads } = useUserContext();
