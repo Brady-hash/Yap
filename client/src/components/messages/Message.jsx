@@ -55,7 +55,7 @@ export const Message = ({ message, isAdmin, refetch }) => {
 			});
 			setIsEditing(false);
 		} catch(err) {
-			console.log('error saving updated thread',err);
+			console.error('error saving updated thread',err);
 		}
 	};
 	let usernameColor = 'white'; // Default color

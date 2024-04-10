@@ -44,9 +44,8 @@ function Profile() {
         try {
             await updateUserProfile({ variables: { username: userData.username, email: userData.email } });
             setEditing(false);
-            console.log('Successfully updated user info');
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
 

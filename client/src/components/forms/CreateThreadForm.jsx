@@ -17,7 +17,6 @@ const CreateThreadForm = ({ onClose }) => {
 
     const handleSubmit = async () => {
         const usernames = participantUsernames.split(',').map(name => name.trim());
-        console.log(authUser);
             try {
             const { data } = await createThread({
                 variables: {
