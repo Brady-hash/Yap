@@ -19,12 +19,6 @@ const MessageInput = ({ thread }) => {
 			threadId: thread._id,
 		},
 	});
-	
-	useEffect(() => {
-
-	}, [combinedData]); // Depend on the last message timestamp
-	
-
 
 	const handleInputChange = (event) => {
 		setMessage(event.target.value);
