@@ -5,9 +5,11 @@ import { useMutation } from '@apollo/client';
 import { UPDATE_THREAD, DELETE_THREAD } from '../../utils/mutations';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserContext } from '../../context/UserContext';
 
 export const EditThread = ({ threadId, name }) => {
     const navigate = useNavigate();
+    const { removeThread } = useUserContext();
 
     const [updateThread, { error: updateThreadError }]= useMutation(UPDATE_THREAD);
     const [deleteThread, { error: deleteThreadError }] = useMutation(DELETE_THREAD);
@@ -36,6 +38,7 @@ export const EditThread = ({ threadId, name }) => {
                     threadId
                 }
             });
+            removeThread(threadId)
             if (data.deleteThread.message === 'success') navigate('/')
         } catch(err) {
             throw new Error(`Error deleting thread: ${err}`);
@@ -69,7 +72,7 @@ export const EditThread = ({ threadId, name }) => {
                   onChange={handleInputChange}
             />
             <Box sx={{ display: 'flex', width: '60%', justifyContent: 'space-between', mt: 1}}>
-                <Button variant='contained' onClick={() => setIsEditing(false)}>cancel</Button>
+                <Button variant='contained' sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}} onClick={() => setIsEditing(false)}>cancel</Button>
                 <Button 
                     variant='contained' 
                     sx={{bgcolor: 'green', '&:hover': { bgcolor: 'darkgreen'}}}
@@ -91,7 +94,7 @@ export const EditThread = ({ threadId, name }) => {
         </Box>
         ) : (
         <Box sx={{ position: 'fixed', bottom: 0, display: 'flex', width: '100%', p: 1, bgcolor: '#666'}}>
-            <Button variant='contained' onClick={() => setIsEditing(!isEditing)}>Edit Thread<Edit /></Button>
+            <Button variant='contained' sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}} onClick={() => setIsEditing(!isEditing)}>Edit Thread<Edit /></Button>
         </Box>
         )}
         <Confirm confirmOpen={confirmOpen} setConfirmOpen={setConfirmOpen} action={'delete this thread'} actionFunction={handleDeleteThread}/>

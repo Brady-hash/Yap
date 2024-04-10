@@ -65,7 +65,7 @@ export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
     
     return (
         <>
-        <Box sx={{border: 'solid white 2px', width: '100%', height: '95%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, px: 1}}>
+        <Box sx={{ width: '100%', height: '95%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, px: 1}}>
             <TextField 
                 name='question'
                 multiline
@@ -95,7 +95,7 @@ export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
                 focused={false}
                 sx={styles}
             />
-            <Button variant='contained' onClick={handleSubmit}>Ask Question</Button>
+            <Button variant='contained' sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}} onClick={handleSubmit}>Ask Question</Button>
         </Box>
         </>
     )

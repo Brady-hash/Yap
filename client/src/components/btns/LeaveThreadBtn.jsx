@@ -38,7 +38,7 @@ export const LeaveThreadBtn= ({ sx, thread }) => {
         <>
             <Button 
                 variant='contained' 
-                sx={sx}
+                sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}
                 onClick={()=> setConfirmOpen(true)}
             >
                 <MeetingRoom sx={{ fontSize: 35 }}/>

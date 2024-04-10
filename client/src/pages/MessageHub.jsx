@@ -1,11 +1,24 @@
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useUserContext } from '../context/UserContext';
 import { Box, Typography } from '@mui/material';
 import { SideBarBtn } from '../components/btns/SideBarBtn';
+import { NavBar } from '../components/NavBar';
 import { CreateThreadBtn } from '../components/btns/CreateThreadBtn'
 import MainPoll from '../components/Mainpoll'
 
 function MessageHub() {
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  useEffect(() => {
+      const handleResize = () => {
+          setWindowWidth(window.innerWidth);
+      }
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+  }, [windowWidth]);
+
+  const isSmallScreen = windowWidth < 1000;
   const navigate = useNavigate();
   const { userId, friends, threads } = useUserContext();
 
@@ -14,9 +27,13 @@ function MessageHub() {
   };
 
   return (
-    <Box sx={{ position: 'relative', minHeight: '100vh' }}> {/* Ensure background extends with content */}
+    <Box sx={{ position: 'relative', minHeight: '100vh', pb: 10}}> {/* Ensure background extends with content */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
-            <SideBarBtn />
+            {!isSmallScreen ? 
+                <NavBar />
+                :
+                <SideBarBtn />
+            }
             <Box sx={{ width: 75, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
                 <img
                     src="/Yap-Logo.png"
@@ -27,7 +44,7 @@ function MessageHub() {
         </Box>
         <Box sx={{ maxWidth: '800px', margin: 'auto' }}>
             <MainPoll />
-            <Box sx={{ overflowY: 'auto' }}>
+            <Box sx={{ height: '50%', overflowY: 'auto' }}>
                 {threads && threads.map(thread => (
                     <Box 
                         key={thread._id} 

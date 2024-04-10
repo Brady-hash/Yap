@@ -29,13 +29,13 @@ export const UserHit = ({ hit,  }) => {
 
     return (
         <>
-        <Box sx={{ borderBottom: 'solid white 2px', display: 'flex', flexDirection: 'column'}}>
-                <Box sx={{ display: 'flex', alignItems: 'center', p: 1}}>
+        <Box sx={{ borderBottom: 'solid #666 2px', display: 'flex', flexDirection: 'column'}}>
+                <Box sx={{ display: 'flex', alignItems: 'center', p: 1, position: 'relative'}}>
                     <Avatar id={hit.objectID} onClick={handleClick} sx={{ marginRight: 2 }} />
-                    <Typography variant='h6'>{hit.username ? hit.username : hit.name}</Typography>
+                    <Typography variant='h6' sx={{ color: 'white' }}>{hit.username}</Typography>
                     {!isCurrentUser && (
                         !isFriend ? 
-                        <AddFriendBtn friendId={hit.objectID} setIsFriend={setIsFriend}/> : 
+                        <AddFriendBtn friendId={hit.objectID} setIsFriend={setIsFriend} sx={{ position: 'absolute', right: 10, bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}                        /> : 
                         <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                             <PeopleOutline sx={{fontSize: 30, color: 'gray', mx: 1}}/>
                             <RemoveFriendBtn friendId={hit.objectID} setIsFriend={setIsFriend}/>

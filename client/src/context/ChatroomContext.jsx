@@ -20,15 +20,16 @@ export const ChatroomProvider = ({ children }) => {
         variables: {
             threadId
         },
-        pollInterval: 10000,
+        // pollInterval: 10000,
     });
-    const thread = threadData?.thread || null
+    const [thread, setThread] = useState({});
 
     useEffect(() => {
         if (threadData && threadData.thread) {
             const updatedCombinedData = [...threadData.thread.messages, ...threadData.thread.questions]
                 .sort((a, b) => parseInt(a.createdAt, 10) - parseInt(b.createdAt, 10));
             setCombinedData(updatedCombinedData);
+            setThread(threadData.thread)
             if (userData && userData.me) {
                 setUserId(userData.me._id)
                 setCurrentUserIsAdmin(threadData.thread.admins.some(admin => admin._id.toString() === userData.me._id.toString()))
@@ -50,6 +51,14 @@ export const ChatroomProvider = ({ children }) => {
         });
     };
 
+    const removeParticipant = (userIdToRemove) => {
+        if (thread && thread.participants) {
+            const updatedParticipants = thread.participants.filter(participant => participant._id !== userIdToRemove);
+            // Update the thread state with the new list of participants
+            setThread(prevThread => ({ ...prevThread, participants: updatedParticipants }));
+        }
+    };
+
     const updatePollDataInCombinedData = (updatedPoll) => {
         setCombinedData(currentData => {
             return currentData.map(item => {
@@ -62,7 +71,7 @@ export const ChatroomProvider = ({ children }) => {
     };
 
     return(
-        <ChatroomContext.Provider value={{ userId, combinedData, addToCombinedData, removeFromCombinedData, thread, currentUserIsAdmin, updatePollDataInCombinedData }}>
+        <ChatroomContext.Provider value={{ userId, combinedData, addToCombinedData, removeFromCombinedData, thread, currentUserIsAdmin, updatePollDataInCombinedData, removeParticipant }}>
             { children }
         </ChatroomContext.Provider>
     )

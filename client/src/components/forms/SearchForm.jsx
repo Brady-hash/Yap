@@ -35,10 +35,9 @@ export const SearchForm = ({ searchOpen, setSearchOpen }) => {
             // onClose={}
             sx={{ overflow: 'auto', height: '100%' }}
         >
-            <Close 
-                sx={{fontSize: 40, color: 'white', position: 'absolute', top: 5, left: 5}}
-                onClick={() => setSearchOpen(false)}
-            />
+            <Button variant='contained' onClick={() => setSearchOpen(false)} sx={{ position: 'absolute',left: 10, top: 10, bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}>
+                <Close sx={{ fontSize: 20, color: 'white' }}/>
+            </Button>
             <Box sx={{ width: '380px', height: '600px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', bgcolor: '#444'}}>
             <DialogTitle sx={{ bgcolor: '#777', boxShadow: 5,width: '100%', textAlign: 'center'}}>Find Users or Threads</DialogTitle>
             <DialogContent sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2}}>

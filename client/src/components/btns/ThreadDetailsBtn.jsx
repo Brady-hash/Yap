@@ -14,7 +14,7 @@ export const ThreadDetailsBtn = ({ thread, currentUser }) => {
         <>
             <Button 
                 variant='contained' 
-                sx={{}}
+                sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}
                 onClick={toggleThreadDetails}
             >
                 <Typography variant='h6'>{thread.name}</Typography>

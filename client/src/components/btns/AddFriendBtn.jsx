@@ -4,7 +4,7 @@ import { useMutation } from "@apollo/client";
 import { ADD_FRIEND } from "../../utils/mutations";
 import { useUserContext } from "../../context/UserContext";
 
-export const AddFriendBtn = ({ friendId }) => {
+export const AddFriendBtn = ({ friendId, sx }) => {
 
     const { addFriend, userId } = useUserContext();
     // console.log(friends)
@@ -27,7 +27,7 @@ export const AddFriendBtn = ({ friendId }) => {
 
     return (
         <>
-        <Button sx={{ p: 0 }} onClick={handleAddFriend}> <PersonAddAlt sx={{fontSize: 30}}/></Button>
+        <Button variant='contained' sx={sx} onClick={handleAddFriend}> <PersonAddAlt sx={{fontSize: 25, color: 'white'}}/></Button>
         </>
     )
 };

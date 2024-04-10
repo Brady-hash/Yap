@@ -245,9 +245,9 @@ const resolvers = {
                 const participants = await User.find({
                     username: { $in: participantUsernames }
                 });
-                if (participants.length !== participantUsernames.length) {
-                    throw new Error('Some usernames do not exist');
-                }
+                // if (participants.length !== participantUsernames.length) {
+                //     throw new Error('Some usernames do not exist');
+                // }
 
                 const participantIds = participants.map(user => user._id);
 
@@ -644,6 +644,25 @@ const resolvers = {
                 return updatedThread
             } catch(err) {
                 throw new Error(`Error removing admin: ${err}`);
+            }
+        }, 
+        kickUser: async (parent, { userId, threadId }, context) => {
+            try {
+                // if (!context.user) {
+                //     throw AuthenticationError
+                // }
+                const updatedThread = await MessageThread.findByIdAndUpdate(
+                    threadId, 
+                    { $pull: { participants: userId, admins: userId }}, 
+                    { new: true })
+                    .populate({ path: 'admins', select: 'username'})
+                    .populate('participants')
+                    .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
+                    .populate({ path: 'questions', populate: 'creator' });
+                    await User.findByIdAndUpdate(userId, { $pull: { messageThreads: threadId }}, { new: true });
+                    return updatedThread
+            } catch(err) {
+                throw new Error(`Erro kicking participant: ${err}`);
             }
         }
     }

@@ -11,8 +11,8 @@ export const ThreadHit = ({ hit }) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column'}}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: 'solid white 2px', p: 1}}>
-                <Typography variant='h6'>{hit.name}</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: 'solid #666 2px', p: 1}}>
+                <Typography variant='h6' sx={{ color: 'white' }}>{hit.name}</Typography>
                 {belongsToThread ? 
                     <OpenThreadBtn threadId={hit.objectID}/>
                     :

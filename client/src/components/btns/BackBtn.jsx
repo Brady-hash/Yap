@@ -1,4 +1,5 @@
 import { ArrowBack } from "@mui/icons-material";
+import { Button } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 
 export const BackBtn = () => {
@@ -8,7 +9,8 @@ export const BackBtn = () => {
         navigate('/');
     }; 
     return (
-
-            <ArrowBack sx={{ fontSize: 35, color:"white"}}  onClick={handleClick}/>
+        <Button sx={{ '&:hover': { bgcolor: 'transparent'}}}>
+            <ArrowBack sx={{ fontSize: 35, color:"white" }}  onClick={handleClick}/>
+        </Button>
     );
 };
