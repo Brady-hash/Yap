@@ -23,10 +23,10 @@ export const AddAdminBtn = ({ userId, threadId }) => {
     return (
         <>
         <Button 
-            sx={{ position: 'absolute', right: 20, bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}
+            sx={{ marginLeft: 2, bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}
 
             onClick={handleAddAdmin}
-        >+ Admin<AdminPanelSettings /></Button>
+        >+<AdminPanelSettings /></Button>
         </>
     )
 };

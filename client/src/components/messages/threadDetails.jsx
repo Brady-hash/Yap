@@ -60,7 +60,7 @@ export const ThreadDetails = ({ detailsToggled, onClose }) => {
                 {thread.participants.map((participant) => (
                     <Box 
                         key={participant._id} 
-                        sx={{ borderBottom: 'solid #666 2px', height: '75px', display: 'flex', alignItems: 'center'}}
+                        sx={{ position: 'relative',borderBottom: 'solid #666 2px', display: 'flex', p: 2, alignItems: 'center', flexWrap: 'wrap'}}
                     >
                         <Avatar
                             src=''
@@ -77,8 +77,8 @@ export const ThreadDetails = ({ detailsToggled, onClose }) => {
                         />
                         )}
                         <Typography 
-                            variant='h5' 
-                            sx={{ color: 'white', ml: 3 }}
+                            variant='h6' 
+                            sx={{ color: 'white', ml: 2, lineHeight: '80px' }}
                         >
                             {participant.username} 
                         </Typography>
