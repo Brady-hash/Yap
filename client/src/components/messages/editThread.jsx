@@ -1,6 +1,7 @@
 import { Button, Box, TextField } from '@mui/material';
 import { Edit, FmdBad } from '@mui/icons-material';
 import { Confirm } from '../forms/Confirm';
+import { AddToThreadBtn } from '../btns/AddToThreadBtn';
 import { useMutation } from '@apollo/client';
 import { UPDATE_THREAD, DELETE_THREAD } from '../../utils/mutations';
 import { useState, useEffect } from 'react';
@@ -93,9 +94,11 @@ export const EditThread = ({ threadId, name }) => {
             </Box>
         </Box>
         ) : (
-        <Box sx={{ position: 'fixed', bottom: 0, display: 'flex', width: '100%', p: 1, bgcolor: '#666'}}>
+        <Box sx={{ position: 'fixed', bottom: 0, display: 'flex', width: '80%', p: 1, bgcolor: '#666', justifyContent: 'space-between'}}>
             <Button variant='contained' sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}} onClick={() => setIsEditing(!isEditing)}>Edit Thread<Edit /></Button>
+            <AddToThreadBtn />
         </Box>
+        
         )}
         <Confirm confirmOpen={confirmOpen} setConfirmOpen={setConfirmOpen} action={'delete this thread'} actionFunction={handleDeleteThread}/>
         </>

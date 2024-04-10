@@ -58,6 +58,18 @@ export const ChatroomProvider = ({ children }) => {
         }
     };
 
+    const addParticipant = (newParticipantId) => {
+        const newParticipant = friends.find(friend => friend._id === newParticipantId);
+        if (!newParticipant) return; // Exit if the friend is not found
+    
+        const updatedParticipants = [...thread.participants, newParticipant];
+    
+        setThread(prevThread => ({
+            ...prevThread,
+            participants: updatedParticipants
+        }));
+    };
+
     const updatePollDataInCombinedData = (updatedPoll) => {
         setCombinedData(currentData => {
             return currentData.map(item => {
@@ -70,7 +82,7 @@ export const ChatroomProvider = ({ children }) => {
     };
 
     return(
-        <ChatroomContext.Provider value={{ userId, combinedData, addToCombinedData, removeFromCombinedData, thread, currentUserIsAdmin, updatePollDataInCombinedData, removeParticipant }}>
+        <ChatroomContext.Provider value={{ userId, combinedData, addToCombinedData, removeFromCombinedData, thread, currentUserIsAdmin, updatePollDataInCombinedData, removeParticipant, addParticipant }}>
             { children }
         </ChatroomContext.Provider>
     )
