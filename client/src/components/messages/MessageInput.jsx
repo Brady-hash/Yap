@@ -21,12 +21,7 @@ const MessageInput = ({ thread }) => {
 	});
 	
 	useEffect(() => {
-		const messageContainer = document.getElementById('messageContainer');
-		if (messageContainer) {
-			setTimeout(() => {
-				messageContainer.scrollTo(0, messageContainer.scrollHeight);
-			}, 10);
-		}
+
 	}, [combinedData]); // Depend on the last message timestamp
 	
 
@@ -43,6 +38,12 @@ const MessageInput = ({ thread }) => {
 			const { data } = await addMessage();
 			if (data) {
 				addToCombinedData(data.addMessage)
+				const messageContainer = document.getElementById('messageContainer');
+					if (messageContainer) {
+				setTimeout(() => {
+					messageContainer.scrollTo(0, messageContainer.scrollHeight);
+				}, 10);
+		}
 			}
 			setMessage('')
 		} catch(err) {
