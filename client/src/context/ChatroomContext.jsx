@@ -20,7 +20,7 @@ export const ChatroomProvider = ({ children }) => {
         variables: {
             threadId
         },
-        pollInterval: 10000,
+        // pollInterval: 10000,
     });
     const thread = threadData?.thread || null
 
@@ -36,13 +36,6 @@ export const ChatroomProvider = ({ children }) => {
         }
     }, [threadData, userData]);
 
-    const updateCombinedData = (newData) => {
-        setCombinedData((prevData) => {
-            const updatedData = [...prevData, newData];
-            return updatedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        });
-    };
-
     const addToCombinedData = (newData) => {
         setCombinedData((prevData) => {
             const updatedData = [...prevData, newData];
@@ -57,12 +50,19 @@ export const ChatroomProvider = ({ children }) => {
         });
     };
 
-    // const isAdmin = threadData.data.admins.some(admin => admin._id.toString() === userData._id);
-
-
+    const updatePollDataInCombinedData = (updatedPoll) => {
+        setCombinedData(currentData => {
+            return currentData.map(item => {
+                if (item._id === updatedPoll._id) {
+                    return updatedPoll; // Update the poll with new data
+                }
+                return item; // Keep other items as they are
+            }).sort((a, b) => parseInt(a.createdAt, 10) - parseInt(b.createdAt, 10)); // Resort if necessary
+        });
+    };
 
     return(
-        <ChatroomContext.Provider value={{ userId, combinedData, addToCombinedData, removeFromCombinedData, thread, currentUserIsAdmin }}>
+        <ChatroomContext.Provider value={{ userId, combinedData, addToCombinedData, removeFromCombinedData, thread, currentUserIsAdmin, updatePollDataInCombinedData }}>
             { children }
         </ChatroomContext.Provider>
     )

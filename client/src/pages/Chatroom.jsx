@@ -16,7 +16,8 @@ import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 
 function Chatroom() {
 
-  const { combinedData, updateCombinedData, thread, currentUserIsAdmin } = useChatroomContext();
+  const { combinedData, updateCombinedData, thread, currentUserIsAdmin, updatePollDataInCombinedData } = useChatroomContext();
+  console.log(combinedData)
 
   const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
   
@@ -50,7 +51,7 @@ function Chatroom() {
       <Box id="messageContainer" sx={{ overflow: 'auto', height: '70%'}}>
         {combinedData.map((item, index) => {
           if (item.__typename === 'Message') {
-            return <Message key={item._id} message={item} currentUser={userData} currentUserIsAdmin={currentUserIsAdmin} refetch={refetch} />;
+            return <Message key={item._id} message={item} currentUserIsAdmin={currentUserIsAdmin} refetch={refetch} />;
           } else if (item.__typename === 'Question') {
             return <Poll key={item._id} poll={item} currentUserIsAdmin={currentUserIsAdmin} refetch={refetch} />;
           } else {
@@ -64,11 +65,3 @@ function Chatroom() {
 }
 
 export default Chatroom;
-
-
-//for MessageHUb
-// import { QUERY_ALL_THREADS } from '../utils/queries';
-// const { loading, error, data } = useQuery(QUERY_ALL_THREADS);
-
-//   if (loading) return <p>Loading...</p>;
-//   if (error) return <p>Error: {error.message}</p>;
