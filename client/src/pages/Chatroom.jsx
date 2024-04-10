@@ -28,14 +28,15 @@ function Chatroom() {
   });
 
   useEffect(() => {
-		const messageContainer = document.getElementById('messageContainer');
-    if (messageContainer) {
-      setTimeout(() => {
-        messageContainer.scrollTo(0, messageContainer.scrollHeight);
-      }, 10)
+    if (!loading) { // Assuming 'loading' indicates the loading state of your chat content
+      const messageContainer = document.getElementById('messageContainer');
+      if (messageContainer) {
+        setTimeout(() => {
+          messageContainer.scrollTo(0, messageContainer.scrollHeight);
+        }, 100); // Adjusted timeout for safety
+      }
     }
-    return
-	}, []);
+  }, [loading]);
 
 
   if (loading) return <p>Loading chatroom...</p>;

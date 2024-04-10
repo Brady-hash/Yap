@@ -24,6 +24,15 @@ const MessageInput = ({ thread }) => {
 		setMessage(event.target.value);
 	};
 
+	const scrollToBottom = () => {
+		const messageContainer = document.getElementById('messageContainer');
+		if (messageContainer) {
+		  setTimeout(() => {
+			messageContainer.scrollTo(0, messageContainer.scrollHeight);
+		  }, 100);
+		}
+	  };
+
 	const handleSubmit = async (event) => {
 		try {
 			if (!message.trim()) {
@@ -32,12 +41,7 @@ const MessageInput = ({ thread }) => {
 			const { data } = await addMessage();
 			if (data) {
 				addToCombinedData(data.addMessage)
-				const messageContainer = document.getElementById('messageContainer');
-					if (messageContainer) {
-				setTimeout(() => {
-					messageContainer.scrollTo(0, messageContainer.scrollHeight);
-				}, 10);
-		}
+				scrollToBottom();
 			}
 			setMessage('')
 		} catch(err) {
