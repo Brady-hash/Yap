@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { useChatroomContext } from '../context/ChatroomContext';
@@ -17,7 +17,6 @@ import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
 function Chatroom() {
 
   const { combinedData, updateCombinedData, thread, currentUserIsAdmin, updatePollDataInCombinedData } = useChatroomContext();
-  console.log(combinedData)
 
   const { data: userData, loading: userLoading, error: userError } = useQuery(QUERY_ME);
   
