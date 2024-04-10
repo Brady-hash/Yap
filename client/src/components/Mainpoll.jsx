@@ -46,8 +46,8 @@ const MainPoll = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mb: 5, mt: 1 }}>
             <Typography variant='h3' sx={{ color: 'white', p: 2, textAlign: 'center' }}>The Daily Yap</Typography>
-            <Box sx={{ borderRadius: 3, boxShadow: 10, bgcolor: 'rgba(0, 0, 0, 0.5)', display: 'flex', flex: '1', minWidth: '70vw', maxWidth: '90vw', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', p: 5, mx: 1, position: 'relative' }}>
-                <Typography variant='h5' sx={{ color: 'white', p: 2, textAlign: 'center' }}>{mainPoll.text}</Typography>
+            <Box sx={{ borderRadius: 3, boxShadow: 10, bgcolor: 'rgba(0, 0, 0, 0.5)', display: 'flex', flex: '1', minWidth: '70vw', maxWidth: '90vw', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', p: 4, mx: 1, position: 'relative' }}>
+                <Typography variant='h5' sx={{ color: 'white', p: 0, textAlign: 'center' }}>{mainPoll.text}</Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
                     <Button
                         variant='contained'
