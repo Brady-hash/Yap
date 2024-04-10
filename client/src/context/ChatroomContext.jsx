@@ -20,7 +20,7 @@ export const ChatroomProvider = ({ children }) => {
         variables: {
             threadId
         },
-        // pollInterval: 10000,
+        pollInterval: 10000,
     });
     const thread = threadData?.thread || null
 
