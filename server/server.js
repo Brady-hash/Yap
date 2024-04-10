@@ -8,7 +8,7 @@
 
 // const path = require('path');
 
-// const { scheduleMainPollSwitch } = require('./utils/cronJobs');
+const { scheduleMainPollSwitch } = require('./utils/cronJobs');
 // const { typeDefs, resolvers } = require('./schemas');
 // const db = require('./config/connection');
 
@@ -231,7 +231,7 @@
 //       console.log(`API server running on port ${PORT}!`);
 //       console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
 
-//       scheduleMainPollSwitch();
+      // scheduleMainPollSwitch();
 //     });
 //   });
 // };
@@ -297,6 +297,7 @@ const startApolloServer = async () => {
     app.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
       console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+      scheduleMainPollSwitch();
     });
   });
 };
