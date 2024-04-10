@@ -114,9 +114,13 @@ const resolvers = {
         },
         mainPoll: async () => {
             try {
-                // Assume we have a method to find the main poll; you might need to adjust this logic
-                // depending on how you determine which poll is the main one.
-                const mainPoll = await Question.findOne({ isMainPoll: true });
+                const mainPoll = await Question.findOne({ isMainPoll: true }).populate({
+                    path: 'answers',
+                    populate: {
+                        path: 'userId',
+                        model: 'User'  // Only necessary if not automatically inferred
+                    }
+                });
                 if (!mainPoll) {
                     throw new Error('Main poll not found');
                 }
@@ -125,7 +129,7 @@ const resolvers = {
                 throw new Error(`Error fetching main poll: ${err}`);
             }
         },
-    },
+    },        
     Mutation: {
         login: async (parent, { email, password }) => {
             try {

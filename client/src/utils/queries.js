@@ -176,6 +176,14 @@ export const QUERY_MAIN_POLL = gql`
       option2
       option1Count
       option2Count
+      answers {
+        _id
+        userId {
+          _id
+          username
+        }
+        answerChoice
+      } 
     }
   }
 `;

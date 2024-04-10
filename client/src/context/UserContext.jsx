@@ -12,6 +12,8 @@ export const UserProvider = ({ children }) => {
     const [userId, setUserId] = useState(null);
     const [threads, setThreads] = useState([]);
     const [mainPoll, setMainPoll] = useState(null);
+    const [hasAnswered, setHasAnswered] = useState(false);
+    const [selectedOption, setSelectedOption] = useState(null);
 
     const { data: userData, loading: userLoading, refetch: refetchUser } = useQuery(QUERY_ME);
     const { data: mainPollData, loading: mainPollLoading, refetch: refetchPoll } = useQuery(QUERY_MAIN_POLL);
@@ -27,9 +29,20 @@ export const UserProvider = ({ children }) => {
 
     useEffect(() => {
         if (!mainPollLoading && mainPollData && mainPollData.mainPoll) {
-            setMainPoll(mainPollData.mainPoll);
+            const mainPoll = mainPollData.mainPoll;
+            setMainPoll(mainPoll);
+
+            // Check if the user has already answered the main poll
+            const userAnswer = mainPoll.answers.find(answer => answer.userId?._id === userId);
+            if (userAnswer) {
+                setHasAnswered(true);
+                setSelectedOption(userAnswer.answerChoice);
+            } else {
+                setHasAnswered(false);
+                setSelectedOption(null);
+            }
         }
-    }, [mainPollData, mainPollLoading]);
+    }, [mainPollData, mainPollLoading, userId]);
 
     const refreshUserData = async () => {
         try {
@@ -68,6 +81,8 @@ export const UserProvider = ({ children }) => {
             friends,
             friendCount,
             mainPoll,
+            hasAnswered,
+            selectedOption,
             addFriend,
             removeFriend,
             addThread,
