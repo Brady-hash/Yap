@@ -95,7 +95,7 @@ export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
                 focused={false}
                 sx={styles}
             />
-            <Button variant='contained' sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}} onClick={handleSubmit}>Ask Question</Button>
+            <Button variant='contained' disabled={!formState.question || !formState.option1 || !formState.option2} sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}} onClick={handleSubmit}>Ask Question</Button>
         </Box>
         </>
     )
