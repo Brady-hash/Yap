@@ -20,14 +20,14 @@ function MessageHub() {
 
   const isSmallScreen = windowWidth < 1000;
   const navigate = useNavigate();
-  const { userId, friends, threads } = useUserContext();
+  const { threads } = useUserContext();
 
   const navigateToThread = (threadId) => {
     navigate(`/chatroom/${threadId}`);
   };
 
   return (
-    <Box sx={{ position: 'relative', minHeight: '100vh', pb: 10}}> {/* Ensure background extends with content */}
+    <Box sx={{ position: 'relative', minHeight: '100vh', pb: 10}}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
             {!isSmallScreen ? 
                 <NavBar />
@@ -42,9 +42,9 @@ function MessageHub() {
                 />
             </Box>
         </Box>
-        <Box sx={{ maxWidth: '800px', margin: 'auto' }}>
+        <Box sx={{ margin: 'auto', display:'flex', flexDirection:'column' }}>
             <MainPoll />
-            <Box sx={{ height: '50%', overflowY: 'auto' }}>
+            <Box sx={{ flex: 1, overflowY: 'auto', mt: 1, ml: !isSmallScreen ? '14vw' : 0, mr: !isSmallScreen ? '14vw' : 0 }}>
                 {threads && threads.map(thread => (
                     <Box 
                         key={thread._id} 

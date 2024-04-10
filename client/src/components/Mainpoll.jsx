@@ -66,7 +66,7 @@ const MainPoll = () => {
                         <Box sx={{ bgcolor: 'blue', width: `${option2Percentage}%` }} />
                     </Box>
                     <Typography textAlign="center" color="white" sx={{ mt: 1 }}>
-                        Red: {option1Percentage.toFixed(1)}%   vs   Blue: {option2Percentage.toFixed(1)}%
+                    <span style={{ color: 'red', textShadow: '1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black'  }}> {option1Percentage.toFixed(1)}% </span>   vs   <span style={{ color: 'blue', textShadow: '1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black'  }}> {option2Percentage.toFixed(1)}%</span>
                     </Typography>
                 </Box>
             </Box>
