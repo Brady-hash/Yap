@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { useParams, useNavigate } from 'react-router-dom';
 import { QUERY_ONE_THREAD, QUERY_ME } from '../utils/queries';
@@ -10,7 +10,6 @@ export const useChatroomContext = () => useContext(ChatroomContext);
 export const ChatroomProvider = ({ children }) => {
 
     const { threadId } = useParams();
-    const navigate = useNavigate();
     const [combinedData, setCombinedData] = useState([]);
     const [userId, setUserId] = useState(null);
     const [currentUserIsAdmin, setCurrentUserIsAdmin] = useState(false);
