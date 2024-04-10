@@ -24,7 +24,7 @@ export const RemoveFriendBtn = ({ friendId, setIsFriend }) => {
     }
     return (
         <>
-        <Button onClick={handleRemoveFriend}><PersonRemove sx={{fontSize: 30, color: '#761a1a'}}/></Button>
+        <Button variant='contained' onClick={handleRemoveFriend} sx={{ position:'absolute', right: 10, marginLeft: 2, bgcolor: '#be3144', '&:hover': { bgcolor: '#e84a5f' }}} ><PersonRemove sx={{fontSize: 25, color: 'white'}}/></Button>
         </>
     )
 };

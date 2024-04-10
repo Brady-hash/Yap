@@ -84,6 +84,7 @@ const CreateThreadForm = ({ onClose }) => {
                 <Button 
                     color="primary" 
                     variant="contained" 
+                    disabled={!threadName}
                     onClick={handleSubmit} 
                     sx={{ 
                         marginTop: 2, 

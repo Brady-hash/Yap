@@ -47,7 +47,7 @@ export const LOGIN = gql`
 `;
 
 export const CREATE_THREAD = gql`
-  mutation createThread($userId: ID!, $name: String!, $participantUsernames: [String!]){
+  mutation createThread($userId: ID!, $name: String!, $participantUsernames: [String]){
     createThread(userId: $userId, name: $name, participantUsernames: $participantUsernames) {
       _id
       name
@@ -338,3 +338,15 @@ mutation removeAdmin($threadId: ID!, $userId: ID!){
   }
 }
 `;
+
+export const KICK_USER = gql`
+mutation kickUser($userId: ID!, $threadId: ID!) {
+  kickUser(userId: $userId, threadId: $threadId) {
+    _id
+      participants {
+        _id
+        username
+      }
+  }
+}
+`

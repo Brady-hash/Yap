@@ -92,7 +92,7 @@ type Mutation {
     deleteUser(userId: ID!): User
     adminUser(threadId: ID!, userId: ID!): MessageThread
     removeAdmin(threadId: ID!, userId: ID!): MessageThread
-    createThread(userId: ID!, name: String!, participantUsernames: [String!]): MessageThread
+    createThread(userId: ID!, name: String!, participantUsernames: [String]): MessageThread
     deleteThread(threadId: ID!): returnMessage
     updateThread(threadId: ID!, name: String!): MessageThread
     addMessage(text: String!, userId: ID!, threadId: ID!): MessageThread
@@ -106,6 +106,7 @@ type Mutation {
     updateQuestion(userId: ID!, questionId: ID!, text: String, option1: String, option2: String): Question
     deleteQuestion(questionId: ID!): Question
     answerQuestion(questionId: ID!, answer: String!): Question
+    kickUser(userId: ID!, threadId: ID!): MessageThread
 }
 
 `

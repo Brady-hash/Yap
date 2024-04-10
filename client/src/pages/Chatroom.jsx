@@ -28,12 +28,12 @@ function Chatroom() {
   });
 
   useEffect(() => {
-    if (!loading) { // Assuming 'loading' indicates the loading state of your chat content
+    if (!loading) {
       const messageContainer = document.getElementById('messageContainer');
       if (messageContainer) {
         setTimeout(() => {
           messageContainer.scrollTo(0, messageContainer.scrollHeight);
-        }, 100); // Adjusted timeout for safety
+        }, 100);
       }
     }
   }, [loading]);
@@ -43,8 +43,18 @@ function Chatroom() {
   if (error) navigate('/');
 
   return (
-    <Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-      <Box sx={{ borderBottomRightRadius: 10, borderBottomLeftRadius: 10, height: '10%', display: 'flex', alignItems: 'center', justifyContent:'space-between', px: 1, boxShadow: 20}}>
+    <Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', py: 2 }}>
+      <Box 
+        sx={{ 
+          borderBottomRightRadius: 10, 
+          borderBottomLeftRadius: 10, 
+          height: '10%', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent:'space-between',
+          px: 1, 
+          boxShadow: '0px 15px 10px -1px rgba(0,0,0,0.1), 0px 4px 6px -2px rgba(0,0,0,0.05)'
+        }}>
         <BackBtn />
         <ThreadDetailsBtn thread={data?.thread} currentUser={userData}/>
         <LeaveThreadBtn thread={data?.thread} currentUser={userData}/>

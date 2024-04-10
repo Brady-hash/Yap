@@ -7,6 +7,7 @@ import { EditThread } from "./editThread";
 import { LeaveThreadBtn } from "../btns/LeaveThreadBtn";
 import { RemoveAdminBtn } from "../btns/RemoveAdminBtn";
 import { AddAdminBtn } from "../btns/AddAdminBtn";
+import { KickUserBtn } from "../btns/KickUserBtn";
 import { useChatroomContext } from "../../context/ChatroomContext";
 
 import  { UserProfile } from '../UserProfile';
@@ -47,13 +48,13 @@ export const ThreadDetails = ({ detailsToggled, onClose }) => {
             }}
         >
             <Box>
-                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'fixed', bgcolor: '#555', width: '80%', zIndex: 10, boxShadow: 5}}>
+                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'fixed', bgcolor: '#555', width: '80%', zIndex: 10, boxShadow: 5, p: 2}}>
                     <Button 
-                        variant='outlined' 
-                        sx={{maxWidth: '65px', height: '65px', m: 2}}
+                        variant='contained' 
+                        sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}
                         onClick={onClose}
                     >
-                        <Close />
+                        <Close sx={{ fontSize: 30 }}/>
                     </Button>
                     <Typography variant='h5' sx={{color: 'white' }}>{thread.name}</Typography>
                     <LeaveThreadBtn sx={{height: '65px', width: '65px', m: 2}} thread={thread}  />
@@ -91,7 +92,8 @@ export const ThreadDetails = ({ detailsToggled, onClose }) => {
                         {/* if the current logged in user is the creator we give them the option of adding current admins*/}
                         {isCreator(userId) && userId !== participant._id && !isAdmin(participant._id) && <AddAdminBtn threadId={thread._id} userId={participant._id}/>}
                         {/* if the current logged in user is the creator we give them the option of removing admins */}
-                        {isCreator(userId) && userId !== participant._id && isAdmin(participant._id) && <RemoveAdminBtn threadId={thread._id} userId={participant._id}/>}
+                        {isCreator(userId) && userId !== participant._id && isAdmin(participant._id) && (<RemoveAdminBtn threadId={thread._id} userId={participant._id}/>)}
+                        {isCreator(userId) && userId !== participant._id && <KickUserBtn userIdToKick={participant._id} threadId={thread._id}/>}
                     </Box>
                 ))}
                 </Box>

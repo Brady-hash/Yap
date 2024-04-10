@@ -25,7 +25,7 @@ export const JoinThreadBtn = ({ threadId }) => {
     }
     return (
         <>
-        <Button variant='text' onClick={handleJoinThread}>join</Button>
+        <Button variant='text' sx={{ color: '#222', bgcolor: '#444', '&:hover': { bgcolor: '#444', color: '#777'}}} onClick={handleJoinThread}>join</Button>
         </>
     )
 };

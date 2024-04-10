@@ -27,7 +27,8 @@ export const RemoveAdminBtn = ({ userId, threadId }) => {
         <>
         <Button
             onClick={() => setConfirmOpen(true)}
-        ><RemoveModerator /></Button>
+            sx={{ marginLeft: 2, bgcolor: '#222831', '&:hover': { bgcolor: '#be3144'}}}
+        ><RemoveModerator sx={{ fontSize: 30, color: 'white' }}/></Button>
         <Confirm confirmOpen={confirmOpen} setConfirmOpen={setConfirmOpen} action={'remove this users privileges'} actionFunction={handleRemoveAdmin}/>
         </>
     )

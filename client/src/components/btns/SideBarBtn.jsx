@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { SideBar } from '../SideBar';
-import { Dehaze } from  '@mui/icons-material';
-import { SearchForm } from "../forms/SearchForm";
+import { Dehaze, Close } from '@mui/icons-material';
+import IconButton from '@mui/material/IconButton';
+
 
 export const SideBarBtn = () => {
     const [sideBarToggled, setSideBarToggled ] = useState(false)
@@ -12,15 +13,21 @@ export const SideBarBtn = () => {
     
     return (
         <>
-            <Dehaze 
-            onClick={toggleSideBar}
-            sx={{ 
-                color: "white",
-                fontSize: 30,
-                margin: "5px",
-                cursor: "pointer"
-                }} 
-            />
+            <IconButton 
+                onClick={toggleSideBar}
+                sx={{ 
+                    color: 'white', 
+                    m: 1,
+                    position: 'absolute',
+                    right: 10,
+                    top: 10,
+                    transition: 'transform 0.3s ease',
+                    transform: sideBarToggled ? 'rotate(180deg)' : 'rotate(0deg)',
+                    zIndex: 1300,
+                }}
+            >
+                {sideBarToggled ? <Close sx={{ fontSize: 40}}/> : <Dehaze sx={{ fontSize: 40}}/>}
+            </IconButton>
             {sideBarToggled && <SideBar sideBarToggled={sideBarToggled} onClose={toggleSideBar}/>}
         </>
     )

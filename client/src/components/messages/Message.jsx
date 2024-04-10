@@ -73,6 +73,7 @@ export const Message = ({ message, isAdmin, refetch }) => {
 			maxWidth: '80%',
 			minHeight: '50px', 
 			display: 'flex',
+			position:'relative',
 			flexDirection: 'column',
 			boxShadow: 10,
 			alignItems: isCurrentUserMessage ? 'end' : 'start',
@@ -115,9 +116,9 @@ export const Message = ({ message, isAdmin, refetch }) => {
 				{isCurrentUserMessage && <EditMessageBtn onClick={startEditing}/>}
 				</Typography>
 			</Box>
-			<Box sx={{ display: 'flex', gap: 0}}>
+			<Box sx={{ display: 'flex', gap: 0 }}>
 				<Typography variant='h6' sx={{color: '#777', textAlign: 'left', my: 1}}>{message.sender.username}</Typography>
-				{!isCurrentUserMessage && !isFriend && <AddFriendBtn friendId={message.sender._id}/>}
+				{!isCurrentUserMessage && !isFriend && <AddFriendBtn friendId={message.sender._id} sx={{ position: 'absolute', bgcolor: '#222831', right: 10, mx: 2.5, '&:hover': { bgcolor: '#455d7a'}}}/>}
 				{!isCurrentUserMessage && isFriend && <PeopleOutline sx={{fontSize: 30, color: 'gray', mx: 1}}/>}
 			</Box>
 			{isEditing ?  

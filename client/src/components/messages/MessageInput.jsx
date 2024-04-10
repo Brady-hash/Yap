@@ -103,11 +103,11 @@ const MessageInput = ({ thread }) => {
             />}
             
 			<Box sx={{ display: 'flex', flexDirection: 'column',justifyContent: 'center', gap: 2, height: '90%'}}>
-				<Button variant="contained" color="primary" onClick={handleSubmit}>
+				<Button variant="contained" onClick={handleSubmit} disabled={!message} sx={{ bgcolor: '#222831' , '&:hover': { bgcolor: '#455d7a'}}}>
                 	<Send />
             	</Button>
 				{currentUserIsAdmin ? 
-					<Button variant="contained" color="primary" onClick={() => setModalOpen(!modalOpen)}>
+					<Button variant="contained" onClick={() => setModalOpen(!modalOpen)} sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}>
 						Poll
 					</Button>
 				: ''}
