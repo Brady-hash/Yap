@@ -19,7 +19,7 @@ export const KickUserBtn = ({ userIdToKick, threadId }) => {
     })
     return(
         <>
-        <Button variant='text' onClick={() => setConfirmOpen(true)} sx={{ mx: 2, bgcolor: '#444', color: '#be3144', '&:hover': { color: 'darkred', bgcolor: '#444'}}}>Kick</Button>
+        <Button variant='text' onClick={() => setConfirmOpen(true)} sx={{ mx: 2, color: '#be3144', '&:hover': { color: 'darkred', bgcolor: 'transparent'}}}>Kick</Button>
         <Confirm confirmOpen={confirmOpen} setConfirmOpen={setConfirmOpen} action={'kick this user'} actionFunction={kickUser}/>
         </>
     )
