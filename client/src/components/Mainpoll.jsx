@@ -33,8 +33,15 @@ const MainPoll = () => {
     if (!mainPoll) return <Typography>Loading main poll...</Typography>;
 
     const totalVotes = mainPoll.option1Count + mainPoll.option2Count;
-    const option1Percentage = totalVotes > 0 ? (mainPoll.option1Count / totalVotes) * 100 : 0;
-    const option2Percentage = 100 - option1Percentage;
+    let option1Percentage, option2Percentage;
+
+    if (totalVotes === 0) {
+        option1Percentage = 50;
+        option2Percentage = 50;
+    } else {
+        option1Percentage = (mainPoll.option1Count / totalVotes) * 100;
+        option2Percentage = 100 - option1Percentage;
+    }
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mb: 5, mt: 1 }}>
@@ -66,7 +73,7 @@ const MainPoll = () => {
                         <Box sx={{ bgcolor: 'blue', width: `${option2Percentage}%` }} />
                     </Box>
                     <Typography textAlign="center" color="white" sx={{ mt: 1 }}>
-                    <span style={{ color: 'red', textShadow: '1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black'  }}> {option1Percentage.toFixed(1)}% </span>   vs   <span style={{ color: 'blue', textShadow: '1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black'  }}> {option2Percentage.toFixed(1)}%</span>
+                        <span style={{ color: 'red', textShadow: '1px 1px 0 black' }}> {option1Percentage.toFixed(1)}% </span> vs <span style={{ color: 'blue', textShadow: '1px 1px 0 black' }}> {option2Percentage.toFixed(1)}%</span>
                     </Typography>
                 </Box>
             </Box>
