@@ -18,9 +18,6 @@ export const ThreadDetails = ({ detailsToggled, onClose }) => {
     const { thread, currentUserIsAdmin, userId } = useChatroomContext();
     const [showUserProfileTD, setShowUserProfileTD] = useState(null);
     
-    console.log('participants',thread.participants)
-    console.log('creator',thread.creator)
-    
     const isAdmin = (participantId) => {
         return thread.admins.some(admin => admin._id.toString() === participantId.toString());
     };

@@ -46,7 +46,7 @@ const MessageInput = ({ thread }) => {
 			setMessage('')
 		} catch(err) {
 			`Error sending message: ${err}`;
-			console.log(err)
+			console.error(err)
 		}
 	}
 

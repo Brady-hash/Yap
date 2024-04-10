@@ -55,7 +55,7 @@ export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
                 await createQuestion();
 
             } catch(err) {
-                console.log(err);
+                console.error(err);
             }
             setFormState({ question: '', option1: '', option2: '' });
             onClose();
