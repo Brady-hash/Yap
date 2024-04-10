@@ -107,6 +107,7 @@ type Mutation {
     deleteQuestion(questionId: ID!): Question
     answerQuestion(questionId: ID!, answer: String!): Question
     kickUser(userId: ID!, threadId: ID!): MessageThread
+    addUserToThread(userId: ID!, threadId: ID!): MessageThread
 }
 
 `

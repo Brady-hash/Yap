@@ -6,6 +6,7 @@ import { EditThread } from "./editThread";
 
 import { LeaveThreadBtn } from "../btns/LeaveThreadBtn";
 import { RemoveAdminBtn } from "../btns/RemoveAdminBtn";
+import { AddToThreadBtn } from "../btns/AddToThreadBtn";
 import { AddAdminBtn } from "../btns/AddAdminBtn";
 import { KickUserBtn } from "../btns/KickUserBtn";
 import { useChatroomContext } from "../../context/ChatroomContext";
@@ -86,7 +87,7 @@ export const ThreadDetails = ({ detailsToggled, onClose }) => {
                             {participant.username} 
                         </Typography>
                         {/* if the current participant is an admin, but not the creator, we give them an admin tag*/}
-                        {isAdmin(participant._id) && !isCreator(participant._id) && <Typography variant='span' sx={{ position: 'absolute', right: 35, color: '#888'}}>(admin)</Typography>}
+                        {isAdmin(participant._id) && !isCreator(participant._id) && !isCreator(userId) && <Typography variant='span' sx={{ position: 'absolute', right: 35, color: '#888'}}>(admin)</Typography>}
                         {/* if the current participant is the creator, we give them a creator tag */}
                         {isCreator(participant._id) && <Typography variant='span' sx={{ position: 'absolute', right: 35, color: '#888'}}>(creator)</Typography>}
                         {/* if the current logged in user is the creator we give them the option of adding current admins*/}
@@ -97,8 +98,8 @@ export const ThreadDetails = ({ detailsToggled, onClose }) => {
                     </Box>
                 ))}
                 </Box>
-                {isCreator(userId) && <EditThread name={thread.name} threadId={thread._id}/>}
-
+                {isCreator(userId) && <EditThread name={thread.name} threadId={thread._id}/> }
+                {/* {isCreator(userId) && <AddToThreadBtn />} */}
             </Box>
         </Drawer>
         </>

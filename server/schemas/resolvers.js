@@ -664,6 +664,28 @@ const resolvers = {
             } catch(err) {
                 throw new Error(`Erro kicking participant: ${err}`);
             }
+        },
+        addUserToThread: async (parent, { userId, threadId }, context) => {
+            try {
+                if (!context.user) {
+                    throw AuthenticationError
+                }
+
+                const updatedThread = await MessageThread.findByIdAndUpdate(
+                    threadId, 
+                    { $addToSet: { participants: userId }}, 
+                    { new: true })
+                    .populate({ path: 'admins', select: 'username'})
+                    .populate('participants')
+                    .populate({ path: 'messages', populate: { path: 'sender' , select: 'username' }})
+                    .populate({ path: 'questions', populate: 'creator' });
+
+                await User.findByIdAndUpdate(userId, { $addToSet: { messageThreads: threadId }}, { new: true })
+
+                return updatedThread
+            } catch(err) {
+                throw new Error(`Error adding user to thread: ${err}`)
+            }
         }
     }
 }

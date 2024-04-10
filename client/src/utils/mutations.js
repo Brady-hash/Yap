@@ -350,3 +350,14 @@ mutation kickUser($userId: ID!, $threadId: ID!) {
   }
 }
 `
+export const ADD_USER_TO_THREAD = gql`
+mutation addUserToThread($userId: ID!, $threadId: ID!) {
+  addUserToThread(userId: $userId, threadId: $threadId) {
+    _id
+    participants {
+      _id
+      username
+    }
+  }
+}
+`
