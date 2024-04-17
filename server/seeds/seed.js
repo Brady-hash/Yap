@@ -48,24 +48,6 @@ db.once('open', async () => {
         }
 
         for (const thread of messageThreads) {
-            const message = await Message.create({
-                messageThread: thread._id,
-                sender: thread.creator,
-                text: `${thread.name}'s first message! Welcome!`,
-            });
-            await MessageThread.findByIdAndUpdate(thread._id, { $push: { messages: message._id } })
-        }
-
-        for (const thread of messageThreads) {
-            for (const userId of thread.participants) {
-                const user = await User.findById(userId);
-                const message = await Message.create({
-                    messageThread: thread._id,
-                    sender: userId,
-                    text: `Message from ${user.username} in ${thread.name}`,
-                });
-                await MessageThread.findByIdAndUpdate(thread._id, { $push: { messages: message._id} } )
-            }
             for (const participantId of thread.participants) {
                 await User.findByIdAndUpdate(participantId, { $addToSet: { messageThreads: thread._id } });
             }

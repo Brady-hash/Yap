@@ -5,7 +5,7 @@ import { QUERY_ME } from '../utils/queries';
 import { UPDATE_USER } from '../utils/mutations';
 import { useUserContext } from '../context/UserContext';
 
-import { BackBtn } from '../components/btns/BackBtn';
+import { HomeBtn } from '../components/btns/HomeBtn';
 
 function Profile() {
     const [userData, setUserData] = useState({ username: '', email: '', friendCount: '' });
@@ -23,6 +23,7 @@ function Profile() {
             });
         }
     }, [data]);
+    console.log(userData.username)
 
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography>Error loading profile!</Typography>;
@@ -56,11 +57,10 @@ function Profile() {
         sx={{ 
             height: "100vh",
             margin: 'auto',
-            padding: 2 
+            pt: 10 
             }}>
-            < BackBtn
-            />
-            <Typography variant="h4" sx={{ fontSize: 35, color:"white"}} >My Profile</Typography>
+            < HomeBtn />
+            <Typography variant="h4" sx={{ fontSize: 35, color:"black"}} >My Profile</Typography>
             <Box className="profile-info">
                 {isEditing ? (
                     <form onSubmit={handleSubmit}>
@@ -98,8 +98,8 @@ function Profile() {
                         flexDirection: 'column', 
                         alignItems: 'flex-start'
                     }}>
-                        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                            <Typography sx={{ mb: 2, textAlign: 'left' }}>Username: {userData.username}</Typography>
+                        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', zIndex: 1}}>
+                            <Typography sx={{ mb: 2, textAlign: 'left', color: 'white' }}>Username: {userData.username}</Typography>
                             <Typography sx={{ mb: 2, textAlign: 'left' }}>Email: {userData.email}</Typography>
                             <Typography sx={{ mb: 2, textAlign: 'left' }}>Friends: {userData.friendCount}</Typography>
                             <Button onClick={handleEditToggle} variant="contained" sx={{ mt: 1 }}>Edit Profile</Button>

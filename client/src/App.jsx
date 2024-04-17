@@ -1,5 +1,3 @@
-
-import "./App.css";
 import {
 	ApolloClient,
 	InMemoryCache,
@@ -8,6 +6,10 @@ import {
   } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { UserProvider } from './context/UserContext.jsx';
+import { ThemeProvider } from './context/ThemeContext.jsx';
+import { NavBar } from './components/NavBar.jsx';
+import DynamicBackground from './components/Background.jsx';
+import { CssBaseline } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 
 const httpLink = createHttpLink({
@@ -30,12 +32,20 @@ const client = new ApolloClient({
 });
 
 function App() {
+
 	return (
-		<ApolloProvider client={client}>
-			<UserProvider>
-				<Outlet />
-			</UserProvider>
-		</ApolloProvider>
+		<>
+		<ThemeProvider>
+			<CssBaseline />
+			<DynamicBackground />
+			<ApolloProvider client={client}>
+				<UserProvider>
+					<NavBar />
+					<Outlet />
+				</UserProvider>
+			</ApolloProvider>
+			</ThemeProvider>
+		</>
 	);
 }
 

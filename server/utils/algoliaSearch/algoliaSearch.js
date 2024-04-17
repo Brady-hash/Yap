@@ -1,9 +1,12 @@
 const { MongoClient } = require('mongodb');
 
 const { usersIndex , threadsIndex } = require('./algoliaClient');
+require('dotenv').config();
+
+const MONGODB_URI = process.env.NODE_ENV === 'production' ? process.env.MONGODB_URI : 'mongodb://127.0.0.1:27017/yap';
 
 const syncData = async () => {
-  const mongoClient = new MongoClient('mongodb://127.0.0.1:27017/yap');
+  const mongoClient = new MongoClient(MONGODB_URI);
 
   try {
     await mongoClient.connect();
