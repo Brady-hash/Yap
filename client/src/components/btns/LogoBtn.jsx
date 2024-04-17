@@ -6,8 +6,9 @@ export const LogoBtn = () => {
         <Avatar 
         src={logoSrc}
         sx={{
-                height: '100px',
-                width: '100px'
+                p:0,
+                height: '80px',
+                width: '80px'
             }}
         />
     )

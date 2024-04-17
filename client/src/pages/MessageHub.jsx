@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { Box, Typography } from '@mui/material';
 import { CreateThreadBtn } from '../components/btns/CreateThreadBtn'
-import MainPoll from '../components/Mainpoll'
+import MainPoll from '../components/Mainpoll';
 
 function MessageHub() {
 
