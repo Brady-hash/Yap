@@ -48,6 +48,7 @@ let currentQuestionIndex = 0;
 
 const scheduleMainPollSwitch = () => {
   cron.schedule('0 0 * * *', async () => {
+
     try {
       // Find and delete the existing main poll
       await Question.findOneAndDelete({ isMainPoll: true });
