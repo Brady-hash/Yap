@@ -30,7 +30,7 @@ export const SideBar = ({ sideBarToggled, onClose }) => {
         >
             <Box sx={{ width: '100%', height: '100%', position: 'relative', display: 'flex', flexDirection: 'column'}}>
                 <Avatar 
-                    src="/public/Yap-logo.png"
+                    src="/public/Yap-Logo.png"
                     sx={{
                         width: 'auto',
                         height: '20%',
