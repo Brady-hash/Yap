@@ -92,7 +92,7 @@ const MessageInput = ({ thread }) => {
 					borderRadius: 2,
 					boxShadow: 5,
 					'& .MuiInputBase-input': {
-						color: theme.palette.text.primary, // Ensure input text color inherits from the main color style
+						color: theme.palette.text.primary,
 					  }
 				  }}
             />}
