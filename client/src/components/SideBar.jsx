@@ -7,6 +7,7 @@ import { SearchBtn } from "./btns/SearchBtn";
 import { SearchForm } from "./forms/SearchForm";
 import { ToggleThemeBtn } from "./btns/ToggleThemeBtn";
 import { useThemeContext } from "../context/ThemeContext";
+import logoSrc from '../images/Yap-Logo.png';
 
 export const SideBar = ({ sideBarToggled, onClose }) => {
     const [searchOpen, setSearchOpen] = useState(false);
@@ -30,7 +31,7 @@ export const SideBar = ({ sideBarToggled, onClose }) => {
         >
             <Box sx={{ width: '100%', height: '100%', position: 'relative', display: 'flex', flexDirection: 'column'}}>
                 <Avatar 
-                    src="/public/Yap-Logo.png"
+                    src={logoSrc}
                     sx={{
                         width: 'auto',
                         height: '20%',
