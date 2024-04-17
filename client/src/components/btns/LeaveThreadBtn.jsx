@@ -6,9 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { LEAVE_THREAD } from '../../utils/mutations';
 import { useState } from "react";
 import { useUserContext } from "../../context/UserContext";
+import { useThemeContext } from "../../context/ThemeContext";
 
 export const LeaveThreadBtn= ({ sx, thread }) => {
     const { removeThread } = useUserContext();
+    const { theme } = useThemeContext();
 
     const [confirmOpen, setConfirmOpen] = useState(false);
     const navigate = useNavigate();
@@ -34,8 +36,8 @@ export const LeaveThreadBtn= ({ sx, thread }) => {
         <>
             <Button 
                 variant='contained' 
-                sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}
                 onClick={()=> setConfirmOpen(true)}
+                sx={{ bgcolor: theme.palette.primary.main, '&:hover': { bgcolor: theme.palette.secondary.main} }}
             >
                 <MeetingRoom sx={{ fontSize: 35 }}/>
             </Button>

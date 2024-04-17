@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Typography, Button } from "@mui/material";
 import { ThreadDetails } from "../messages/threadDetails";
+import { useThemeContext } from '../../context/ThemeContext';
 
 export const ThreadDetailsBtn = ({ thread, currentUser }) => {
     const [detailsToggled, setDetailsToggled] = useState(false);
+    const { theme } = useThemeContext();
 
     const toggleThreadDetails = () => {
         setDetailsToggled(!detailsToggled);
@@ -13,8 +15,8 @@ export const ThreadDetailsBtn = ({ thread, currentUser }) => {
         <>
             <Button 
                 variant='contained' 
-                sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}
                 onClick={toggleThreadDetails}
+                sx={{ bgcolor: theme.palette.primary.main, '&:hover': { bgcolor: theme.palette.secondary.main} }}
             >
                 <Typography variant='h6'>{thread.name}</Typography>
             </Button>

@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { ADD_MESSAGE } from "../../utils/mutations";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { Send } from '@mui/icons-material/';
 import { CreatePoll } from "./createPoll";
 import { useChatroomContext } from "../../context/ChatroomContext";
+import { useThemeContext } from "../../context/ThemeContext";
 
 const MessageInput = ({ thread }) => {
 
 	const { userId, addToCombinedData, currentUserIsAdmin, combinedData } = useChatroomContext();
+	const { theme } = useThemeContext();
 
 	const [message, setMessage] = useState('');
 	const [modalOpen, setModalOpen] = useState(false);
@@ -60,19 +62,11 @@ const MessageInput = ({ thread }) => {
 
 	return (
 		<>
-		<Box sx={{ 
-			borderTopRightRadius: 10, 
-			borderTopLeftRadius: 10, 
-			boxShadow: '0px -5px 5px 0px rgba(0,0,0,0.3)', 
-			height: modalOpen ? '60%' : '20%', 
-			display: 'flex', 
-			flexDirection: 'column', 
-			justifyContent: 'center', 
-			px: 2 }}>
 		<Box
             sx={{
 				position: 'relative',
-				height: '100%',
+				pt: 4,
+				pb: 2,
                 display: 'flex',
                 alignItems: 'center',
 				justifyContent: 'center',
@@ -93,27 +87,29 @@ const MessageInput = ({ thread }) => {
                 onChange={handleInputChange}
 				onKeyDown={handleKeyDown}
 				sx={{
-					border: 'solid #555 2px',
+					maxWidth: 'xl',
+					// border: 'solid #555 2px',
 					borderRadius: 2,
 					boxShadow: 5,
 					'& .MuiInputBase-input': {
-					  color: 'white',
-					},
+						color: theme.palette.text.primary, // Ensure input text color inherits from the main color style
+					  }
 				  }}
             />}
             
 			<Box sx={{ display: 'flex', flexDirection: 'column',justifyContent: 'center', gap: 2, height: '90%'}}>
-				<Button variant="contained" onClick={handleSubmit} disabled={!message} sx={{ bgcolor: '#222831' , '&:hover': { bgcolor: '#455d7a'}}}>
-                	<Send />
+				<Button variant="contained" onClick={handleSubmit} disabled={!message} sx={{ bgcolor: theme.palette.utility.main, '&:hover': { bgcolor: theme.palette.utility.secondary }}}>
+                	<Send sx={{ color: theme.palette.utility.contrastText, }}/>
             	</Button>
 				{currentUserIsAdmin ? 
-					<Button variant="contained" onClick={() => setModalOpen(!modalOpen)} sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}}>
-						Poll
+					<Button variant="contained" onClick={() => setModalOpen(!modalOpen)} sx={{ bgcolor: theme.palette.utility.main, '&:hover': { bgcolor: theme.palette.utility.secondary } }}>
+						    <Typography sx={{ color: theme.palette.utility.contrastText }}>
+      							Poll
+    						</Typography>
 					</Button>
 				: ''}
 			</Box>
         </Box>
-		</Box>
 		</>
 	);
 };

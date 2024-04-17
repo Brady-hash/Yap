@@ -1,13 +1,16 @@
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
 import { CREATE_QUESTION } from "../../utils/mutations";
-import { TextField, Button, Box } from "@mui/material";
+import { TextField, Button, Box, Typography } from "@mui/material";
 import { useChatroomContext } from "../../context/ChatroomContext";
+import { useThemeContext } from "../../context/ThemeContext";
 
 export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
     const { addToCombinedData, combinedData } = useChatroomContext();
+    const { theme } = useThemeContext();
         const styles = {
             borderRadius: 2,
+            width: '100%',
             '& .MuiInputBase-input': {
                 color: 'white',
             },
@@ -65,7 +68,7 @@ export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
     
     return (
         <>
-        <Box sx={{ width: '100%', height: '95%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, px: 1}}>
+        <Box sx={{ width: '100%', height: '95%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4, px: 1}}>
             <TextField 
                 name='question'
                 multiline
@@ -75,7 +78,12 @@ export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
                 value={formState.question}
                 onChange={handleFormChange}
                 focused={false}
-                sx={styles}
+                sx={{
+                    ...styles,
+                    '& .MuiInputBase-input': {
+						color: theme.palette.text.primary, 
+					  }
+                }}
             />
             <TextField 
                 name='option1'
@@ -84,7 +92,12 @@ export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
                 onChange={handleFormChange}
                 variant='standard'
                 focused={false}
-                sx={styles}
+                sx={{
+                    ...styles,
+                    '& .MuiInputBase-input': {
+						color: theme.palette.text.primary, 
+					  }
+                }}
             />
             <TextField 
                 name={'option2'}
@@ -93,9 +106,21 @@ export const CreatePoll = ({ userId, thread, modalOpen, onClose }) => {
                 onChange={handleFormChange}
                 variant='standard'
                 focused={false}
-                sx={styles}
+                sx={{
+                    ...styles,
+                    '& .MuiInputBase-input': {
+						color: theme.palette.text.primary,
+					  }
+                }}
             />
-            <Button variant='contained' disabled={!formState.question || !formState.option1 || !formState.option2} sx={{ bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a'}}} onClick={handleSubmit}>Ask Question</Button>
+            <Button 
+                variant='contained' 
+                disabled={!formState.question || !formState.option1 || !formState.option2} 
+                sx={{ width: '80%', bgcolor: theme.palette.utility.main, '&:hover': { bgcolor: theme.palette.utility.secondary}}} 
+                onClick={handleSubmit}
+            >
+                <Typography variant='h6' sx={{ color: theme.palette.text.primary, fontWeight: 700}}>Send Poll</Typography>
+            </Button>
         </Box>
         </>
     )

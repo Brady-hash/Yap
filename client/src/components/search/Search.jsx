@@ -10,7 +10,7 @@ import { ThreadHit } from './ThreadHit';
 export const Search = ({ tabIndex }) => {
     const searchClient = algoliasearch('3ECRGKFTT4', '59491801aa4f784d065d8475e2cc0a99');
     const [isInputEmpty, setInputEmpty] = useState(true);
-    const hitComponent = tabIndex === 'usersIndex' ? UserHit : ThreadHit;
+    const hitComponent = tabIndex === 'dev_YAP_USERS' ? UserHit : ThreadHit;
 
     return (
         <>

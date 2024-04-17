@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Box, Drawer, Button, Avatar, Typography } from "@mui/material";
-import { Settings } from "@mui/icons-material";
+import { Box, Drawer, Button, Avatar, Typography, useTheme } from "@mui/material";
+import { Settings, Close } from "@mui/icons-material";
 import LogoutBtn from '../components/btns/LogoutBtn';
 import MyProfileBtn from '../components/btns/MyProfileBtn';
 import { SearchBtn } from "./btns/SearchBtn";
 import { SearchForm } from "./forms/SearchForm";
+import { ToggleThemeBtn } from "./btns/ToggleThemeBtn";
+import { useThemeContext } from "../context/ThemeContext";
 
-export const SideBar = ({ sideBarToggled }) => {
+export const SideBar = ({ sideBarToggled, onClose }) => {
     const [searchOpen, setSearchOpen] = useState(false);
+    const { theme } = useThemeContext();
 
     return (
         <Drawer
@@ -18,7 +21,7 @@ export const SideBar = ({ sideBarToggled }) => {
                 width: 240, 
                 flexShrink: 0, 
                 '& .MuiDrawer-paper': {
-                    width: '34%', 
+                    width: '40%', 
                     boxSizing: 'border-box', 
                     border: 'solid #444 2px', 
                     bgcolor: '#333',
@@ -37,18 +40,32 @@ export const SideBar = ({ sideBarToggled }) => {
                         display: 'block',  
                     }}
                 />
-                <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',marginLeft:.25, marginRight:.25}}>
+                <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
                     <MyProfileBtn sx={{ marginBottom: 1, bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a' }}} />
                     <SearchBtn setSearchOpen={setSearchOpen} sx={{ marginBottom: 1, bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a' }}} searchOpen={searchOpen} />
                     <Button sx={{ marginBottom: 1, bgcolor: '#222831', '&:hover': { bgcolor: '#455d7a' }}}>
                         <Typography variant='h7' sx={{ color: "white" }}>Settings</Typography>
                         <Settings sx={{ fontSize: 30, color: "white", marginLeft: 1 }}/>
                     </Button>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <LogoutBtn sx={{ bgcolor: '#be3144', '&:hover': { bgcolor: '#e84a5f' } }} />
-                </Box>
+                    <Box sx={{ flexGrow: 1, }} />
+                        <ToggleThemeBtn sx={{ position: 'absolute', transform: 'translateY(-30px)', left: 0}}/>
+                        <LogoutBtn sx={{ bgcolor: '#be3144', '&:hover': { bgcolor: '#e84a5f' } }} />
+                    </Box>
                 {searchOpen && <SearchForm searchOpen={searchOpen} setSearchOpen={setSearchOpen} />}
             </Box>
+            <Close 
+                onClick={() => onClose(false)}
+                sx={{ 
+                    fontSize: 35,
+                    cursor: 'pointer', 
+                    transition: '0.1s ease-in-out', 
+                    position: 'absolute', 
+                    top: 12, 
+                    left: 10, 
+                    color: theme.palette.utility.main,
+                    '&:hover': { color: theme.palette.utility.secondary } 
+                }}
+            />
         </Drawer>
     );
 }

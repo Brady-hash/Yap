@@ -14,13 +14,10 @@ export const SideBarBtn = () => {
     return (
         <>
             <IconButton 
+                disableRipple
                 onClick={toggleSideBar}
                 sx={{ 
                     color: 'white', 
-                    m: 1,
-                    position: 'absolute',
-                    right: 10,
-                    top: 10,
                     transition: 'transform 0.3s ease',
                     transform: sideBarToggled ? 'rotate(180deg)' : 'rotate(0deg)',
                     zIndex: 1300,
