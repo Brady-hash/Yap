@@ -4,7 +4,7 @@ import { Close } from "@mui/icons-material";
 import { Search } from "../search/Search";
 
 export const SearchForm = ({ searchOpen, setSearchOpen }) => {
-    const [tabIndex, setTabIndex] = useState('dev_YAP_USERS');
+    const [tabIndex, setTabIndex] = useState('usersIndex');
     const activeSX = {
         bgcolor: 'darkblue', 
         color: 'white', 
@@ -45,14 +45,14 @@ export const SearchForm = ({ searchOpen, setSearchOpen }) => {
                     <Typography 
                         variant='h5' 
                         sx= {tabIndex === 'usersIndex' ? activeSX: inactiveSX}
-                        onClick={() => setTabIndex('dev_YAP_USERS')}
+                        onClick={() => setTabIndex('usersIndex')}
                     >
                         Users
                     </Typography>
                     <Typography 
                         variant='h5' 
                         sx= {tabIndex === 'threadsIndex' ? activeSX: inactiveSX}
-                        onClick={() => setTabIndex('dev_YAP_THREADS')}
+                        onClick={() => setTabIndex('threadsIndex')}
                     >
                         Threads
                     </Typography>
